@@ -1,0 +1,3831 @@
+Running DOE Analysis
+Dakota version 6.5 released Dec  7 2016.
+Repository revision f928f89 (2016-11-10) built Dec  7 2016 15:24:52.
+Running serial Dakota executable in serial mode.
+Start time: Fri Jul 28 16:56:33 2017
+
+-------------------------
+Begin DAKOTA input file
+templatedir/dakota_DOE.in
+-------------------------
+
+environment
+    	tabular_data
+        tabular_data_file = 'out_dace.dat'
+#        freeform
+	custom_annotated header eval_id # no interface column
+        method_pointer = 'DACE'
+
+method
+ id_method = 'DACE'                              
+ model_pointer = 'DACE_M'     
+ sampling
+ sample_type lhs
+ seed = 52983
+ samples = 10
+
+model                                                 
+ id_model = 'DACE_M'                             
+ single                                                   
+ variables_pointer = 'V1' 
+ interface_pointer = 'I1'                     
+ responses_pointer = 'R1' 
+
+variables
+ id_variables = 'V1'
+ uniform_uncertain = 2
+ upper_bounds    40 10.0   
+ lower_bounds    32 1.0
+ descriptors  'L2' 'Inlet1_Velocity'
+
+interface
+ id_interface = 'I1'  
+	fork
+	asynchronous 
+	  evaluation_concurrency = 10
+	  local_evaluation_scheduling dynamic 
+# When using work_directory, the analysis_drivers may be given by:
+# 1) an absolute path, 2) located in (or relative to) the startup directory alongside the Dakota input file, 3) in the list of template files linked or copied, 4) or on the $PATH (Path% on Windows).
+  	analysis_driver = 'simulator_script'
+  	parameters_file = 'params.in'
+  	results_file    = 'results.out'
+  	work_directory directory_tag
+	named = 'work_dir/dakota_tmp'
+        directory_save
+        replace
+        copy_files = 'templatedir/*'
+   # named 'workdir' file_save directory_save
+  	aprepro
+   deactivate active_set_vector
+
+responses
+ id_responses = 'R1'   
+ num_response_functions = 2
+ response_descriptors =  'ClipUy'  'lineP' 
+ no_gradients
+ no_hessians
+
+---------------------
+End DAKOTA input file
+---------------------
+
+Using Dakota input file 'templatedir/dakota_DOE.in'
+Writing new restart file dakota.rst
+
+>>>>> Executing environment.
+
+>>>>> Running random_sampling iterator.
+
+NonD lhs Samples = 10 Seed (user-specified) = 52983
+
+------------------------------
+Begin       I1 Evaluation    1
+------------------------------
+Parameters for evaluation 1:
+                      3.2880378071e+01 L2
+                      4.0238807510e+00 Inlet1_Velocity
+
+(Asynchronous job 1 added to I1 queue)
+
+------------------------------
+Begin       I1 Evaluation    2
+------------------------------
+Parameters for evaluation 2:
+                      3.5796078755e+01 L2
+                      5.2672343553e+00 Inlet1_Velocity
+
+(Asynchronous job 2 added to I1 queue)
+
+------------------------------
+Begin       I1 Evaluation    3
+------------------------------
+Parameters for evaluation 3:
+                      3.7690282843e+01 L2
+                      1.1942034723e+00 Inlet1_Velocity
+
+(Asynchronous job 3 added to I1 queue)
+
+------------------------------
+Begin       I1 Evaluation    4
+------------------------------
+Parameters for evaluation 4:
+                      3.9309959257e+01 L2
+                      9.8387208115e+00 Inlet1_Velocity
+
+(Asynchronous job 4 added to I1 queue)
+
+------------------------------
+Begin       I1 Evaluation    5
+------------------------------
+Parameters for evaluation 5:
+                      3.3854358812e+01 L2
+                      5.6767758841e+00 Inlet1_Velocity
+
+(Asynchronous job 5 added to I1 queue)
+
+------------------------------
+Begin       I1 Evaluation    6
+------------------------------
+Parameters for evaluation 6:
+                      3.8738256080e+01 L2
+                      2.8725174028e+00 Inlet1_Velocity
+
+(Asynchronous job 6 added to I1 queue)
+
+------------------------------
+Begin       I1 Evaluation    7
+------------------------------
+Parameters for evaluation 7:
+                      3.6356719203e+01 L2
+                      2.7964072208e+00 Inlet1_Velocity
+
+(Asynchronous job 7 added to I1 queue)
+
+------------------------------
+Begin       I1 Evaluation    8
+------------------------------
+Parameters for evaluation 8:
+                      3.7188172502e+01 L2
+                      8.2586739244e+00 Inlet1_Velocity
+
+(Asynchronous job 8 added to I1 queue)
+
+------------------------------
+Begin       I1 Evaluation    9
+------------------------------
+Parameters for evaluation 9:
+                      3.2193330598e+01 L2
+                      6.4887734754e+00 Inlet1_Velocity
+
+(Asynchronous job 9 added to I1 queue)
+
+------------------------------
+Begin       I1 Evaluation   10
+------------------------------
+Parameters for evaluation 10:
+                      3.4935348476e+01 L2
+                      8.0703843394e+00 Inlet1_Velocity
+
+(Asynchronous job 10 added to I1 queue)
+
+Blocking synchronize of 10 asynchronous I1 evaluations
+First pass: initiating 10 local asynchronous jobs
+Initiating I1 evaluation 1
+nonblocking fork: simulator_script params.in results.out
+Initiating I1 evaluation 2
+nonblocking fork: simulator_script params.in results.out
+arg1 is: params.in
+arg2 is: results.out
+arg1 is: params.in
+arg2 is: results.out
+Initiating I1 evaluation 3
+nonblocking fork: simulator_script params.in results.out
+arg1 is: params.in
+arg2 is: results.out
+Initiating I1 evaluation 4
+nonblocking fork: simulator_script params.in results.out
+arg1 is: params.in
+Initiating I1 evaluation 5
+nonblocking fork: simulator_script params.in results.out
+arg2 is: results.out
+arg1 is: params.in
+arg2 is: results.out
+Initiating I1 evaluation 6
+nonblocking fork: simulator_script params.in results.out
+Initiating I1 evaluation 7
+nonblocking fork: simulator_script params.in results.out
+arg1 is: params.in
+arg2 is: results.out
+arg1 is: params.in
+arg2 is: results.out
+Initiating I1 evaluation 8
+nonblocking fork: simulator_script params.in results.out
+Initiating I1 evaluation 9
+nonblocking fork: simulator_script params.in results.out
+Initiating I1 evaluation 10
+nonblocking fork: simulator_script params.in results.out
+arg1 is: params.in
+arg2 is: results.out
+arg1 is: params.in
+arg2 is: results.out
+arg1 is: params.in
+arg2 is: results.out
+Waiting on completed jobs
+L2 37.690283 
+Inlet1_Velocity 1.194203 
+R 8 
+r 2 
+L1 32 
+Rcurve 24 
+xIn2 54.5 
+yIn2 -4.5 
+Inlet2_Velocity 4.0 
+endTime 5.0 
+writeInterval 1.0 
+meshMinLevel 0 
+meshMaxLevel 1 
+L2 35.796079 
+Inlet1_Velocity 5.267234 
+R 8 
+r 2 
+L1 32 
+Rcurve 24 
+xIn2 54.5 
+yIn2 -4.5 
+Inlet2_Velocity 4.0 
+endTime 5.0 
+writeInterval 1.0 
+meshMinLevel 0 
+meshMaxLevel 1 
+L2 32.880378 
+Inlet1_Velocity 4.023881 
+R 8 
+r 2 
+L1 32 
+Rcurve 24 
+xIn2 54.5 
+yIn2 -4.5 
+Inlet2_Velocity 4.0 
+endTime 5.0 
+writeInterval 1.0 
+meshMinLevel 0 
+meshMaxLevel 1 
+L2 36.356719 
+Inlet1_Velocity 2.796407 
+R 8 
+r 2 
+L1 32 
+Rcurve 24 
+xIn2 54.5 
+yIn2 -4.5 
+Inlet2_Velocity 4.0 
+endTime 5.0 
+writeInterval 1.0 
+meshMinLevel 0 
+meshMaxLevel 1 
+L2 39.309959 
+Inlet1_Velocity 9.838721 
+R 8 
+r 2 
+L1 32 
+Rcurve 24 
+xIn2 54.5 
+yIn2 -4.5 
+Inlet2_Velocity 4.0 
+endTime 5.0 
+writeInterval 1.0 
+meshMinLevel 0 
+meshMaxLevel 1 
+L2 38.738256 
+Inlet1_Velocity 2.872517 
+R 8 
+r 2 
+L1 32 
+Rcurve 24 
+xIn2 54.5 
+yIn2 -4.5 
+Inlet2_Velocity 4.0 
+endTime 5.0 
+writeInterval 1.0 
+meshMinLevel 0 
+meshMaxLevel 1 
+http://52.38.246.211:4030
+L2 37.188173 
+Inlet1_Velocity 8.258674 
+R 8 
+r 2 
+L1 32 
+Rcurve 24 
+xIn2 54.5 
+yIn2 -4.5 
+Inlet2_Velocity 4.0 
+endTime 5.0 
+writeInterval 1.0 
+meshMinLevel 0 
+meshMaxLevel 1 
+L2 34.935348 
+Inlet1_Velocity 8.070384 
+R 8 
+r 2 
+L1 32 
+Rcurve 24 
+xIn2 54.5 
+yIn2 -4.5 
+Inlet2_Velocity 4.0 
+endTime 5.0 
+writeInterval 1.0 
+meshMinLevel 0 
+meshMaxLevel 1 
+http://52.38.246.211:4030
+L2 33.854359 
+Inlet1_Velocity 5.676776 
+R 8 
+r 2 
+L1 32 
+Rcurve 24 
+xIn2 54.5 
+yIn2 -4.5 
+Inlet2_Velocity 4.0 
+endTime 5.0 
+writeInterval 1.0 
+meshMinLevel 0 
+meshMaxLevel 1 
+http://52.38.246.211:4030
+L2,32.880378,Inlet1_Velocity,4.023881,R,8,r,2,L1,32,Rcurve,24,xIn2,54.5,yIn2,-4.5,Inlet2_Velocity,4.0,endTime,5.0,writeInterval,1.0,meshMinLevel,0,meshMaxLevel,1,.tar.gz
+dakota_DOE.in
+dakota_cleanup
+dakota_surr.in
+dprepro
+graph.py
+graph_sensitivity.py
+input.in
+input.template
+input_parser.py
+inputs/
+inputs/sweepParams.run
+inputs/points.dat
+inputs/pwParams.run
+inputs/elbowKPI.json
+inputs/openFoamCase.tar
+outputs/
+outputs/simParamFiles/
+outputs/simParamFiles/caseParamFile0.in
+L2,35.796079,Inlet1_Velocity,5.267234,R,8,r,2,L1,32,Rcurve,24,xIn2,54.5,yIn2,-4.5,Inlet2_Velocity,4.0,endTime,5.0,writeInterval,1.0,meshMinLevel,0,meshMaxLevel,1,.tar.gz
+params.in
+prepInputs.sh
+dakota_DOE.in
+dakota_cleanup
+dakota_surr.in
+dprepro
+prepInputs_surr.sh
+runDakota.sh
+graph.py
+runDakota_surr.sh
+runOFA.sh
+graph_sensitivity.py
+input.in
+simulator_script
+input.template
+input_parser.py
+start_docker.sh
+inputs/
+inputs/sweepParams.run
+start_docker_surr.sh
+inputs/points.dat
+swift.conf
+inputs/pwParams.run
+inputs/elbowKPI.json
+swift_driver
+tree
+inputs/openFoamCase.tar
+outputs/
+outputs/simParamFiles/
+outputs/simParamFiles/caseParamFile0.in
+params.in
+prepInputs.sh
+prepInputs_surr.sh
+utils/
+runDakota.sh
+utils/pvutils.py
+runDakota_surr.sh
+runOFA.sh
+simulator_script
+utils/runSim.sh
+start_docker.sh
+utils/elbow3D_inputFile.py
+start_docker_surr.sh
+swift.conf
+utils/killSalome.sh
+swift_driver
+utils/PVExtract.sh
+tree
+utils/extract.py
+utils/preProcess.sh
+utils/runOpenFOAM.sh
+utils/makeFoamMesh2.sh
+utils/makeMesh.sh
+utils/makeGeom.sh
+utils/makeFoamMesh.sh
+utils/
+utils/expandSweep.py
+utils/pvutils.py
+utils/writeSimParamFiles.py
+utils/runSim.sh
+utils/data_IO.py
+utils/foamutils.py
+utils/elbow3D_inputFile.py
+utils/runSimPVExtract.sh
+utils/killSalome.sh
+utils/writeBoundaryFile.py
+utils/PVExtract.sh
+utils/writeBlockMeshDictFile.py
+utils/extract.py
+utils/preProcess.sh
+utils/runOpenFOAM.sh
+utils/makeFoamMesh2.sh
+utils/makeMesh.sh
+utils/makeGeom.sh
+utils/makeFoamMesh.sh
+utils/expandSweep.py
+utils/writeSimParamFiles.py
+utils/data_IO.py
+utils/foamutils.py
+utils/runSimPVExtract.sh
+utils/writeBoundaryFile.py
+utils/writeBlockMeshDictFile.py
+http://52.38.246.211:4030
+L2,37.690283,Inlet1_Velocity,1.194203,R,8,r,2,L1,32,Rcurve,24,xIn2,54.5,yIn2,-4.5,Inlet2_Velocity,4.0,endTime,5.0,writeInterval,1.0,meshMinLevel,0,meshMaxLevel,1,.tar.gz
+dakota_DOE.in
+dakota_cleanup
+dakota_surr.in
+dprepro
+graph.py
+graph_sensitivity.py
+input.in
+input.template
+input_parser.py
+inputs/
+inputs/sweepParams.run
+inputs/points.dat
+inputs/pwParams.run
+inputs/elbowKPI.json
+inputs/openFoamCase.tar
+outputs/
+outputs/simParamFiles/
+outputs/simParamFiles/caseParamFile0.in
+params.in
+prepInputs.sh
+prepInputs_surr.sh
+runDakota.sh
+runDakota_surr.sh
+runOFA.sh
+simulator_script
+start_docker.sh
+start_docker_surr.sh
+swift.conf
+swift_driver
+tree
+utils/
+utils/pvutils.py
+utils/runSim.sh
+utils/elbow3D_inputFile.py
+utils/killSalome.sh
+utils/PVExtract.sh
+utils/extract.py
+utils/preProcess.sh
+utils/runOpenFOAM.sh
+utils/makeFoamMesh2.sh
+utils/makeMesh.sh
+utils/makeGeom.sh
+utils/makeFoamMesh.sh
+utils/expandSweep.py
+utils/writeSimParamFiles.py
+utils/data_IO.py
+utils/foamutils.py
+utils/runSimPVExtract.sh
+utils/writeBoundaryFile.py
+utils/writeBlockMeshDictFile.py
+http://52.38.246.211:4030
+L2 32.193331 
+Inlet1_Velocity 6.488773 
+R 8 
+r 2 
+L1 32 
+Rcurve 24 
+xIn2 54.5 
+yIn2 -4.5 
+Inlet2_Velocity 4.0 
+endTime 5.0 
+writeInterval 1.0 
+meshMinLevel 0 
+meshMaxLevel 1 
+http://52.38.246.211:4030
+L2,39.309959,Inlet1_Velocity,9.838721,R,8,r,2,L1,32,Rcurve,24,xIn2,54.5,yIn2,-4.5,Inlet2_Velocity,4.0,endTime,5.0,writeInterval,1.0,meshMinLevel,0,meshMaxLevel,1,.tar.gz
+dakota_DOE.in
+dakota_cleanup
+dakota_surr.in
+dprepro
+graph.py
+graph_sensitivity.py
+input.in
+input.template
+input_parser.py
+inputs/
+inputs/sweepParams.run
+inputs/points.dat
+inputs/pwParams.run
+inputs/elbowKPI.json
+inputs/openFoamCase.tar
+outputs/
+outputs/simParamFiles/
+outputs/simParamFiles/caseParamFile0.in
+params.in
+prepInputs.sh
+prepInputs_surr.sh
+runDakota.sh
+runDakota_surr.sh
+runOFA.sh
+simulator_script
+start_docker.sh
+start_docker_surr.sh
+swift.conf
+http://52.38.246.211:4030
+swift_driver
+tree
+utils/
+utils/pvutils.py
+utils/runSim.sh
+utils/elbow3D_inputFile.py
+utils/killSalome.sh
+utils/PVExtract.sh
+utils/extract.py
+utils/preProcess.sh
+utils/runOpenFOAM.sh
+utils/makeFoamMesh2.sh
+utils/makeMesh.sh
+utils/makeGeom.sh
+utils/makeFoamMesh.sh
+utils/expandSweep.py
+utils/writeSimParamFiles.py
+utils/data_IO.py
+utils/foamutils.py
+utils/runSimPVExtract.sh
+utils/writeBoundaryFile.py
+utils/writeBlockMeshDictFile.py
+L2,34.935348,Inlet1_Velocity,8.070384,R,8,r,2,L1,32,Rcurve,24,xIn2,54.5,yIn2,-4.5,Inlet2_Velocity,4.0,endTime,5.0,writeInterval,1.0,meshMinLevel,0,meshMaxLevel,1,.tar.gz
+dakota_DOE.in
+dakota_cleanup
+dakota_surr.in
+dprepro
+graph.py
+graph_sensitivity.py
+input.in
+input.template
+input_parser.py
+inputs/
+inputs/sweepParams.run
+inputs/points.dat
+inputs/pwParams.run
+inputs/elbowKPI.json
+inputs/openFoamCase.tar
+outputs/
+outputs/simParamFiles/
+outputs/simParamFiles/caseParamFile0.in
+params.in
+prepInputs.sh
+prepInputs_surr.sh
+runDakota.sh
+runDakota_surr.sh
+runOFA.sh
+simulator_script
+start_docker.sh
+start_docker_surr.sh
+swift.conf
+swift_driver
+tree
+utils/
+utils/pvutils.py
+utils/runSim.sh
+utils/elbow3D_inputFile.py
+utils/killSalome.sh
+utils/PVExtract.sh
+utils/extract.py
+utils/preProcess.sh
+utils/runOpenFOAM.sh
+utils/makeFoamMesh2.sh
+utils/makeMesh.sh
+utils/makeGeom.sh
+utils/makeFoamMesh.sh
+utils/expandSweep.py
+utils/writeSimParamFiles.py
+utils/data_IO.py
+utils/foamutils.py
+utils/runSimPVExtract.sh
+utils/writeBoundaryFile.py
+utils/writeBlockMeshDictFile.py
+http://52.38.246.211:4030
+http://52.38.246.211:4030
+L2,38.738256,Inlet1_Velocity,2.872517,R,8,r,2,L1,32,Rcurve,24,xIn2,54.5,yIn2,-4.5,Inlet2_Velocity,4.0,endTime,5.0,writeInterval,1.0,meshMinLevel,0,meshMaxLevel,1,.tar.gz
+L2,37.188173,Inlet1_Velocity,8.258674,R,8,r,2,L1,32,Rcurve,24,xIn2,54.5,yIn2,-4.5,Inlet2_Velocity,4.0,endTime,5.0,writeInterval,1.0,meshMinLevel,0,meshMaxLevel,1,.tar.gz
+dakota_DOE.in
+dakota_DOE.in
+dakota_cleanup
+dakota_cleanup
+dakota_surr.in
+dakota_surr.in
+dprepro
+dprepro
+graph.py
+graph.py
+graph_sensitivity.py
+graph_sensitivity.py
+input.in
+input.in
+input.template
+input.template
+input_parser.py
+input_parser.py
+inputs/
+inputs/sweepParams.run
+inputs/points.dat
+inputs/pwParams.run
+inputs/
+inputs/sweepParams.run
+inputs/elbowKPI.json
+inputs/openFoamCase.tar
+inputs/points.dat
+inputs/pwParams.run
+inputs/elbowKPI.json
+inputs/openFoamCase.tar
+outputs/
+outputs/simParamFiles/
+outputs/simParamFiles/caseParamFile0.in
+params.in
+prepInputs.sh
+outputs/
+prepInputs_surr.sh
+runDakota.sh
+outputs/simParamFiles/
+runDakota_surr.sh
+runOFA.sh
+outputs/simParamFiles/caseParamFile0.in
+simulator_script
+start_docker.sh
+params.in
+start_docker_surr.sh
+swift.conf
+prepInputs.sh
+swift_driver
+prepInputs_surr.sh
+tree
+runDakota.sh
+runDakota_surr.sh
+runOFA.sh
+simulator_script
+start_docker.sh
+start_docker_surr.sh
+utils/
+swift.conf
+swift_driver
+tree
+utils/
+utils/pvutils.py
+utils/runSim.sh
+utils/elbow3D_inputFile.py
+utils/killSalome.sh
+utils/PVExtract.sh
+utils/extract.py
+utils/preProcess.sh
+utils/runOpenFOAM.sh
+utils/makeFoamMesh2.sh
+utils/makeMesh.sh
+utils/makeGeom.sh
+utils/makeFoamMesh.sh
+utils/expandSweep.py
+utils/writeSimParamFiles.py
+utils/data_IO.py
+utils/foamutils.py
+utils/runSimPVExtract.sh
+utils/writeBoundaryFile.py
+utils/writeBlockMeshDictFile.py
+utils/pvutils.py
+utils/runSim.sh
+utils/elbow3D_inputFile.py
+utils/killSalome.sh
+utils/PVExtract.sh
+utils/extract.py
+utils/preProcess.sh
+utils/runOpenFOAM.sh
+utils/makeFoamMesh2.sh
+utils/makeMesh.sh
+utils/makeGeom.sh
+utils/makeFoamMesh.sh
+utils/expandSweep.py
+utils/writeSimParamFiles.py
+utils/data_IO.py
+utils/foamutils.py
+utils/runSimPVExtract.sh
+utils/writeBoundaryFile.py
+utils/writeBlockMeshDictFile.py
+L2,36.356719,Inlet1_Velocity,2.796407,R,8,r,2,L1,32,Rcurve,24,xIn2,54.5,yIn2,-4.5,Inlet2_Velocity,4.0,endTime,5.0,writeInterval,1.0,meshMinLevel,0,meshMaxLevel,1,.tar.gz
+dakota_DOE.in
+dakota_cleanup
+dakota_surr.in
+dprepro
+graph.py
+graph_sensitivity.py
+input.in
+input.template
+input_parser.py
+inputs/
+inputs/sweepParams.run
+inputs/points.dat
+inputs/pwParams.run
+inputs/elbowKPI.json
+inputs/openFoamCase.tar
+outputs/
+outputs/simParamFiles/
+outputs/simParamFiles/caseParamFile0.in
+params.in
+prepInputs.sh
+prepInputs_surr.sh
+runDakota.sh
+runDakota_surr.sh
+runOFA.sh
+simulator_script
+start_docker.sh
+start_docker_surr.sh
+swift.conf
+swift_driver
+L2,33.854359,Inlet1_Velocity,5.676776,R,8,r,2,L1,32,Rcurve,24,xIn2,54.5,yIn2,-4.5,Inlet2_Velocity,4.0,endTime,5.0,writeInterval,1.0,meshMinLevel,0,meshMaxLevel,1,.tar.gz
+tree
+dakota_DOE.in
+dakota_cleanup
+dakota_surr.in
+dprepro
+graph.py
+graph_sensitivity.py
+input.in
+utils/
+input.template
+utils/pvutils.py
+input_parser.py
+utils/runSim.sh
+inputs/
+utils/elbow3D_inputFile.py
+inputs/sweepParams.run
+inputs/points.dat
+utils/killSalome.sh
+inputs/pwParams.run
+utils/PVExtract.sh
+utils/extract.py
+inputs/elbowKPI.json
+inputs/openFoamCase.tar
+utils/preProcess.sh
+utils/runOpenFOAM.sh
+utils/makeFoamMesh2.sh
+utils/makeMesh.sh
+outputs/
+outputs/simParamFiles/
+utils/makeGeom.sh
+utils/makeFoamMesh.sh
+outputs/simParamFiles/caseParamFile0.in
+params.in
+utils/expandSweep.py
+prepInputs.sh
+prepInputs_surr.sh
+utils/writeSimParamFiles.py
+runDakota.sh
+utils/data_IO.py
+runDakota_surr.sh
+utils/foamutils.py
+runOFA.sh
+utils/runSimPVExtract.sh
+simulator_script
+utils/writeBoundaryFile.py
+start_docker.sh
+start_docker_surr.sh
+utils/writeBlockMeshDictFile.py
+swift.conf
+swift_driver
+tree
+utils/
+utils/pvutils.py
+utils/runSim.sh
+utils/elbow3D_inputFile.py
+utils/killSalome.sh
+utils/PVExtract.sh
+utils/extract.py
+utils/preProcess.sh
+utils/runOpenFOAM.sh
+utils/makeFoamMesh2.sh
+utils/makeMesh.sh
+utils/makeGeom.sh
+utils/makeFoamMesh.sh
+utils/expandSweep.py
+utils/writeSimParamFiles.py
+utils/data_IO.py
+utils/foamutils.py
+utils/runSimPVExtract.sh
+utils/writeBoundaryFile.py
+utils/writeBlockMeshDictFile.py
+http://52.38.246.211:4030
+L2,32.193331,Inlet1_Velocity,6.488773,R,8,r,2,L1,32,Rcurve,24,xIn2,54.5,yIn2,-4.5,Inlet2_Velocity,4.0,endTime,5.0,writeInterval,1.0,meshMinLevel,0,meshMaxLevel,1,.tar.gz
+dakota_DOE.in
+dakota_cleanup
+dakota_surr.in
+dprepro
+graph.py
+graph_sensitivity.py
+input.in
+input.template
+input_parser.py
+inputs/
+inputs/sweepParams.run
+inputs/points.dat
+inputs/pwParams.run
+inputs/elbowKPI.json
+inputs/openFoamCase.tar
+outputs/
+outputs/simParamFiles/
+outputs/simParamFiles/caseParamFile0.in
+params.in
+prepInputs.sh
+prepInputs_surr.sh
+runDakota.sh
+runDakota_surr.sh
+runOFA.sh
+simulator_script
+start_docker.sh
+start_docker_surr.sh
+swift.conf
+swift_driver
+tree
+utils/
+utils/pvutils.py
+utils/runSim.sh
+utils/elbow3D_inputFile.py
+utils/killSalome.sh
+utils/PVExtract.sh
+utils/extract.py
+utils/preProcess.sh
+utils/runOpenFOAM.sh
+utils/makeFoamMesh2.sh
+utils/makeMesh.sh
+utils/makeGeom.sh
+utils/makeFoamMesh.sh
+utils/expandSweep.py
+utils/writeSimParamFiles.py
+utils/data_IO.py
+utils/foamutils.py
+utils/runSimPVExtract.sh
+utils/writeBoundaryFile.py
+utils/writeBlockMeshDictFile.py
+.
+|-- L2,37.690283,Inlet1_Velocity,1.194203,R,8,r,2,L1,32,Rcurve,24,xIn2,54.5,yIn2,-4.5,Inlet2_Velocity,4.0,endTime,5.0,writeInterval,1.0,meshMinLevel,0,meshMaxLevel,1,.tar.gz
+|-- cog_transfer.tar
+|-- dakota_DOE.in
+|-- dakota_cleanup
+|-- dakota_surr.in
+|-- data_IO.py
+|-- data_IO.pyc
+|-- dprepro
+|-- foamutils.py
+|-- geomScript_localCopy.py
+|-- graph.py
+|-- graph_sensitivity.py
+|-- input.in
+|-- input.template
+|-- input_parser.py
+|-- inputs
+|   |-- elbowKPI.json
+|   |-- openFoamCase.tar
+|   |-- points.dat
+|   |-- pwParams.run
+|   `-- sweepParams.run
+|-- makeGeomRun.sh
+|-- makeMeshRun.sh
+|-- output.txt
+|-- outputs
+|   `-- simParamFiles
+|       `-- caseParamFile0.in
+|-- params.in
+|-- paramsFile_localCopy
+|-- prepInputs.sh
+|-- prepInputs_surr.sh
+|-- problemFaces
+|-- pvpythonExtractScript_localCopy.py
+|-- pvpythonRun.sh
+|-- pvutils.py
+|-- pvutils.pyc
+|-- runDakota.sh
+|-- runDakota_surr.sh
+|-- runOFA.sh
+|-- runSimCommands.sh
+|-- sim.log
+|-- simulator_script
+|-- start_docker.sh
+|-- start_docker_surr.sh
+|-- swift.conf
+|-- swift_driver
+|-- tree
+|-- utils
+|   |-- PVExtract.sh
+|   |-- data_IO.py
+|   |-- elbow3D_inputFile.py
+|   |-- expandSweep.py
+|   |-- extract.py
+|   |-- foamutils.py
+|   |-- killSalome.sh
+|   |-- makeFoamMesh.sh
+|   |-- makeFoamMesh2.sh
+|   |-- makeGeom.sh
+|   |-- makeMesh.sh
+|   |-- preProcess.sh
+|   |-- pvutils.py
+|   |-- runOpenFOAM.sh
+|   |-- runSim.sh
+|   |-- runSimPVExtract.sh
+|   |-- writeBlockMeshDictFile.py
+|   |-- writeBoundaryFile.py
+|   `-- writeSimParamFiles.py
+`-- writeBlockMeshDictScript_localCopy.py
+
+4 directories, 64 files
+L2,37.690283,Inlet1_Velocity,1.194203,R,8,r,2,L1,32,Rcurve,24,xIn2,54.5,yIn2,-4.5,Inlet2_Velocity,4.0,endTime,5.0,writeInterval,1.0,meshMinLevel,0,meshMaxLevel,1,.tar.gz
+dakota_DOE.in
+dakota_cleanup
+dakota_surr.in
+dprepro
+graph.py
+graph_sensitivity.py
+input.in
+input.template
+input_parser.py
+inputs/
+inputs/sweepParams.run
+inputs/points.dat
+inputs/pwParams.run
+inputs/elbowKPI.json
+inputs/openFoamCase.tar
+outputs/
+outputs/simParamFiles/
+outputs/simParamFiles/caseParamFile0.in
+params.in
+prepInputs.sh
+prepInputs_surr.sh
+runDakota.sh
+runDakota_surr.sh
+runOFA.sh
+simulator_script
+start_docker.sh
+start_docker_surr.sh
+swift.conf
+swift_driver
+tree
+utils/
+utils/pvutils.py
+utils/runSim.sh
+utils/elbow3D_inputFile.py
+utils/killSalome.sh
+utils/PVExtract.sh
+utils/extract.py
+utils/preProcess.sh
+utils/runOpenFOAM.sh
+utils/makeFoamMesh2.sh
+utils/makeMesh.sh
+utils/makeGeom.sh
+utils/makeFoamMesh.sh
+utils/expandSweep.py
+utils/writeSimParamFiles.py
+utils/data_IO.py
+utils/foamutils.py
+utils/runSimPVExtract.sh
+utils/writeBoundaryFile.py
+utils/writeBlockMeshDictFile.py
+Parameter Length: 26
+outputs/
+outputs/simParamFiles/
+outputs/simParamFiles/caseParamFile0.in
+outputs/logFiles/
+outputs/logFiles/extractRun0.out
+outputs/logFiles/mesh0.out
+outputs/case0/
+outputs/case0/openFoamCase/
+outputs/case0/openFoamCase/3/
+outputs/case0/openFoamCase/3/U
+outputs/case0/openFoamCase/3/p
+outputs/case0/openFoamCase/3/uniform/
+outputs/case0/openFoamCase/3/uniform/time
+outputs/case0/openFoamCase/3/phi
+outputs/case0/openFoamCase/5/
+outputs/case0/openFoamCase/5/U
+outputs/case0/openFoamCase/5/p
+outputs/case0/openFoamCase/5/uniform/
+outputs/case0/openFoamCase/5/uniform/time
+outputs/case0/openFoamCase/5/phi
+outputs/case0/openFoamCase/constant/
+outputs/case0/openFoamCase/constant/dynamicMeshDict
+outputs/case0/openFoamCase/constant/polyMesh/
+outputs/case0/openFoamCase/constant/polyMesh/faces
+outputs/case0/openFoamCase/constant/polyMesh/cellLevel
+outputs/case0/openFoamCase/constant/polyMesh/pointLevel
+outputs/case0/openFoamCase/constant/polyMesh/surfaceIndex
+outputs/case0/openFoamCase/constant/polyMesh/boundary.orig
+outputs/case0/openFoamCase/constant/polyMesh/neighbour
+outputs/case0/openFoamCase/constant/polyMesh/level0Edge
+outputs/case0/openFoamCase/constant/polyMesh/points
+outputs/case0/openFoamCase/constant/polyMesh/owner
+outputs/case0/openFoamCase/constant/polyMesh/pointZones
+outputs/case0/openFoamCase/constant/polyMesh/faceZones
+outputs/case0/openFoamCase/constant/polyMesh/refinementHistory
+outputs/case0/openFoamCase/constant/polyMesh/boundary
+outputs/case0/openFoamCase/constant/polyMesh/cellZones
+outputs/case0/openFoamCase/constant/polyMesh/boundary.ref
+outputs/case0/openFoamCase/constant/transportProperties
+outputs/case0/openFoamCase/constant/turbulenceProperties
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_internalEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_openEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls.extendedFeatureEdgeMesh
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_concaveFeaturePts.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_edgeMesh.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_externalEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_convexFeaturePts.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_flatEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_mixedFeaturePtsStructure.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_multipleEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_regionEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_mixedFeaturePts.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_edgeDirections.obj
+outputs/case0/openFoamCase/constant/triSurface/
+outputs/case0/openFoamCase/constant/triSurface/walls.stl
+outputs/case0/openFoamCase/constant/triSurface/velocity-inlet-2.stl
+outputs/case0/openFoamCase/constant/triSurface/pressure-outlet.stl
+outputs/case0/openFoamCase/constant/triSurface/velocity-inlet-1.stl
+outputs/case0/openFoamCase/constant/triSurface/walls.eMesh
+outputs/case0/openFoamCase/constant/MRFProperties
+outputs/case0/openFoamCase/4/
+outputs/case0/openFoamCase/4/U
+outputs/case0/openFoamCase/4/p
+outputs/case0/openFoamCase/4/uniform/
+outputs/case0/openFoamCase/4/uniform/time
+outputs/case0/openFoamCase/4/phi
+outputs/case0/openFoamCase/system/
+outputs/case0/openFoamCase/system/stretchMeshDict
+outputs/case0/openFoamCase/system/projectDict
+outputs/case0/openFoamCase/system/blockMeshDict
+outputs/case0/openFoamCase/system/customNodeDict
+outputs/case0/openFoamCase/system/setFieldsDict
+outputs/case0/openFoamCase/system/mapFieldsDict
+outputs/case0/openFoamCase/system/fvOptions
+outputs/case0/openFoamCase/system/controlDict
+outputs/case0/openFoamCase/system/snappyHexMeshDict
+outputs/case0/openFoamCase/system/fvSchemes
+outputs/case0/openFoamCase/system/surfaceFeatureExtractDict
+outputs/case0/openFoamCase/system/decomposeParDict
+outputs/case0/openFoamCase/system/fvSolution
+outputs/case0/openFoamCase/0/
+outputs/case0/openFoamCase/0/U
+outputs/case0/openFoamCase/0/polyMesh/
+outputs/case0/openFoamCase/0/p
+outputs/case0/openFoamCase/1/
+outputs/case0/openFoamCase/1/U
+outputs/case0/openFoamCase/1/p
+outputs/case0/openFoamCase/1/uniform/
+outputs/case0/openFoamCase/1/uniform/time
+outputs/case0/openFoamCase/1/phi
+outputs/case0/openFoamCase/2/
+outputs/case0/openFoamCase/2/U
+outputs/case0/openFoamCase/2/p
+outputs/case0/openFoamCase/2/uniform/
+outputs/case0/openFoamCase/2/uniform/time
+outputs/case0/openFoamCase/2/phi
+outputs/case0/metrics.csv
+outputs/case0/openFoamCase.tar
+outputs/png/
+outputs/png/0/
+outputs/png/0/streamlinesU_blender.tar
+outputs/png/0/out_stl.png
+outputs/png/0/out_streamlinesU.png
+outputs/png/0/out_ClipUy.png
+outputs/png/0/out_ClipUy.gif
+outputs/png/0/plot_lineP.csv
+outputs/png/0/plot_lineP.png
+outputs/errorFiles/
+outputs/errorFiles/mesh0.err
+outputs/errorFiles/extractRun0.err
+0.760337266167
+-0.115745720609
+/scratch/work_dir/dakota_tmp.3
+total 10408
+-rw-r--r--  1 root root    20042 Jul 28 16:58 pvutils.py
+drwxr-xr-x  5 root root     4096 Jul 28 16:58 .
+-rwxrwxrwx  1 root root      773 Jul 28 16:58 swift.conf
+-rwxrwxrwx  1 root root      175 Jul 28 16:58 input.in
+-rw-r--r--  1 root root      214 Jul 28 16:58 pvpythonRun.sh
+drwxrwxrwx  2 root root     4096 Jul 28 16:56 utils
+-rw-r--r--  1 root root     4613 Jul 28 16:58 pvpythonExtractScript_localCopy.py
+-rw-r--r--  1 root root    18391 Jul 28 16:58 pvutils.pyc
+-rwxrwxrwx  1 root root     1979 Jul 28 16:58 dakota_surr.in
+-rw-r--r--  1 root root      774 Jul 28 16:58 problemFaces
+-rwxrwxrwx  1 root root      721 Jul 28 16:58 params.in
+drwxr-xr-x 12 root root     4096 Jul 28 16:56 ..
+-rwxrwxrwx  1 root root     2055 Jul 28 16:58 graph_sensitivity.py
+-rwxrwxrwx  1 root root      172 Jul 28 16:58 start_docker.sh
+-rw-r--r--  1 root root      175 Jul 28 16:58 paramsFile_localCopy
+-rwxrwxrwx  1 root root     3231 Jul 28 16:58 input_parser.py
+drwxrwxrwx  7 root root     4096 Jul 28 16:58 outputs
+drwxrwxrwx  2 root root     4096 Jul 28 16:56 inputs
+-rw-r--r--  1 root root   266240 Jul 28 16:58 cog_transfer.tar
+-rw-r--r--  1 root root      120 Jul 28 16:58 makeGeomRun.sh
+-rwxrwxrwx  1 root root      887 Jul 28 16:58 runOFA.sh
+-rwxrwxrwx  1 root root    57176 Jul 28 16:58 tree
+-rw-r--r--  1 root root        0 Jul 28 16:58 sim.log
+-rw-r--r--  1 root root       31 Jul 28 16:58 results.out
+-rwxrwxrwx  1 root root     1596 Jul 28 16:58 dakota_DOE.in
+-rwxrwxrwx  1 root root      110 Jul 28 16:58 dakota_cleanup
+-rwxrwxrwx  1 root root      179 Jul 28 16:58 input.template
+-rw-r--r--  1 root root      339 Jul 28 16:58 makeMeshRun.sh
+-rw-r--r--  1 root root       81 Jul 28 16:58 runSimCommands.sh
+-rwxrwxrwx  1 root root     1813 Jul 28 16:58 simulator_script
+-rwxrwxrwx  1 root root      451 Jul 28 16:58 prepInputs_surr.sh
+-rwxrwxrwx  1 root root      417 Jul 28 16:58 prepInputs.sh
+-rwxrwxrwx  1 root root 10089468 Jul 28 16:58 L2,37.690283,Inlet1_Velocity,1.194203,R,8,r,2,L1,32,Rcurve,24,xIn2,54.5,yIn2,-4.5,Inlet2_Velocity,4.0,endTime,5.0,writeInterval,1.0,meshMinLevel,0,meshMaxLevel,1,.tar.gz
+-rw-r--r--  1 root root     6038 Jul 28 16:58 geomScript_localCopy.py
+-rwxrwxrwx  1 root root     1715 Jul 28 16:58 graph.py
+-rwxrwxrwx  1 root root     2047 Jul 28 16:58 runDakota_surr.sh
+-rwxrwxrwx  1 root root      674 Jul 28 16:58 swift_driver
+-rw-r--r--  1 root root       31 Jul 28 16:58 results.txt
+-rw-r--r--  1 root root     2459 Jul 28 16:58 writeBlockMeshDictScript_localCopy.py
+-rw-r--r--  1 root root     5072 Jul 28 16:58 data_IO.pyc
+-rw-r--r--  1 root root     6144 Jul 28 16:58 output.txt
+-rw-r--r--  1 root root     4928 Jul 28 16:58 data_IO.py
+-rw-r--r--  1 root root     4224 Jul 28 16:58 foamutils.py
+-rwxrwxrwx  1 root root    12889 Jul 28 16:58 dprepro
+-rwxrwxrwx  1 root root     2017 Jul 28 16:58 runDakota.sh
+-rwxrwxrwx  1 root root      180 Jul 28 16:58 start_docker_surr.sh
+I1 evaluation 3 has completed
+Waiting on completed jobs
+.
+|-- L2,32.880378,Inlet1_Velocity,4.023881,R,8,r,2,L1,32,Rcurve,24,xIn2,54.5,yIn2,-4.5,Inlet2_Velocity,4.0,endTime,5.0,writeInterval,1.0,meshMinLevel,0,meshMaxLevel,1,.tar.gz
+|-- cog_transfer.tar
+|-- dakota_DOE.in
+|-- dakota_cleanup
+|-- dakota_surr.in
+|-- data_IO.py
+|-- data_IO.pyc
+|-- dprepro
+|-- foamutils.py
+|-- geomScript_localCopy.py
+|-- graph.py
+|-- graph_sensitivity.py
+|-- input.in
+|-- input.template
+|-- input_parser.py
+|-- inputs
+|   |-- elbowKPI.json
+|   |-- openFoamCase.tar
+|   |-- points.dat
+|   |-- pwParams.run
+|   `-- sweepParams.run
+|-- makeGeomRun.sh
+|-- makeMeshRun.sh
+|-- output.txt
+|-- outputs
+|   `-- simParamFiles
+|       `-- caseParamFile0.in
+|-- params.in
+|-- paramsFile_localCopy
+|-- prepInputs.sh
+|-- prepInputs_surr.sh
+|-- problemFaces
+|-- pvpythonExtractScript_localCopy.py
+|-- pvpythonRun.sh
+|-- pvutils.py
+|-- pvutils.pyc
+|-- runDakota.sh
+|-- runDakota_surr.sh
+|-- runOFA.sh
+|-- runSimCommands.sh
+|-- sim.log
+|-- simulator_script
+|-- start_docker.sh
+|-- start_docker_surr.sh
+|-- swift.conf
+|-- swift_driver
+|-- tree
+|-- utils
+|   |-- PVExtract.sh
+|   |-- data_IO.py
+|   |-- elbow3D_inputFile.py
+|   |-- expandSweep.py
+|   |-- extract.py
+|   |-- foamutils.py
+|   |-- killSalome.sh
+|   |-- makeFoamMesh.sh
+|   |-- makeFoamMesh2.sh
+|   |-- makeGeom.sh
+|   |-- makeMesh.sh
+|   |-- preProcess.sh
+|   |-- pvutils.py
+|   |-- runOpenFOAM.sh
+|   |-- runSim.sh
+|   |-- runSimPVExtract.sh
+|   |-- writeBlockMeshDictFile.py
+|   |-- writeBoundaryFile.py
+|   `-- writeSimParamFiles.py
+`-- writeBlockMeshDictScript_localCopy.py
+
+4 directories, 64 files
+L2,32.880378,Inlet1_Velocity,4.023881,R,8,r,2,L1,32,Rcurve,24,xIn2,54.5,yIn2,-4.5,Inlet2_Velocity,4.0,endTime,5.0,writeInterval,1.0,meshMinLevel,0,meshMaxLevel,1,.tar.gz
+dakota_DOE.in
+dakota_cleanup
+dakota_surr.in
+dprepro
+graph.py
+graph_sensitivity.py
+input.in
+input.template
+input_parser.py
+inputs/
+inputs/sweepParams.run
+inputs/points.dat
+inputs/pwParams.run
+inputs/elbowKPI.json
+inputs/openFoamCase.tar
+outputs/
+outputs/simParamFiles/
+outputs/simParamFiles/caseParamFile0.in
+params.in
+prepInputs.sh
+prepInputs_surr.sh
+runDakota.sh
+runDakota_surr.sh
+runOFA.sh
+simulator_script
+start_docker.sh
+start_docker_surr.sh
+swift.conf
+swift_driver
+tree
+utils/
+utils/pvutils.py
+utils/runSim.sh
+utils/elbow3D_inputFile.py
+utils/killSalome.sh
+utils/PVExtract.sh
+utils/extract.py
+utils/preProcess.sh
+utils/runOpenFOAM.sh
+utils/makeFoamMesh2.sh
+utils/makeMesh.sh
+utils/makeGeom.sh
+utils/makeFoamMesh.sh
+utils/expandSweep.py
+utils/writeSimParamFiles.py
+utils/data_IO.py
+utils/foamutils.py
+utils/runSimPVExtract.sh
+utils/writeBoundaryFile.py
+utils/writeBlockMeshDictFile.py
+Parameter Length: 26
+outputs/
+outputs/simParamFiles/
+outputs/simParamFiles/caseParamFile0.in
+outputs/logFiles/
+outputs/logFiles/extractRun0.out
+outputs/logFiles/mesh0.out
+outputs/case0/
+outputs/case0/openFoamCase/
+outputs/case0/openFoamCase/3/
+outputs/case0/openFoamCase/3/U
+outputs/case0/openFoamCase/3/p
+outputs/case0/openFoamCase/3/uniform/
+outputs/case0/openFoamCase/3/uniform/time
+outputs/case0/openFoamCase/3/phi
+outputs/case0/openFoamCase/5/
+outputs/case0/openFoamCase/5/U
+outputs/case0/openFoamCase/5/p
+outputs/case0/openFoamCase/5/uniform/
+outputs/case0/openFoamCase/5/uniform/time
+outputs/case0/openFoamCase/5/phi
+outputs/case0/openFoamCase/constant/
+outputs/case0/openFoamCase/constant/dynamicMeshDict
+outputs/case0/openFoamCase/constant/polyMesh/
+outputs/case0/openFoamCase/constant/polyMesh/faces
+outputs/case0/openFoamCase/constant/polyMesh/cellLevel
+outputs/case0/openFoamCase/constant/polyMesh/pointLevel
+outputs/case0/openFoamCase/constant/polyMesh/surfaceIndex
+outputs/case0/openFoamCase/constant/polyMesh/boundary.orig
+outputs/case0/openFoamCase/constant/polyMesh/neighbour
+outputs/case0/openFoamCase/constant/polyMesh/level0Edge
+outputs/case0/openFoamCase/constant/polyMesh/points
+outputs/case0/openFoamCase/constant/polyMesh/owner
+outputs/case0/openFoamCase/constant/polyMesh/pointZones
+outputs/case0/openFoamCase/constant/polyMesh/faceZones
+outputs/case0/openFoamCase/constant/polyMesh/refinementHistory
+outputs/case0/openFoamCase/constant/polyMesh/boundary
+outputs/case0/openFoamCase/constant/polyMesh/cellZones
+outputs/case0/openFoamCase/constant/polyMesh/boundary.ref
+outputs/case0/openFoamCase/constant/transportProperties
+outputs/case0/openFoamCase/constant/turbulenceProperties
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_internalEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_openEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls.extendedFeatureEdgeMesh
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_concaveFeaturePts.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_edgeMesh.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_externalEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_convexFeaturePts.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_flatEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_mixedFeaturePtsStructure.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_multipleEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_regionEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_mixedFeaturePts.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_edgeDirections.obj
+outputs/case0/openFoamCase/constant/triSurface/
+outputs/case0/openFoamCase/constant/triSurface/walls.stl
+outputs/case0/openFoamCase/constant/triSurface/velocity-inlet-2.stl
+outputs/case0/openFoamCase/constant/triSurface/pressure-outlet.stl
+outputs/case0/openFoamCase/constant/triSurface/velocity-inlet-1.stl
+outputs/case0/openFoamCase/constant/triSurface/walls.eMesh
+outputs/case0/openFoamCase/constant/MRFProperties
+outputs/case0/openFoamCase/4/
+outputs/case0/openFoamCase/4/U
+outputs/case0/openFoamCase/4/p
+outputs/case0/openFoamCase/4/uniform/
+outputs/case0/openFoamCase/4/uniform/time
+outputs/case0/openFoamCase/4/phi
+outputs/case0/openFoamCase/system/
+outputs/case0/openFoamCase/system/stretchMeshDict
+outputs/case0/openFoamCase/system/projectDict
+outputs/case0/openFoamCase/system/blockMeshDict
+outputs/case0/openFoamCase/system/customNodeDict
+outputs/case0/openFoamCase/system/setFieldsDict
+outputs/case0/openFoamCase/system/mapFieldsDict
+outputs/case0/openFoamCase/system/fvOptions
+outputs/case0/openFoamCase/system/controlDict
+outputs/case0/openFoamCase/system/snappyHexMeshDict
+outputs/case0/openFoamCase/system/fvSchemes
+outputs/case0/openFoamCase/system/surfaceFeatureExtractDict
+outputs/case0/openFoamCase/system/decomposeParDict
+outputs/case0/openFoamCase/system/fvSolution
+outputs/case0/openFoamCase/0/
+outputs/case0/openFoamCase/0/U
+outputs/case0/openFoamCase/0/polyMesh/
+outputs/case0/openFoamCase/0/p
+outputs/case0/openFoamCase/1/
+outputs/case0/openFoamCase/1/U
+outputs/case0/openFoamCase/1/p
+outputs/case0/openFoamCase/1/uniform/
+outputs/case0/openFoamCase/1/uniform/time
+outputs/case0/openFoamCase/1/phi
+outputs/case0/openFoamCase/2/
+outputs/case0/openFoamCase/2/U
+outputs/case0/openFoamCase/2/p
+outputs/case0/openFoamCase/2/uniform/
+outputs/case0/openFoamCase/2/uniform/time
+outputs/case0/openFoamCase/2/phi
+outputs/case0/metrics.csv
+outputs/case0/openFoamCase.tar
+outputs/png/
+outputs/png/0/
+outputs/png/0/streamlinesU_blender.tar
+outputs/png/0/out_stl.png
+outputs/png/0/out_streamlinesU.png
+outputs/png/0/out_ClipUy.png
+outputs/png/0/out_ClipUy.gif
+outputs/png/0/plot_lineP.csv
+outputs/png/0/plot_lineP.png
+outputs/errorFiles/
+outputs/errorFiles/mesh0.err
+outputs/errorFiles/extractRun0.err
+2.13191403034
+1.36445618871
+/scratch/work_dir/dakota_tmp.1
+total 10164
+-rw-r--r--  1 root root   20042 Jul 28 16:59 pvutils.py
+drwxr-xr-x  5 root root    4096 Jul 28 16:59 .
+-rwxrwxrwx  1 root root     773 Jul 28 16:59 swift.conf
+-rwxrwxrwx  1 root root     175 Jul 28 16:59 input.in
+-rw-r--r--  1 root root     214 Jul 28 16:59 pvpythonRun.sh
+drwxrwxrwx  2 root root    4096 Jul 28 16:56 utils
+-rw-r--r--  1 root root    4613 Jul 28 16:59 pvpythonExtractScript_localCopy.py
+-rw-r--r--  1 root root   18391 Jul 28 16:59 pvutils.pyc
+-rwxrwxrwx  1 root root    1979 Jul 28 16:59 dakota_surr.in
+-rw-r--r--  1 root root     794 Jul 28 16:59 problemFaces
+-rwxrwxrwx  1 root root     721 Jul 28 16:59 params.in
+drwxr-xr-x 12 root root    4096 Jul 28 16:56 ..
+-rwxrwxrwx  1 root root    2055 Jul 28 16:59 graph_sensitivity.py
+-rwxrwxrwx  1 root root     172 Jul 28 16:59 start_docker.sh
+-rw-r--r--  1 root root     175 Jul 28 16:59 paramsFile_localCopy
+-rwxrwxrwx  1 root root    3231 Jul 28 16:59 input_parser.py
+drwxrwxrwx  7 root root    4096 Jul 28 16:58 outputs
+drwxrwxrwx  2 root root    4096 Jul 28 16:56 inputs
+-rw-r--r--  1 root root  266240 Jul 28 16:59 cog_transfer.tar
+-rw-r--r--  1 root root     120 Jul 28 16:59 makeGeomRun.sh
+-rwxrwxrwx  1 root root 9841444 Jul 28 16:59 L2,32.880378,Inlet1_Velocity,4.023881,R,8,r,2,L1,32,Rcurve,24,xIn2,54.5,yIn2,-4.5,Inlet2_Velocity,4.0,endTime,5.0,writeInterval,1.0,meshMinLevel,0,meshMaxLevel,1,.tar.gz
+-rwxrwxrwx  1 root root     887 Jul 28 16:59 runOFA.sh
+-rwxrwxrwx  1 root root   57176 Jul 28 16:59 tree
+-rw-r--r--  1 root root       0 Jul 28 16:59 sim.log
+-rw-r--r--  1 root root      28 Jul 28 16:59 results.out
+-rwxrwxrwx  1 root root    1596 Jul 28 16:59 dakota_DOE.in
+-rwxrwxrwx  1 root root     110 Jul 28 16:59 dakota_cleanup
+-rwxrwxrwx  1 root root     179 Jul 28 16:59 input.template
+-rw-r--r--  1 root root     339 Jul 28 16:59 makeMeshRun.sh
+-rw-r--r--  1 root root      81 Jul 28 16:59 runSimCommands.sh
+-rwxrwxrwx  1 root root    1813 Jul 28 16:59 simulator_script
+-rwxrwxrwx  1 root root     451 Jul 28 16:59 prepInputs_surr.sh
+-rwxrwxrwx  1 root root     417 Jul 28 16:59 prepInputs.sh
+-rw-r--r--  1 root root    6038 Jul 28 16:59 geomScript_localCopy.py
+-rwxrwxrwx  1 root root    1715 Jul 28 16:59 graph.py
+-rwxrwxrwx  1 root root    2047 Jul 28 16:59 runDakota_surr.sh
+-rwxrwxrwx  1 root root     674 Jul 28 16:59 swift_driver
+-rw-r--r--  1 root root      28 Jul 28 16:59 results.txt
+-rw-r--r--  1 root root    2459 Jul 28 16:59 writeBlockMeshDictScript_localCopy.py
+-rw-r--r--  1 root root    5072 Jul 28 16:59 data_IO.pyc
+-rw-r--r--  1 root root    6144 Jul 28 16:59 output.txt
+-rw-r--r--  1 root root    4928 Jul 28 16:59 data_IO.py
+-rw-r--r--  1 root root    4224 Jul 28 16:59 foamutils.py
+-rwxrwxrwx  1 root root   12889 Jul 28 16:59 dprepro
+-rwxrwxrwx  1 root root    2017 Jul 28 16:59 runDakota.sh
+-rwxrwxrwx  1 root root     180 Jul 28 16:59 start_docker_surr.sh
+I1 evaluation 1 has completed
+Waiting on completed jobs
+.
+|-- L2,38.738256,Inlet1_Velocity,2.872517,R,8,r,2,L1,32,Rcurve,24,xIn2,54.5,yIn2,-4.5,Inlet2_Velocity,4.0,endTime,5.0,writeInterval,1.0,meshMinLevel,0,meshMaxLevel,1,.tar.gz
+|-- cog_transfer.tar
+|-- dakota_DOE.in
+|-- dakota_cleanup
+|-- dakota_surr.in
+|-- data_IO.py
+|-- data_IO.pyc
+|-- dprepro
+|-- foamutils.py
+|-- geomScript_localCopy.py
+|-- graph.py
+|-- graph_sensitivity.py
+|-- input.in
+|-- input.template
+|-- input_parser.py
+|-- inputs
+|   |-- elbowKPI.json
+|   |-- openFoamCase.tar
+|   |-- points.dat
+|   |-- pwParams.run
+|   `-- sweepParams.run
+|-- makeGeomRun.sh
+|-- makeMeshRun.sh
+|-- output.txt
+|-- outputs
+|   `-- simParamFiles
+|       `-- caseParamFile0.in
+|-- params.in
+|-- paramsFile_localCopy
+|-- prepInputs.sh
+|-- prepInputs_surr.sh
+|-- problemFaces
+|-- pvpythonExtractScript_localCopy.py
+|-- pvpythonRun.sh
+|-- pvutils.py
+|-- pvutils.pyc
+|-- runDakota.sh
+|-- runDakota_surr.sh
+|-- runOFA.sh
+|-- runSimCommands.sh
+|-- sim.log
+|-- simulator_script
+|-- start_docker.sh
+|-- start_docker_surr.sh
+|-- swift.conf
+|-- swift_driver
+|-- tree
+|-- utils
+|   |-- PVExtract.sh
+|   |-- data_IO.py
+|   |-- elbow3D_inputFile.py
+|   |-- expandSweep.py
+|   |-- extract.py
+|   |-- foamutils.py
+|   |-- killSalome.sh
+|   |-- makeFoamMesh.sh
+|   |-- makeFoamMesh2.sh
+|   |-- makeGeom.sh
+|   |-- makeMesh.sh
+|   |-- preProcess.sh
+|   |-- pvutils.py
+|   |-- runOpenFOAM.sh
+|   |-- runSim.sh
+|   |-- runSimPVExtract.sh
+|   |-- writeBlockMeshDictFile.py
+|   |-- writeBoundaryFile.py
+|   `-- writeSimParamFiles.py
+`-- writeBlockMeshDictScript_localCopy.py
+
+4 directories, 64 files
+L2,38.738256,Inlet1_Velocity,2.872517,R,8,r,2,L1,32,Rcurve,24,xIn2,54.5,yIn2,-4.5,Inlet2_Velocity,4.0,endTime,5.0,writeInterval,1.0,meshMinLevel,0,meshMaxLevel,1,.tar.gz
+dakota_DOE.in
+dakota_cleanup
+dakota_surr.in
+dprepro
+graph.py
+graph_sensitivity.py
+input.in
+input.template
+input_parser.py
+inputs/
+inputs/sweepParams.run
+inputs/points.dat
+inputs/pwParams.run
+inputs/elbowKPI.json
+inputs/openFoamCase.tar
+outputs/
+outputs/simParamFiles/
+outputs/simParamFiles/caseParamFile0.in
+params.in
+prepInputs.sh
+prepInputs_surr.sh
+runDakota.sh
+runDakota_surr.sh
+runOFA.sh
+simulator_script
+start_docker.sh
+start_docker_surr.sh
+swift.conf
+swift_driver
+tree
+utils/
+utils/pvutils.py
+utils/runSim.sh
+utils/elbow3D_inputFile.py
+utils/killSalome.sh
+utils/PVExtract.sh
+utils/extract.py
+utils/preProcess.sh
+utils/runOpenFOAM.sh
+utils/makeFoamMesh2.sh
+utils/makeMesh.sh
+utils/makeGeom.sh
+utils/makeFoamMesh.sh
+utils/expandSweep.py
+utils/writeSimParamFiles.py
+utils/data_IO.py
+utils/foamutils.py
+utils/runSimPVExtract.sh
+utils/writeBoundaryFile.py
+utils/writeBlockMeshDictFile.py
+Parameter Length: 26
+outputs/
+outputs/simParamFiles/
+outputs/simParamFiles/caseParamFile0.in
+outputs/logFiles/
+outputs/logFiles/extractRun0.out
+outputs/logFiles/mesh0.out
+outputs/case0/
+outputs/case0/openFoamCase/
+outputs/case0/openFoamCase/3/
+outputs/case0/openFoamCase/3/U
+outputs/case0/openFoamCase/3/p
+outputs/case0/openFoamCase/3/uniform/
+outputs/case0/openFoamCase/3/uniform/time
+outputs/case0/openFoamCase/3/phi
+outputs/case0/openFoamCase/5/
+outputs/case0/openFoamCase/5/U
+outputs/case0/openFoamCase/5/p
+outputs/case0/openFoamCase/5/uniform/
+outputs/case0/openFoamCase/5/uniform/time
+outputs/case0/openFoamCase/5/phi
+outputs/case0/openFoamCase/constant/
+outputs/case0/openFoamCase/constant/dynamicMeshDict
+outputs/case0/openFoamCase/constant/polyMesh/
+outputs/case0/openFoamCase/constant/polyMesh/faces
+outputs/case0/openFoamCase/constant/polyMesh/cellLevel
+outputs/case0/openFoamCase/constant/polyMesh/pointLevel
+outputs/case0/openFoamCase/constant/polyMesh/surfaceIndex
+outputs/case0/openFoamCase/constant/polyMesh/boundary.orig
+outputs/case0/openFoamCase/constant/polyMesh/neighbour
+outputs/case0/openFoamCase/constant/polyMesh/level0Edge
+outputs/case0/openFoamCase/constant/polyMesh/points
+outputs/case0/openFoamCase/constant/polyMesh/owner
+outputs/case0/openFoamCase/constant/polyMesh/pointZones
+outputs/case0/openFoamCase/constant/polyMesh/faceZones
+outputs/case0/openFoamCase/constant/polyMesh/refinementHistory
+outputs/case0/openFoamCase/constant/polyMesh/boundary
+outputs/case0/openFoamCase/constant/polyMesh/cellZones
+outputs/case0/openFoamCase/constant/polyMesh/boundary.ref
+outputs/case0/openFoamCase/constant/transportProperties
+outputs/case0/openFoamCase/constant/turbulenceProperties
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_internalEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_openEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls.extendedFeatureEdgeMesh
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_concaveFeaturePts.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_edgeMesh.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_externalEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_convexFeaturePts.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_flatEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_mixedFeaturePtsStructure.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_multipleEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_regionEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_mixedFeaturePts.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_edgeDirections.obj
+outputs/case0/openFoamCase/constant/triSurface/
+outputs/case0/openFoamCase/constant/triSurface/walls.stl
+outputs/case0/openFoamCase/constant/triSurface/velocity-inlet-2.stl
+outputs/case0/openFoamCase/constant/triSurface/pressure-outlet.stl
+outputs/case0/openFoamCase/constant/triSurface/velocity-inlet-1.stl
+outputs/case0/openFoamCase/constant/triSurface/walls.eMesh
+outputs/case0/openFoamCase/constant/MRFProperties
+outputs/case0/openFoamCase/4/
+outputs/case0/openFoamCase/4/U
+outputs/case0/openFoamCase/4/p
+outputs/case0/openFoamCase/4/uniform/
+outputs/case0/openFoamCase/4/uniform/time
+outputs/case0/openFoamCase/4/phi
+outputs/case0/openFoamCase/system/
+outputs/case0/openFoamCase/system/stretchMeshDict
+outputs/case0/openFoamCase/system/projectDict
+outputs/case0/openFoamCase/system/blockMeshDict
+outputs/case0/openFoamCase/system/customNodeDict
+outputs/case0/openFoamCase/system/setFieldsDict
+outputs/case0/openFoamCase/system/mapFieldsDict
+outputs/case0/openFoamCase/system/fvOptions
+outputs/case0/openFoamCase/system/controlDict
+outputs/case0/openFoamCase/system/snappyHexMeshDict
+outputs/case0/openFoamCase/system/fvSchemes
+outputs/case0/openFoamCase/system/surfaceFeatureExtractDict
+outputs/case0/openFoamCase/system/decomposeParDict
+outputs/case0/openFoamCase/system/fvSolution
+outputs/case0/openFoamCase/0/
+outputs/case0/openFoamCase/0/U
+outputs/case0/openFoamCase/0/polyMesh/
+outputs/case0/openFoamCase/0/p
+outputs/case0/openFoamCase/1/
+outputs/case0/openFoamCase/1/U
+outputs/case0/openFoamCase/1/p
+outputs/case0/openFoamCase/1/uniform/
+outputs/case0/openFoamCase/1/uniform/time
+outputs/case0/openFoamCase/1/phi
+outputs/case0/openFoamCase/2/
+outputs/case0/openFoamCase/2/U
+outputs/case0/openFoamCase/2/p
+outputs/case0/openFoamCase/2/uniform/
+outputs/case0/openFoamCase/2/uniform/time
+outputs/case0/openFoamCase/2/phi
+outputs/case0/metrics.csv
+outputs/case0/openFoamCase.tar
+outputs/png/
+outputs/png/0/
+outputs/png/0/streamlinesU_blender.tar
+outputs/png/0/out_stl.png
+outputs/png/0/out_streamlinesU.png
+outputs/png/0/out_ClipUy.png
+outputs/png/0/out_ClipUy.gif
+outputs/png/0/plot_lineP.csv
+outputs/png/0/plot_lineP.png
+outputs/errorFiles/
+outputs/errorFiles/mesh0.err
+outputs/errorFiles/extractRun0.err
+1.62924553958
+0.564541863455
+/scratch/work_dir/dakota_tmp.6
+total 10528
+-rw-r--r--  1 root root    20042 Jul 28 16:59 pvutils.py
+drwxr-xr-x  5 root root     4096 Jul 28 16:59 .
+-rwxrwxrwx  1 root root      773 Jul 28 16:59 swift.conf
+-rwxrwxrwx  1 root root      175 Jul 28 16:59 input.in
+-rw-r--r--  1 root root      214 Jul 28 16:59 pvpythonRun.sh
+drwxrwxrwx  2 root root     4096 Jul 28 16:56 utils
+-rw-r--r--  1 root root     4613 Jul 28 16:59 pvpythonExtractScript_localCopy.py
+-rw-r--r--  1 root root    18391 Jul 28 16:59 pvutils.pyc
+-rwxrwxrwx  1 root root     1979 Jul 28 16:59 dakota_surr.in
+-rw-r--r--  1 root root      774 Jul 28 16:59 problemFaces
+-rwxrwxrwx  1 root root      721 Jul 28 16:59 params.in
+drwxr-xr-x 12 root root     4096 Jul 28 16:56 ..
+-rwxrwxrwx  1 root root     2055 Jul 28 16:59 graph_sensitivity.py
+-rwxrwxrwx  1 root root      172 Jul 28 16:59 start_docker.sh
+-rw-r--r--  1 root root      175 Jul 28 16:59 paramsFile_localCopy
+-rwxrwxrwx  1 root root     3231 Jul 28 16:59 input_parser.py
+drwxrwxrwx  7 root root     4096 Jul 28 16:58 outputs
+drwxrwxrwx  2 root root     4096 Jul 28 16:56 inputs
+-rw-r--r--  1 root root   266240 Jul 28 16:59 cog_transfer.tar
+-rw-r--r--  1 root root      120 Jul 28 16:59 makeGeomRun.sh
+-rwxrwxrwx  1 root root      887 Jul 28 16:59 runOFA.sh
+-rwxrwxrwx  1 root root    57176 Jul 28 16:59 tree
+-rw-r--r--  1 root root        0 Jul 28 16:59 sim.log
+-rw-r--r--  1 root root       29 Jul 28 16:59 results.out
+-rwxrwxrwx  1 root root     1596 Jul 28 16:59 dakota_DOE.in
+-rwxrwxrwx  1 root root      110 Jul 28 16:59 dakota_cleanup
+-rwxrwxrwx  1 root root      179 Jul 28 16:59 input.template
+-rw-r--r--  1 root root      339 Jul 28 16:59 makeMeshRun.sh
+-rw-r--r--  1 root root       81 Jul 28 16:59 runSimCommands.sh
+-rwxrwxrwx  1 root root 10213415 Jul 28 16:59 L2,38.738256,Inlet1_Velocity,2.872517,R,8,r,2,L1,32,Rcurve,24,xIn2,54.5,yIn2,-4.5,Inlet2_Velocity,4.0,endTime,5.0,writeInterval,1.0,meshMinLevel,0,meshMaxLevel,1,.tar.gz
+-rwxrwxrwx  1 root root     1813 Jul 28 16:59 simulator_script
+-rwxrwxrwx  1 root root      451 Jul 28 16:59 prepInputs_surr.sh
+-rwxrwxrwx  1 root root      417 Jul 28 16:59 prepInputs.sh
+-rw-r--r--  1 root root     6038 Jul 28 16:59 geomScript_localCopy.py
+-rwxrwxrwx  1 root root     1715 Jul 28 16:59 graph.py
+-rwxrwxrwx  1 root root     2047 Jul 28 16:59 runDakota_surr.sh
+-rwxrwxrwx  1 root root      674 Jul 28 16:59 swift_driver
+-rw-r--r--  1 root root       29 Jul 28 16:59 results.txt
+-rw-r--r--  1 root root     2459 Jul 28 16:59 writeBlockMeshDictScript_localCopy.py
+-rw-r--r--  1 root root     5072 Jul 28 16:59 data_IO.pyc
+-rw-r--r--  1 root root     6144 Jul 28 16:59 output.txt
+-rw-r--r--  1 root root     4928 Jul 28 16:59 data_IO.py
+-rw-r--r--  1 root root     4224 Jul 28 16:59 foamutils.py
+-rwxrwxrwx  1 root root    12889 Jul 28 16:59 dprepro
+-rwxrwxrwx  1 root root     2017 Jul 28 16:59 runDakota.sh
+-rwxrwxrwx  1 root root      180 Jul 28 16:59 start_docker_surr.sh
+I1 evaluation 6 has completed
+Waiting on completed jobs
+.
+|-- L2,33.854359,Inlet1_Velocity,5.676776,R,8,r,2,L1,32,Rcurve,24,xIn2,54.5,yIn2,-4.5,Inlet2_Velocity,4.0,endTime,5.0,writeInterval,1.0,meshMinLevel,0,meshMaxLevel,1,.tar.gz
+|-- cog_transfer.tar
+|-- dakota_DOE.in
+|-- dakota_cleanup
+|-- dakota_surr.in
+|-- data_IO.py
+|-- data_IO.pyc
+|-- dprepro
+|-- foamutils.py
+|-- geomScript_localCopy.py
+|-- graph.py
+|-- graph_sensitivity.py
+|-- input.in
+|-- input.template
+|-- input_parser.py
+|-- inputs
+|   |-- elbowKPI.json
+|   |-- openFoamCase.tar
+|   |-- points.dat
+|   |-- pwParams.run
+|   `-- sweepParams.run
+|-- makeGeomRun.sh
+|-- makeMeshRun.sh
+|-- output.txt
+|-- outputs
+|   `-- simParamFiles
+|       `-- caseParamFile0.in
+|-- params.in
+|-- paramsFile_localCopy
+|-- prepInputs.sh
+|-- prepInputs_surr.sh
+|-- problemFaces
+|-- pvpythonExtractScript_localCopy.py
+|-- pvpythonRun.sh
+|-- pvutils.py
+|-- pvutils.pyc
+|-- runDakota.sh
+|-- runDakota_surr.sh
+|-- runOFA.sh
+|-- runSimCommands.sh
+|-- sim.log
+|-- simulator_script
+|-- start_docker.sh
+|-- start_docker_surr.sh
+|-- swift.conf
+|-- swift_driver
+|-- tree
+|-- utils
+|   |-- PVExtract.sh
+|   |-- data_IO.py
+|   |-- elbow3D_inputFile.py
+|   |-- expandSweep.py
+|   |-- extract.py
+|   |-- foamutils.py
+|   |-- killSalome.sh
+|   |-- makeFoamMesh.sh
+|   |-- makeFoamMesh2.sh
+|   |-- makeGeom.sh
+|   |-- makeMesh.sh
+|   |-- preProcess.sh
+|   |-- pvutils.py
+|   |-- runOpenFOAM.sh
+|   |-- runSim.sh
+|   |-- runSimPVExtract.sh
+|   |-- writeBlockMeshDictFile.py
+|   |-- writeBoundaryFile.py
+|   `-- writeSimParamFiles.py
+`-- writeBlockMeshDictScript_localCopy.py
+
+4 directories, 64 files
+L2,33.854359,Inlet1_Velocity,5.676776,R,8,r,2,L1,32,Rcurve,24,xIn2,54.5,yIn2,-4.5,Inlet2_Velocity,4.0,endTime,5.0,writeInterval,1.0,meshMinLevel,0,meshMaxLevel,1,.tar.gz
+dakota_DOE.in
+dakota_cleanup
+dakota_surr.in
+dprepro
+graph.py
+graph_sensitivity.py
+input.in
+input.template
+input_parser.py
+inputs/
+inputs/sweepParams.run
+inputs/points.dat
+inputs/pwParams.run
+inputs/elbowKPI.json
+inputs/openFoamCase.tar
+outputs/
+outputs/simParamFiles/
+outputs/simParamFiles/caseParamFile0.in
+params.in
+prepInputs.sh
+prepInputs_surr.sh
+runDakota.sh
+runDakota_surr.sh
+runOFA.sh
+simulator_script
+start_docker.sh
+start_docker_surr.sh
+swift.conf
+swift_driver
+tree
+utils/
+utils/pvutils.py
+utils/runSim.sh
+utils/elbow3D_inputFile.py
+utils/killSalome.sh
+utils/PVExtract.sh
+utils/extract.py
+utils/preProcess.sh
+utils/runOpenFOAM.sh
+utils/makeFoamMesh2.sh
+utils/makeMesh.sh
+utils/makeGeom.sh
+utils/makeFoamMesh.sh
+utils/expandSweep.py
+utils/writeSimParamFiles.py
+utils/data_IO.py
+utils/foamutils.py
+utils/runSimPVExtract.sh
+utils/writeBoundaryFile.py
+utils/writeBlockMeshDictFile.py
+Parameter Length: 26
+outputs/
+outputs/simParamFiles/
+outputs/simParamFiles/caseParamFile0.in
+outputs/logFiles/
+outputs/logFiles/extractRun0.out
+outputs/logFiles/mesh0.out
+outputs/case0/
+outputs/case0/openFoamCase/
+outputs/case0/openFoamCase/3/
+outputs/case0/openFoamCase/3/U
+outputs/case0/openFoamCase/3/p
+outputs/case0/openFoamCase/3/uniform/
+outputs/case0/openFoamCase/3/uniform/time
+outputs/case0/openFoamCase/3/phi
+outputs/case0/openFoamCase/5/
+outputs/case0/openFoamCase/5/U
+outputs/case0/openFoamCase/5/p
+outputs/case0/openFoamCase/5/uniform/
+outputs/case0/openFoamCase/5/uniform/time
+outputs/case0/openFoamCase/5/phi
+outputs/case0/openFoamCase/constant/
+outputs/case0/openFoamCase/constant/dynamicMeshDict
+outputs/case0/openFoamCase/constant/polyMesh/
+outputs/case0/openFoamCase/constant/polyMesh/faces
+outputs/case0/openFoamCase/constant/polyMesh/cellLevel
+outputs/case0/openFoamCase/constant/polyMesh/pointLevel
+outputs/case0/openFoamCase/constant/polyMesh/surfaceIndex
+outputs/case0/openFoamCase/constant/polyMesh/boundary.orig
+outputs/case0/openFoamCase/constant/polyMesh/neighbour
+outputs/case0/openFoamCase/constant/polyMesh/level0Edge
+outputs/case0/openFoamCase/constant/polyMesh/points
+outputs/case0/openFoamCase/constant/polyMesh/owner
+outputs/case0/openFoamCase/constant/polyMesh/pointZones
+outputs/case0/openFoamCase/constant/polyMesh/faceZones
+outputs/case0/openFoamCase/constant/polyMesh/refinementHistory
+outputs/case0/openFoamCase/constant/polyMesh/boundary
+outputs/case0/openFoamCase/constant/polyMesh/cellZones
+outputs/case0/openFoamCase/constant/polyMesh/boundary.ref
+outputs/case0/openFoamCase/constant/transportProperties
+outputs/case0/openFoamCase/constant/turbulenceProperties
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_internalEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_openEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls.extendedFeatureEdgeMesh
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_concaveFeaturePts.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_edgeMesh.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_externalEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_convexFeaturePts.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_flatEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_mixedFeaturePtsStructure.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_multipleEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_regionEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_mixedFeaturePts.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_edgeDirections.obj
+outputs/case0/openFoamCase/constant/triSurface/
+outputs/case0/openFoamCase/constant/triSurface/walls.stl
+outputs/case0/openFoamCase/constant/triSurface/velocity-inlet-2.stl
+outputs/case0/openFoamCase/constant/triSurface/pressure-outlet.stl
+outputs/case0/openFoamCase/constant/triSurface/velocity-inlet-1.stl
+outputs/case0/openFoamCase/constant/triSurface/walls.eMesh
+outputs/case0/openFoamCase/constant/MRFProperties
+outputs/case0/openFoamCase/4/
+outputs/case0/openFoamCase/4/U
+outputs/case0/openFoamCase/4/p
+outputs/case0/openFoamCase/4/uniform/
+outputs/case0/openFoamCase/4/uniform/time
+outputs/case0/openFoamCase/4/phi
+outputs/case0/openFoamCase/system/
+outputs/case0/openFoamCase/system/stretchMeshDict
+outputs/case0/openFoamCase/system/projectDict
+outputs/case0/openFoamCase/system/blockMeshDict
+outputs/case0/openFoamCase/system/customNodeDict
+outputs/case0/openFoamCase/system/setFieldsDict
+outputs/case0/openFoamCase/system/mapFieldsDict
+outputs/case0/openFoamCase/system/fvOptions
+outputs/case0/openFoamCase/system/controlDict
+outputs/case0/openFoamCase/system/snappyHexMeshDict
+outputs/case0/openFoamCase/system/fvSchemes
+outputs/case0/openFoamCase/system/surfaceFeatureExtractDict
+outputs/case0/openFoamCase/system/decomposeParDict
+outputs/case0/openFoamCase/system/fvSolution
+outputs/case0/openFoamCase/0/
+outputs/case0/openFoamCase/0/U
+outputs/case0/openFoamCase/0/polyMesh/
+outputs/case0/openFoamCase/0/p
+outputs/case0/openFoamCase/1/
+outputs/case0/openFoamCase/1/U
+outputs/case0/openFoamCase/1/p
+outputs/case0/openFoamCase/1/uniform/
+outputs/case0/openFoamCase/1/uniform/time
+outputs/case0/openFoamCase/1/phi
+outputs/case0/openFoamCase/2/
+outputs/case0/openFoamCase/2/U
+outputs/case0/openFoamCase/2/p
+outputs/case0/openFoamCase/2/uniform/
+outputs/case0/openFoamCase/2/uniform/time
+outputs/case0/openFoamCase/2/phi
+outputs/case0/metrics.csv
+outputs/case0/openFoamCase.tar
+outputs/png/
+outputs/png/0/
+outputs/png/0/streamlinesU_blender.tar
+outputs/png/0/out_stl.png
+outputs/png/0/out_streamlinesU.png
+outputs/png/0/out_ClipUy.png
+outputs/png/0/out_ClipUy.gif
+outputs/png/0/plot_lineP.csv
+outputs/png/0/plot_lineP.png
+outputs/errorFiles/
+outputs/errorFiles/mesh0.err
+outputs/errorFiles/extractRun0.err
+2.97093059228
+2.91144348767
+/scratch/work_dir/dakota_tmp.5
+total 10180
+-rw-r--r--  1 root root   20042 Jul 28 16:59 pvutils.py
+drwxr-xr-x  5 root root    4096 Jul 28 16:59 .
+-rwxrwxrwx  1 root root     773 Jul 28 16:59 swift.conf
+-rwxrwxrwx  1 root root     175 Jul 28 16:59 input.in
+-rw-r--r--  1 root root     214 Jul 28 16:59 pvpythonRun.sh
+drwxrwxrwx  2 root root    4096 Jul 28 16:56 utils
+-rw-r--r--  1 root root    4613 Jul 28 16:59 pvpythonExtractScript_localCopy.py
+-rwxrwxrwx  1 root root 9855417 Jul 28 16:59 L2,33.854359,Inlet1_Velocity,5.676776,R,8,r,2,L1,32,Rcurve,24,xIn2,54.5,yIn2,-4.5,Inlet2_Velocity,4.0,endTime,5.0,writeInterval,1.0,meshMinLevel,0,meshMaxLevel,1,.tar.gz
+-rw-r--r--  1 root root   18391 Jul 28 16:59 pvutils.pyc
+-rwxrwxrwx  1 root root    1979 Jul 28 16:59 dakota_surr.in
+-rw-r--r--  1 root root     794 Jul 28 16:59 problemFaces
+-rwxrwxrwx  1 root root     721 Jul 28 16:59 params.in
+drwxr-xr-x 12 root root    4096 Jul 28 16:56 ..
+-rwxrwxrwx  1 root root    2055 Jul 28 16:59 graph_sensitivity.py
+-rwxrwxrwx  1 root root     172 Jul 28 16:59 start_docker.sh
+-rw-r--r--  1 root root     175 Jul 28 16:59 paramsFile_localCopy
+-rwxrwxrwx  1 root root    3231 Jul 28 16:59 input_parser.py
+drwxrwxrwx  7 root root    4096 Jul 28 16:58 outputs
+drwxrwxrwx  2 root root    4096 Jul 28 16:56 inputs
+-rw-r--r--  1 root root  266240 Jul 28 16:59 cog_transfer.tar
+-rw-r--r--  1 root root     120 Jul 28 16:59 makeGeomRun.sh
+-rwxrwxrwx  1 root root     887 Jul 28 16:59 runOFA.sh
+-rwxrwxrwx  1 root root   57176 Jul 28 16:59 tree
+-rw-r--r--  1 root root       0 Jul 28 16:59 sim.log
+-rw-r--r--  1 root root      28 Jul 28 16:59 results.out
+-rwxrwxrwx  1 root root    1596 Jul 28 16:59 dakota_DOE.in
+-rwxrwxrwx  1 root root     110 Jul 28 16:59 dakota_cleanup
+-rwxrwxrwx  1 root root     179 Jul 28 16:59 input.template
+-rw-r--r--  1 root root     339 Jul 28 16:59 makeMeshRun.sh
+-rw-r--r--  1 root root      81 Jul 28 16:59 runSimCommands.sh
+-rwxrwxrwx  1 root root    1813 Jul 28 16:59 simulator_script
+-rwxrwxrwx  1 root root     451 Jul 28 16:59 prepInputs_surr.sh
+-rwxrwxrwx  1 root root     417 Jul 28 16:59 prepInputs.sh
+-rw-r--r--  1 root root    6038 Jul 28 16:59 geomScript_localCopy.py
+-rwxrwxrwx  1 root root    1715 Jul 28 16:59 graph.py
+-rwxrwxrwx  1 root root    2047 Jul 28 16:59 runDakota_surr.sh
+-rwxrwxrwx  1 root root     674 Jul 28 16:59 swift_driver
+-rw-r--r--  1 root root      28 Jul 28 16:59 results.txt
+-rw-r--r--  1 root root    2459 Jul 28 16:59 writeBlockMeshDictScript_localCopy.py
+-rw-r--r--  1 root root    5072 Jul 28 16:59 data_IO.pyc
+-rw-r--r--  1 root root    6144 Jul 28 16:59 output.txt
+-rw-r--r--  1 root root    4928 Jul 28 16:59 data_IO.py
+-rw-r--r--  1 root root    4224 Jul 28 16:59 foamutils.py
+-rwxrwxrwx  1 root root   12889 Jul 28 16:59 dprepro
+-rwxrwxrwx  1 root root    2017 Jul 28 16:59 runDakota.sh
+-rwxrwxrwx  1 root root     180 Jul 28 16:59 start_docker_surr.sh
+I1 evaluation 5 has completed
+Waiting on completed jobs
+.
+|-- L2,32.193331,Inlet1_Velocity,6.488773,R,8,r,2,L1,32,Rcurve,24,xIn2,54.5,yIn2,-4.5,Inlet2_Velocity,4.0,endTime,5.0,writeInterval,1.0,meshMinLevel,0,meshMaxLevel,1,.tar.gz
+|-- cog_transfer.tar
+|-- dakota_DOE.in
+|-- dakota_cleanup
+|-- dakota_surr.in
+|-- data_IO.py
+|-- data_IO.pyc
+|-- dprepro
+|-- foamutils.py
+|-- geomScript_localCopy.py
+|-- graph.py
+|-- graph_sensitivity.py
+|-- input.in
+|-- input.template
+|-- input_parser.py
+|-- inputs
+|   |-- elbowKPI.json
+|   |-- openFoamCase.tar
+|   |-- points.dat
+|   |-- pwParams.run
+|   `-- sweepParams.run
+|-- makeGeomRun.sh
+|-- makeMeshRun.sh
+|-- output.txt
+|-- outputs
+|   `-- simParamFiles
+|       `-- caseParamFile0.in
+|-- params.in
+|-- paramsFile_localCopy
+|-- prepInputs.sh
+|-- prepInputs_surr.sh
+|-- problemFaces
+|-- pvpythonExtractScript_localCopy.py
+|-- pvpythonRun.sh
+|-- pvutils.py
+|-- pvutils.pyc
+|-- runDakota.sh
+|-- runDakota_surr.sh
+|-- runOFA.sh
+|-- runSimCommands.sh
+|-- sim.log
+|-- simulator_script
+|-- start_docker.sh
+|-- start_docker_surr.sh
+|-- swift.conf
+|-- swift_driver
+|-- tree
+|-- utils
+|   |-- PVExtract.sh
+|   |-- data_IO.py
+|   |-- elbow3D_inputFile.py
+|   |-- expandSweep.py
+|   |-- extract.py
+|   |-- foamutils.py
+|   |-- killSalome.sh
+|   |-- makeFoamMesh.sh
+|   |-- makeFoamMesh2.sh
+|   |-- makeGeom.sh
+|   |-- makeMesh.sh
+|   |-- preProcess.sh
+|   |-- pvutils.py
+|   |-- runOpenFOAM.sh
+|   |-- runSim.sh
+|   |-- runSimPVExtract.sh
+|   |-- writeBlockMeshDictFile.py
+|   |-- writeBoundaryFile.py
+|   `-- writeSimParamFiles.py
+`-- writeBlockMeshDictScript_localCopy.py
+
+4 directories, 64 files
+L2,32.193331,Inlet1_Velocity,6.488773,R,8,r,2,L1,32,Rcurve,24,xIn2,54.5,yIn2,-4.5,Inlet2_Velocity,4.0,endTime,5.0,writeInterval,1.0,meshMinLevel,0,meshMaxLevel,1,.tar.gz
+dakota_DOE.in
+dakota_cleanup
+dakota_surr.in
+dprepro
+graph.py
+graph_sensitivity.py
+input.in
+input.template
+input_parser.py
+inputs/
+inputs/sweepParams.run
+inputs/points.dat
+inputs/pwParams.run
+inputs/elbowKPI.json
+inputs/openFoamCase.tar
+outputs/
+outputs/simParamFiles/
+outputs/simParamFiles/caseParamFile0.in
+params.in
+prepInputs.sh
+prepInputs_surr.sh
+runDakota.sh
+runDakota_surr.sh
+runOFA.sh
+simulator_script
+start_docker.sh
+start_docker_surr.sh
+swift.conf
+swift_driver
+tree
+utils/
+utils/pvutils.py
+utils/runSim.sh
+utils/elbow3D_inputFile.py
+utils/killSalome.sh
+utils/PVExtract.sh
+utils/extract.py
+utils/preProcess.sh
+utils/runOpenFOAM.sh
+utils/makeFoamMesh2.sh
+utils/makeMesh.sh
+utils/makeGeom.sh
+utils/makeFoamMesh.sh
+utils/expandSweep.py
+utils/writeSimParamFiles.py
+utils/data_IO.py
+utils/foamutils.py
+utils/runSimPVExtract.sh
+utils/writeBoundaryFile.py
+utils/writeBlockMeshDictFile.py
+Parameter Length: 26
+outputs/
+outputs/simParamFiles/
+outputs/simParamFiles/caseParamFile0.in
+outputs/logFiles/
+outputs/logFiles/extractRun0.out
+outputs/logFiles/mesh0.out
+outputs/case0/
+outputs/case0/openFoamCase/
+outputs/case0/openFoamCase/3/
+outputs/case0/openFoamCase/3/U
+outputs/case0/openFoamCase/3/p
+outputs/case0/openFoamCase/3/uniform/
+outputs/case0/openFoamCase/3/uniform/time
+outputs/case0/openFoamCase/3/phi
+outputs/case0/openFoamCase/5/
+outputs/case0/openFoamCase/5/U
+outputs/case0/openFoamCase/5/p
+outputs/case0/openFoamCase/5/uniform/
+outputs/case0/openFoamCase/5/uniform/time
+outputs/case0/openFoamCase/5/phi
+outputs/case0/openFoamCase/constant/
+outputs/case0/openFoamCase/constant/dynamicMeshDict
+outputs/case0/openFoamCase/constant/polyMesh/
+outputs/case0/openFoamCase/constant/polyMesh/faces
+outputs/case0/openFoamCase/constant/polyMesh/cellLevel
+outputs/case0/openFoamCase/constant/polyMesh/pointLevel
+outputs/case0/openFoamCase/constant/polyMesh/surfaceIndex
+outputs/case0/openFoamCase/constant/polyMesh/boundary.orig
+outputs/case0/openFoamCase/constant/polyMesh/neighbour
+outputs/case0/openFoamCase/constant/polyMesh/level0Edge
+outputs/case0/openFoamCase/constant/polyMesh/points
+outputs/case0/openFoamCase/constant/polyMesh/owner
+outputs/case0/openFoamCase/constant/polyMesh/pointZones
+outputs/case0/openFoamCase/constant/polyMesh/faceZones
+outputs/case0/openFoamCase/constant/polyMesh/refinementHistory
+outputs/case0/openFoamCase/constant/polyMesh/boundary
+outputs/case0/openFoamCase/constant/polyMesh/cellZones
+outputs/case0/openFoamCase/constant/polyMesh/boundary.ref
+outputs/case0/openFoamCase/constant/transportProperties
+outputs/case0/openFoamCase/constant/turbulenceProperties
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_internalEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_openEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls.extendedFeatureEdgeMesh
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_concaveFeaturePts.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_edgeMesh.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_externalEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_convexFeaturePts.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_flatEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_mixedFeaturePtsStructure.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_multipleEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_regionEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_mixedFeaturePts.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_edgeDirections.obj
+outputs/case0/openFoamCase/constant/triSurface/
+outputs/case0/openFoamCase/constant/triSurface/walls.stl
+outputs/case0/openFoamCase/constant/triSurface/velocity-inlet-2.stl
+outputs/case0/openFoamCase/constant/triSurface/pressure-outlet.stl
+outputs/case0/openFoamCase/constant/triSurface/velocity-inlet-1.stl
+outputs/case0/openFoamCase/constant/triSurface/walls.eMesh
+outputs/case0/openFoamCase/constant/MRFProperties
+outputs/case0/openFoamCase/4/
+outputs/case0/openFoamCase/4/U
+outputs/case0/openFoamCase/4/p
+outputs/case0/openFoamCase/4/uniform/
+outputs/case0/openFoamCase/4/uniform/time
+outputs/case0/openFoamCase/4/phi
+outputs/case0/openFoamCase/system/
+outputs/case0/openFoamCase/system/stretchMeshDict
+outputs/case0/openFoamCase/system/projectDict
+outputs/case0/openFoamCase/system/blockMeshDict
+outputs/case0/openFoamCase/system/customNodeDict
+outputs/case0/openFoamCase/system/setFieldsDict
+outputs/case0/openFoamCase/system/mapFieldsDict
+outputs/case0/openFoamCase/system/fvOptions
+outputs/case0/openFoamCase/system/controlDict
+outputs/case0/openFoamCase/system/snappyHexMeshDict
+outputs/case0/openFoamCase/system/fvSchemes
+outputs/case0/openFoamCase/system/surfaceFeatureExtractDict
+outputs/case0/openFoamCase/system/decomposeParDict
+outputs/case0/openFoamCase/system/fvSolution
+outputs/case0/openFoamCase/0/
+outputs/case0/openFoamCase/0/U
+outputs/case0/openFoamCase/0/polyMesh/
+outputs/case0/openFoamCase/0/p
+outputs/case0/openFoamCase/1/
+outputs/case0/openFoamCase/1/U
+outputs/case0/openFoamCase/1/p
+outputs/case0/openFoamCase/1/uniform/
+outputs/case0/openFoamCase/1/uniform/time
+outputs/case0/openFoamCase/1/phi
+outputs/case0/openFoamCase/2/
+outputs/case0/openFoamCase/2/U
+outputs/case0/openFoamCase/2/p
+outputs/case0/openFoamCase/2/uniform/
+outputs/case0/openFoamCase/2/uniform/time
+outputs/case0/openFoamCase/2/phi
+outputs/case0/metrics.csv
+outputs/case0/openFoamCase.tar
+outputs/png/
+outputs/png/0/
+outputs/png/0/streamlinesU_blender.tar
+outputs/png/0/out_stl.png
+outputs/png/0/out_streamlinesU.png
+outputs/png/0/out_ClipUy.png
+outputs/png/0/out_ClipUy.gif
+outputs/png/0/plot_lineP.csv
+outputs/png/0/plot_lineP.png
+outputs/errorFiles/
+outputs/errorFiles/mesh0.err
+outputs/errorFiles/extractRun0.err
+3.33432306343
+3.84113431979
+/scratch/work_dir/dakota_tmp.9
+total 10068
+-rw-r--r--  1 root root   20042 Jul 28 16:59 pvutils.py
+drwxr-xr-x  5 root root    4096 Jul 28 16:59 .
+-rwxrwxrwx  1 root root     773 Jul 28 16:59 swift.conf
+-rwxrwxrwx  1 root root     175 Jul 28 16:59 input.in
+-rw-r--r--  1 root root     214 Jul 28 16:59 pvpythonRun.sh
+drwxrwxrwx  2 root root    4096 Jul 28 16:56 utils
+-rw-r--r--  1 root root    4613 Jul 28 16:59 pvpythonExtractScript_localCopy.py
+-rw-r--r--  1 root root   18391 Jul 28 16:59 pvutils.pyc
+-rwxrwxrwx  1 root root    1979 Jul 28 16:59 dakota_surr.in
+-rw-r--r--  1 root root     794 Jul 28 16:59 problemFaces
+-rwxrwxrwx  1 root root     721 Jul 28 16:59 params.in
+drwxr-xr-x 12 root root    4096 Jul 28 16:56 ..
+-rwxrwxrwx  1 root root    2055 Jul 28 16:59 graph_sensitivity.py
+-rwxrwxrwx  1 root root     172 Jul 28 16:59 start_docker.sh
+-rw-r--r--  1 root root     175 Jul 28 16:59 paramsFile_localCopy
+-rwxrwxrwx  1 root root    3231 Jul 28 16:59 input_parser.py
+drwxrwxrwx  7 root root    4096 Jul 28 16:58 outputs
+drwxrwxrwx  2 root root    4096 Jul 28 16:56 inputs
+-rw-r--r--  1 root root  266240 Jul 28 16:59 cog_transfer.tar
+-rw-r--r--  1 root root     120 Jul 28 16:59 makeGeomRun.sh
+-rwxrwxrwx  1 root root     887 Jul 28 16:59 runOFA.sh
+-rwxrwxrwx  1 root root   57176 Jul 28 16:59 tree
+-rw-r--r--  1 root root       0 Jul 28 16:59 sim.log
+-rw-r--r--  1 root root      28 Jul 28 16:59 results.out
+-rwxrwxrwx  1 root root    1596 Jul 28 16:59 dakota_DOE.in
+-rwxrwxrwx  1 root root     110 Jul 28 16:59 dakota_cleanup
+-rwxrwxrwx  1 root root     179 Jul 28 16:59 input.template
+-rw-r--r--  1 root root     339 Jul 28 16:59 makeMeshRun.sh
+-rw-r--r--  1 root root      81 Jul 28 16:59 runSimCommands.sh
+-rwxrwxrwx  1 root root    1813 Jul 28 16:59 simulator_script
+-rwxrwxrwx  1 root root     451 Jul 28 16:59 prepInputs_surr.sh
+-rwxrwxrwx  1 root root     417 Jul 28 16:59 prepInputs.sh
+-rw-r--r--  1 root root    6038 Jul 28 16:59 geomScript_localCopy.py
+-rwxrwxrwx  1 root root    1715 Jul 28 16:59 graph.py
+-rwxrwxrwx  1 root root    2047 Jul 28 16:59 runDakota_surr.sh
+-rwxrwxrwx  1 root root     674 Jul 28 16:59 swift_driver
+-rw-r--r--  1 root root      28 Jul 28 16:59 results.txt
+-rw-r--r--  1 root root    2459 Jul 28 16:59 writeBlockMeshDictScript_localCopy.py
+-rwxrwxrwx  1 root root 9740398 Jul 28 16:59 L2,32.193331,Inlet1_Velocity,6.488773,R,8,r,2,L1,32,Rcurve,24,xIn2,54.5,yIn2,-4.5,Inlet2_Velocity,4.0,endTime,5.0,writeInterval,1.0,meshMinLevel,0,meshMaxLevel,1,.tar.gz
+-rw-r--r--  1 root root    5072 Jul 28 16:59 data_IO.pyc
+-rw-r--r--  1 root root    6144 Jul 28 16:59 output.txt
+-rw-r--r--  1 root root    4928 Jul 28 16:59 data_IO.py
+-rw-r--r--  1 root root    4224 Jul 28 16:59 foamutils.py
+-rwxrwxrwx  1 root root   12889 Jul 28 16:59 dprepro
+-rwxrwxrwx  1 root root    2017 Jul 28 16:59 runDakota.sh
+-rwxrwxrwx  1 root root     180 Jul 28 16:59 start_docker_surr.sh
+I1 evaluation 9 has completed
+Waiting on completed jobs
+.
+|-- L2,37.188173,Inlet1_Velocity,8.258674,R,8,r,2,L1,32,Rcurve,24,xIn2,54.5,yIn2,-4.5,Inlet2_Velocity,4.0,endTime,5.0,writeInterval,1.0,meshMinLevel,0,meshMaxLevel,1,.tar.gz
+|-- cog_transfer.tar
+|-- dakota_DOE.in
+|-- dakota_cleanup
+|-- dakota_surr.in
+|-- data_IO.py
+|-- data_IO.pyc
+|-- dprepro
+|-- foamutils.py
+|-- geomScript_localCopy.py
+|-- graph.py
+|-- graph_sensitivity.py
+|-- input.in
+|-- input.template
+|-- input_parser.py
+|-- inputs
+|   |-- elbowKPI.json
+|   |-- openFoamCase.tar
+|   |-- points.dat
+|   |-- pwParams.run
+|   `-- sweepParams.run
+|-- makeGeomRun.sh
+|-- makeMeshRun.sh
+|-- output.txt
+|-- outputs
+|   `-- simParamFiles
+|       `-- caseParamFile0.in
+|-- params.in
+|-- paramsFile_localCopy
+|-- prepInputs.sh
+|-- prepInputs_surr.sh
+|-- problemFaces
+|-- pvpythonExtractScript_localCopy.py
+|-- pvpythonRun.sh
+|-- pvutils.py
+|-- pvutils.pyc
+|-- runDakota.sh
+|-- runDakota_surr.sh
+|-- runOFA.sh
+|-- runSimCommands.sh
+|-- sim.log
+|-- simulator_script
+|-- start_docker.sh
+|-- start_docker_surr.sh
+|-- swift.conf
+|-- swift_driver
+|-- tree
+|-- utils
+|   |-- PVExtract.sh
+|   |-- data_IO.py
+|   |-- elbow3D_inputFile.py
+|   |-- expandSweep.py
+|   |-- extract.py
+|   |-- foamutils.py
+|   |-- killSalome.sh
+|   |-- makeFoamMesh.sh
+|   |-- makeFoamMesh2.sh
+|   |-- makeGeom.sh
+|   |-- makeMesh.sh
+|   |-- preProcess.sh
+|   |-- pvutils.py
+|   |-- runOpenFOAM.sh
+|   |-- runSim.sh
+|   |-- runSimPVExtract.sh
+|   |-- writeBlockMeshDictFile.py
+|   |-- writeBoundaryFile.py
+|   `-- writeSimParamFiles.py
+`-- writeBlockMeshDictScript_localCopy.py
+
+4 directories, 64 files
+L2,37.188173,Inlet1_Velocity,8.258674,R,8,r,2,L1,32,Rcurve,24,xIn2,54.5,yIn2,-4.5,Inlet2_Velocity,4.0,endTime,5.0,writeInterval,1.0,meshMinLevel,0,meshMaxLevel,1,.tar.gz
+dakota_DOE.in
+dakota_cleanup
+dakota_surr.in
+dprepro
+graph.py
+graph_sensitivity.py
+input.in
+input.template
+input_parser.py
+inputs/
+inputs/sweepParams.run
+inputs/points.dat
+inputs/pwParams.run
+inputs/elbowKPI.json
+inputs/openFoamCase.tar
+outputs/
+outputs/simParamFiles/
+outputs/simParamFiles/caseParamFile0.in
+params.in
+prepInputs.sh
+prepInputs_surr.sh
+runDakota.sh
+runDakota_surr.sh
+runOFA.sh
+simulator_script
+start_docker.sh
+start_docker_surr.sh
+swift.conf
+swift_driver
+tree
+utils/
+utils/pvutils.py
+utils/runSim.sh
+utils/elbow3D_inputFile.py
+utils/killSalome.sh
+utils/PVExtract.sh
+utils/extract.py
+utils/preProcess.sh
+utils/runOpenFOAM.sh
+utils/makeFoamMesh2.sh
+utils/makeMesh.sh
+utils/makeGeom.sh
+utils/makeFoamMesh.sh
+utils/expandSweep.py
+utils/writeSimParamFiles.py
+utils/data_IO.py
+utils/foamutils.py
+utils/runSimPVExtract.sh
+utils/writeBoundaryFile.py
+utils/writeBlockMeshDictFile.py
+Parameter Length: 26
+outputs/
+outputs/simParamFiles/
+outputs/simParamFiles/caseParamFile0.in
+outputs/logFiles/
+outputs/logFiles/extractRun0.out
+outputs/logFiles/mesh0.out
+outputs/case0/
+outputs/case0/openFoamCase/
+outputs/case0/openFoamCase/3/
+outputs/case0/openFoamCase/3/U
+outputs/case0/openFoamCase/3/p
+outputs/case0/openFoamCase/3/uniform/
+outputs/case0/openFoamCase/3/uniform/time
+outputs/case0/openFoamCase/3/phi
+outputs/case0/openFoamCase/5/
+outputs/case0/openFoamCase/5/U
+outputs/case0/openFoamCase/5/p
+outputs/case0/openFoamCase/5/uniform/
+outputs/case0/openFoamCase/5/uniform/time
+outputs/case0/openFoamCase/5/phi
+outputs/case0/openFoamCase/constant/
+outputs/case0/openFoamCase/constant/dynamicMeshDict
+outputs/case0/openFoamCase/constant/polyMesh/
+outputs/case0/openFoamCase/constant/polyMesh/faces
+outputs/case0/openFoamCase/constant/polyMesh/cellLevel
+outputs/case0/openFoamCase/constant/polyMesh/pointLevel
+outputs/case0/openFoamCase/constant/polyMesh/surfaceIndex
+outputs/case0/openFoamCase/constant/polyMesh/boundary.orig
+outputs/case0/openFoamCase/constant/polyMesh/neighbour
+outputs/case0/openFoamCase/constant/polyMesh/level0Edge
+outputs/case0/openFoamCase/constant/polyMesh/points
+outputs/case0/openFoamCase/constant/polyMesh/owner
+outputs/case0/openFoamCase/constant/polyMesh/pointZones
+outputs/case0/openFoamCase/constant/polyMesh/faceZones
+outputs/case0/openFoamCase/constant/polyMesh/refinementHistory
+outputs/case0/openFoamCase/constant/polyMesh/boundary
+outputs/case0/openFoamCase/constant/polyMesh/cellZones
+outputs/case0/openFoamCase/constant/polyMesh/boundary.ref
+outputs/case0/openFoamCase/constant/transportProperties
+outputs/case0/openFoamCase/constant/turbulenceProperties
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_internalEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_openEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls.extendedFeatureEdgeMesh
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_concaveFeaturePts.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_edgeMesh.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_externalEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_convexFeaturePts.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_flatEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_mixedFeaturePtsStructure.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_multipleEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_regionEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_mixedFeaturePts.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_edgeDirections.obj
+outputs/case0/openFoamCase/constant/triSurface/
+outputs/case0/openFoamCase/constant/triSurface/walls.stl
+outputs/case0/openFoamCase/constant/triSurface/velocity-inlet-2.stl
+outputs/case0/openFoamCase/constant/triSurface/pressure-outlet.stl
+outputs/case0/openFoamCase/constant/triSurface/velocity-inlet-1.stl
+outputs/case0/openFoamCase/constant/triSurface/walls.eMesh
+outputs/case0/openFoamCase/constant/MRFProperties
+outputs/case0/openFoamCase/4/
+outputs/case0/openFoamCase/4/U
+outputs/case0/openFoamCase/4/p
+outputs/case0/openFoamCase/4/uniform/
+outputs/case0/openFoamCase/4/uniform/time
+outputs/case0/openFoamCase/4/phi
+outputs/case0/openFoamCase/system/
+outputs/case0/openFoamCase/system/stretchMeshDict
+outputs/case0/openFoamCase/system/projectDict
+outputs/case0/openFoamCase/system/blockMeshDict
+outputs/case0/openFoamCase/system/customNodeDict
+outputs/case0/openFoamCase/system/setFieldsDict
+outputs/case0/openFoamCase/system/mapFieldsDict
+outputs/case0/openFoamCase/system/fvOptions
+outputs/case0/openFoamCase/system/controlDict
+outputs/case0/openFoamCase/system/snappyHexMeshDict
+outputs/case0/openFoamCase/system/fvSchemes
+outputs/case0/openFoamCase/system/surfaceFeatureExtractDict
+outputs/case0/openFoamCase/system/decomposeParDict
+outputs/case0/openFoamCase/system/fvSolution
+outputs/case0/openFoamCase/0/
+outputs/case0/openFoamCase/0/U
+outputs/case0/openFoamCase/0/polyMesh/
+outputs/case0/openFoamCase/0/p
+outputs/case0/openFoamCase/1/
+outputs/case0/openFoamCase/1/U
+outputs/case0/openFoamCase/1/p
+outputs/case0/openFoamCase/1/uniform/
+outputs/case0/openFoamCase/1/uniform/time
+outputs/case0/openFoamCase/1/phi
+outputs/case0/openFoamCase/2/
+outputs/case0/openFoamCase/2/U
+outputs/case0/openFoamCase/2/p
+outputs/case0/openFoamCase/2/uniform/
+outputs/case0/openFoamCase/2/uniform/time
+outputs/case0/openFoamCase/2/phi
+outputs/case0/metrics.csv
+outputs/case0/openFoamCase.tar
+outputs/png/
+outputs/png/0/
+outputs/png/0/streamlinesU_blender.tar
+outputs/png/0/out_stl.png
+outputs/png/0/out_streamlinesU.png
+outputs/png/0/out_ClipUy.png
+outputs/png/0/out_ClipUy.gif
+outputs/png/0/plot_lineP.csv
+outputs/png/0/plot_lineP.png
+outputs/errorFiles/
+outputs/errorFiles/mesh0.err
+outputs/errorFiles/extractRun0.err
+4.36453242902
+6.20536118356
+/scratch/work_dir/dakota_tmp.8
+total 10428
+-rw-r--r--  1 root root    20042 Jul 28 16:59 pvutils.py
+drwxr-xr-x  5 root root     4096 Jul 28 16:59 .
+-rwxrwxrwx  1 root root      773 Jul 28 16:59 swift.conf
+-rwxrwxrwx  1 root root      175 Jul 28 16:59 input.in
+-rw-r--r--  1 root root      214 Jul 28 16:59 pvpythonRun.sh
+drwxrwxrwx  2 root root     4096 Jul 28 16:56 utils
+-rw-r--r--  1 root root     4613 Jul 28 16:59 pvpythonExtractScript_localCopy.py
+-rw-r--r--  1 root root    18391 Jul 28 16:59 pvutils.pyc
+-rwxrwxrwx  1 root root     1979 Jul 28 16:59 dakota_surr.in
+-rw-r--r--  1 root root      774 Jul 28 16:59 problemFaces
+-rwxrwxrwx  1 root root      721 Jul 28 16:59 params.in
+drwxr-xr-x 12 root root     4096 Jul 28 16:56 ..
+-rwxrwxrwx  1 root root     2055 Jul 28 16:59 graph_sensitivity.py
+-rwxrwxrwx  1 root root      172 Jul 28 16:59 start_docker.sh
+-rw-r--r--  1 root root      175 Jul 28 16:59 paramsFile_localCopy
+-rwxrwxrwx  1 root root     3231 Jul 28 16:59 input_parser.py
+-rwxrwxrwx  1 root root 10110051 Jul 28 16:59 L2,37.188173,Inlet1_Velocity,8.258674,R,8,r,2,L1,32,Rcurve,24,xIn2,54.5,yIn2,-4.5,Inlet2_Velocity,4.0,endTime,5.0,writeInterval,1.0,meshMinLevel,0,meshMaxLevel,1,.tar.gz
+drwxrwxrwx  7 root root     4096 Jul 28 16:58 outputs
+drwxrwxrwx  2 root root     4096 Jul 28 16:56 inputs
+-rw-r--r--  1 root root   266240 Jul 28 16:59 cog_transfer.tar
+-rw-r--r--  1 root root      120 Jul 28 16:59 makeGeomRun.sh
+-rwxrwxrwx  1 root root      887 Jul 28 16:59 runOFA.sh
+-rwxrwxrwx  1 root root    57176 Jul 28 16:59 tree
+-rw-r--r--  1 root root        0 Jul 28 16:59 sim.log
+-rw-r--r--  1 root root       28 Jul 28 16:59 results.out
+-rwxrwxrwx  1 root root     1596 Jul 28 16:59 dakota_DOE.in
+-rwxrwxrwx  1 root root      110 Jul 28 16:59 dakota_cleanup
+-rwxrwxrwx  1 root root      179 Jul 28 16:59 input.template
+-rw-r--r--  1 root root      339 Jul 28 16:59 makeMeshRun.sh
+-rw-r--r--  1 root root       81 Jul 28 16:59 runSimCommands.sh
+-rwxrwxrwx  1 root root     1813 Jul 28 16:59 simulator_script
+-rwxrwxrwx  1 root root      451 Jul 28 16:59 prepInputs_surr.sh
+-rwxrwxrwx  1 root root      417 Jul 28 16:59 prepInputs.sh
+-rw-r--r--  1 root root     6038 Jul 28 16:59 geomScript_localCopy.py
+-rwxrwxrwx  1 root root     1715 Jul 28 16:59 graph.py
+-rwxrwxrwx  1 root root     2047 Jul 28 16:59 runDakota_surr.sh
+-rwxrwxrwx  1 root root      674 Jul 28 16:59 swift_driver
+-rw-r--r--  1 root root       28 Jul 28 16:59 results.txt
+-rw-r--r--  1 root root     2459 Jul 28 16:59 writeBlockMeshDictScript_localCopy.py
+-rw-r--r--  1 root root     5072 Jul 28 16:59 data_IO.pyc
+-rw-r--r--  1 root root     6144 Jul 28 16:59 output.txt
+-rw-r--r--  1 root root     4928 Jul 28 16:59 data_IO.py
+-rw-r--r--  1 root root     4224 Jul 28 16:59 foamutils.py
+-rwxrwxrwx  1 root root    12889 Jul 28 16:59 dprepro
+-rwxrwxrwx  1 root root     2017 Jul 28 16:59 runDakota.sh
+-rwxrwxrwx  1 root root      180 Jul 28 16:59 start_docker_surr.sh
+I1 evaluation 8 has completed
+Waiting on completed jobs
+.
+|-- L2,35.796079,Inlet1_Velocity,5.267234,R,8,r,2,L1,32,Rcurve,24,xIn2,54.5,yIn2,-4.5,Inlet2_Velocity,4.0,endTime,5.0,writeInterval,1.0,meshMinLevel,0,meshMaxLevel,1,.tar.gz
+|-- cog_transfer.tar
+|-- dakota_DOE.in
+|-- dakota_cleanup
+|-- dakota_surr.in
+|-- data_IO.py
+|-- data_IO.pyc
+|-- dprepro
+|-- foamutils.py
+|-- geomScript_localCopy.py
+|-- graph.py
+|-- graph_sensitivity.py
+|-- input.in
+|-- input.template
+|-- input_parser.py
+|-- inputs
+|   |-- elbowKPI.json
+|   |-- openFoamCase.tar
+|   |-- points.dat
+|   |-- pwParams.run
+|   `-- sweepParams.run
+|-- makeGeomRun.sh
+|-- makeMeshRun.sh
+|-- output.txt
+|-- outputs
+|   `-- simParamFiles
+|       `-- caseParamFile0.in
+|-- params.in
+|-- paramsFile_localCopy
+|-- prepInputs.sh
+|-- prepInputs_surr.sh
+|-- problemFaces
+|-- pvpythonExtractScript_localCopy.py
+|-- pvpythonRun.sh
+|-- pvutils.py
+|-- pvutils.pyc
+|-- runDakota.sh
+|-- runDakota_surr.sh
+|-- runOFA.sh
+|-- runSimCommands.sh
+|-- sim.log
+|-- simulator_script
+|-- start_docker.sh
+|-- start_docker_surr.sh
+|-- swift.conf
+|-- swift_driver
+|-- tree
+|-- utils
+|   |-- PVExtract.sh
+|   |-- data_IO.py
+|   |-- elbow3D_inputFile.py
+|   |-- expandSweep.py
+|   |-- extract.py
+|   |-- foamutils.py
+|   |-- killSalome.sh
+|   |-- makeFoamMesh.sh
+|   |-- makeFoamMesh2.sh
+|   |-- makeGeom.sh
+|   |-- makeMesh.sh
+|   |-- preProcess.sh
+|   |-- pvutils.py
+|   |-- runOpenFOAM.sh
+|   |-- runSim.sh
+|   |-- runSimPVExtract.sh
+|   |-- writeBlockMeshDictFile.py
+|   |-- writeBoundaryFile.py
+|   `-- writeSimParamFiles.py
+`-- writeBlockMeshDictScript_localCopy.py
+
+4 directories, 64 files
+L2,35.796079,Inlet1_Velocity,5.267234,R,8,r,2,L1,32,Rcurve,24,xIn2,54.5,yIn2,-4.5,Inlet2_Velocity,4.0,endTime,5.0,writeInterval,1.0,meshMinLevel,0,meshMaxLevel,1,.tar.gz
+dakota_DOE.in
+dakota_cleanup
+dakota_surr.in
+dprepro
+graph.py
+graph_sensitivity.py
+input.in
+input.template
+input_parser.py
+inputs/
+inputs/sweepParams.run
+inputs/points.dat
+inputs/pwParams.run
+inputs/elbowKPI.json
+inputs/openFoamCase.tar
+outputs/
+outputs/simParamFiles/
+outputs/simParamFiles/caseParamFile0.in
+params.in
+prepInputs.sh
+prepInputs_surr.sh
+runDakota.sh
+runDakota_surr.sh
+runOFA.sh
+simulator_script
+start_docker.sh
+start_docker_surr.sh
+swift.conf
+swift_driver
+tree
+utils/
+utils/pvutils.py
+utils/runSim.sh
+utils/elbow3D_inputFile.py
+utils/killSalome.sh
+utils/PVExtract.sh
+utils/extract.py
+utils/preProcess.sh
+utils/runOpenFOAM.sh
+utils/makeFoamMesh2.sh
+utils/makeMesh.sh
+utils/makeGeom.sh
+utils/makeFoamMesh.sh
+utils/expandSweep.py
+utils/writeSimParamFiles.py
+utils/data_IO.py
+utils/foamutils.py
+utils/runSimPVExtract.sh
+utils/writeBoundaryFile.py
+utils/writeBlockMeshDictFile.py
+Parameter Length: 26
+outputs/
+outputs/simParamFiles/
+outputs/simParamFiles/caseParamFile0.in
+outputs/logFiles/
+outputs/logFiles/extractRun0.out
+outputs/logFiles/mesh0.out
+outputs/case0/
+outputs/case0/openFoamCase/
+outputs/case0/openFoamCase/3/
+outputs/case0/openFoamCase/3/U
+outputs/case0/openFoamCase/3/p
+outputs/case0/openFoamCase/3/uniform/
+outputs/case0/openFoamCase/3/uniform/time
+outputs/case0/openFoamCase/3/phi
+outputs/case0/openFoamCase/5/
+outputs/case0/openFoamCase/5/U
+outputs/case0/openFoamCase/5/p
+outputs/case0/openFoamCase/5/uniform/
+outputs/case0/openFoamCase/5/uniform/time
+outputs/case0/openFoamCase/5/phi
+outputs/case0/openFoamCase/constant/
+outputs/case0/openFoamCase/constant/dynamicMeshDict
+outputs/case0/openFoamCase/constant/polyMesh/
+outputs/case0/openFoamCase/constant/polyMesh/faces
+outputs/case0/openFoamCase/constant/polyMesh/cellLevel
+outputs/case0/openFoamCase/constant/polyMesh/pointLevel
+outputs/case0/openFoamCase/constant/polyMesh/surfaceIndex
+outputs/case0/openFoamCase/constant/polyMesh/boundary.orig
+outputs/case0/openFoamCase/constant/polyMesh/neighbour
+outputs/case0/openFoamCase/constant/polyMesh/level0Edge
+outputs/case0/openFoamCase/constant/polyMesh/points
+outputs/case0/openFoamCase/constant/polyMesh/owner
+outputs/case0/openFoamCase/constant/polyMesh/pointZones
+outputs/case0/openFoamCase/constant/polyMesh/faceZones
+outputs/case0/openFoamCase/constant/polyMesh/refinementHistory
+outputs/case0/openFoamCase/constant/polyMesh/boundary
+outputs/case0/openFoamCase/constant/polyMesh/cellZones
+outputs/case0/openFoamCase/constant/polyMesh/boundary.ref
+outputs/case0/openFoamCase/constant/transportProperties
+outputs/case0/openFoamCase/constant/turbulenceProperties
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_internalEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_openEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls.extendedFeatureEdgeMesh
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_concaveFeaturePts.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_edgeMesh.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_externalEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_convexFeaturePts.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_flatEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_mixedFeaturePtsStructure.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_multipleEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_regionEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_mixedFeaturePts.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_edgeDirections.obj
+outputs/case0/openFoamCase/constant/triSurface/
+outputs/case0/openFoamCase/constant/triSurface/walls.stl
+outputs/case0/openFoamCase/constant/triSurface/velocity-inlet-2.stl
+outputs/case0/openFoamCase/constant/triSurface/pressure-outlet.stl
+outputs/case0/openFoamCase/constant/triSurface/velocity-inlet-1.stl
+outputs/case0/openFoamCase/constant/triSurface/walls.eMesh
+outputs/case0/openFoamCase/constant/MRFProperties
+outputs/case0/openFoamCase/4/
+outputs/case0/openFoamCase/4/U
+outputs/case0/openFoamCase/4/p
+outputs/case0/openFoamCase/4/uniform/
+outputs/case0/openFoamCase/4/uniform/time
+outputs/case0/openFoamCase/4/phi
+outputs/case0/openFoamCase/system/
+outputs/case0/openFoamCase/system/stretchMeshDict
+outputs/case0/openFoamCase/system/projectDict
+outputs/case0/openFoamCase/system/blockMeshDict
+outputs/case0/openFoamCase/system/customNodeDict
+outputs/case0/openFoamCase/system/setFieldsDict
+outputs/case0/openFoamCase/system/mapFieldsDict
+outputs/case0/openFoamCase/system/fvOptions
+outputs/case0/openFoamCase/system/controlDict
+outputs/case0/openFoamCase/system/snappyHexMeshDict
+outputs/case0/openFoamCase/system/fvSchemes
+outputs/case0/openFoamCase/system/surfaceFeatureExtractDict
+outputs/case0/openFoamCase/system/decomposeParDict
+outputs/case0/openFoamCase/system/fvSolution
+outputs/case0/openFoamCase/0/
+outputs/case0/openFoamCase/0/U
+outputs/case0/openFoamCase/0/polyMesh/
+outputs/case0/openFoamCase/0/p
+outputs/case0/openFoamCase/1/
+outputs/case0/openFoamCase/1/U
+outputs/case0/openFoamCase/1/p
+outputs/case0/openFoamCase/1/uniform/
+outputs/case0/openFoamCase/1/uniform/time
+outputs/case0/openFoamCase/1/phi
+outputs/case0/openFoamCase/2/
+outputs/case0/openFoamCase/2/U
+outputs/case0/openFoamCase/2/p
+outputs/case0/openFoamCase/2/uniform/
+outputs/case0/openFoamCase/2/uniform/time
+outputs/case0/openFoamCase/2/phi
+outputs/case0/metrics.csv
+outputs/case0/openFoamCase.tar
+outputs/png/
+outputs/png/0/
+outputs/png/0/streamlinesU_blender.tar
+outputs/png/0/out_stl.png
+outputs/png/0/out_streamlinesU.png
+outputs/png/0/out_ClipUy.png
+outputs/png/0/out_ClipUy.gif
+outputs/png/0/plot_lineP.csv
+outputs/png/0/plot_lineP.png
+outputs/errorFiles/
+outputs/errorFiles/mesh0.err
+outputs/errorFiles/extractRun0.err
+2.80618978145
+2.51903830336
+/scratch/work_dir/dakota_tmp.2
+total 10352
+-rw-r--r--  1 root root    20042 Jul 28 16:59 pvutils.py
+drwxr-xr-x  5 root root     4096 Jul 28 16:59 .
+-rwxrwxrwx  1 root root      773 Jul 28 16:59 swift.conf
+-rwxrwxrwx  1 root root      175 Jul 28 16:59 input.in
+-rw-r--r--  1 root root      214 Jul 28 16:59 pvpythonRun.sh
+drwxrwxrwx  2 root root     4096 Jul 28 16:56 utils
+-rw-r--r--  1 root root     4613 Jul 28 16:59 pvpythonExtractScript_localCopy.py
+-rw-r--r--  1 root root    18391 Jul 28 16:59 pvutils.pyc
+-rwxrwxrwx  1 root root     1979 Jul 28 16:59 dakota_surr.in
+-rw-r--r--  1 root root      794 Jul 28 16:59 problemFaces
+-rwxrwxrwx  1 root root      721 Jul 28 16:59 params.in
+drwxr-xr-x 12 root root     4096 Jul 28 16:56 ..
+-rwxrwxrwx  1 root root     2055 Jul 28 16:59 graph_sensitivity.py
+-rwxrwxrwx  1 root root      172 Jul 28 16:59 start_docker.sh
+-rw-r--r--  1 root root      175 Jul 28 16:59 paramsFile_localCopy
+-rwxrwxrwx  1 root root     3231 Jul 28 16:59 input_parser.py
+drwxrwxrwx  7 root root     4096 Jul 28 16:58 outputs
+drwxrwxrwx  2 root root     4096 Jul 28 16:56 inputs
+-rw-r--r--  1 root root   266240 Jul 28 16:59 cog_transfer.tar
+-rw-r--r--  1 root root      120 Jul 28 16:59 makeGeomRun.sh
+-rwxrwxrwx  1 root root      887 Jul 28 16:59 runOFA.sh
+-rwxrwxrwx  1 root root    57176 Jul 28 16:59 tree
+-rw-r--r--  1 root root        0 Jul 28 16:59 sim.log
+-rw-r--r--  1 root root       28 Jul 28 16:59 results.out
+-rwxrwxrwx  1 root root     1596 Jul 28 16:59 dakota_DOE.in
+-rwxrwxrwx  1 root root      110 Jul 28 16:59 dakota_cleanup
+-rwxrwxrwx  1 root root      179 Jul 28 16:59 input.template
+-rw-r--r--  1 root root      339 Jul 28 16:59 makeMeshRun.sh
+-rw-r--r--  1 root root       81 Jul 28 16:59 runSimCommands.sh
+-rwxrwxrwx  1 root root     1813 Jul 28 16:59 simulator_script
+-rwxrwxrwx  1 root root      451 Jul 28 16:59 prepInputs_surr.sh
+-rwxrwxrwx  1 root root      417 Jul 28 16:59 prepInputs.sh
+-rw-r--r--  1 root root     6038 Jul 28 16:59 geomScript_localCopy.py
+-rwxrwxrwx  1 root root     1715 Jul 28 16:59 graph.py
+-rwxrwxrwx  1 root root     2047 Jul 28 16:59 runDakota_surr.sh
+-rwxrwxrwx  1 root root 10034763 Jul 28 16:59 L2,35.796079,Inlet1_Velocity,5.267234,R,8,r,2,L1,32,Rcurve,24,xIn2,54.5,yIn2,-4.5,Inlet2_Velocity,4.0,endTime,5.0,writeInterval,1.0,meshMinLevel,0,meshMaxLevel,1,.tar.gz
+-rwxrwxrwx  1 root root      674 Jul 28 16:59 swift_driver
+-rw-r--r--  1 root root       28 Jul 28 16:59 results.txt
+-rw-r--r--  1 root root     2459 Jul 28 16:59 writeBlockMeshDictScript_localCopy.py
+-rw-r--r--  1 root root     5072 Jul 28 16:59 data_IO.pyc
+-rw-r--r--  1 root root     6144 Jul 28 16:59 output.txt
+-rw-r--r--  1 root root     4928 Jul 28 16:59 data_IO.py
+-rw-r--r--  1 root root     4224 Jul 28 16:59 foamutils.py
+-rwxrwxrwx  1 root root    12889 Jul 28 16:59 dprepro
+-rwxrwxrwx  1 root root     2017 Jul 28 16:59 runDakota.sh
+-rwxrwxrwx  1 root root      180 Jul 28 16:59 start_docker_surr.sh
+I1 evaluation 2 has completed
+Waiting on completed jobs
+.
+|-- L2,36.356719,Inlet1_Velocity,2.796407,R,8,r,2,L1,32,Rcurve,24,xIn2,54.5,yIn2,-4.5,Inlet2_Velocity,4.0,endTime,5.0,writeInterval,1.0,meshMinLevel,0,meshMaxLevel,1,.tar.gz
+|-- cog_transfer.tar
+|-- dakota_DOE.in
+|-- dakota_cleanup
+|-- dakota_surr.in
+|-- data_IO.py
+|-- data_IO.pyc
+|-- dprepro
+|-- foamutils.py
+|-- geomScript_localCopy.py
+|-- graph.py
+|-- graph_sensitivity.py
+|-- input.in
+|-- input.template
+|-- input_parser.py
+|-- inputs
+|   |-- elbowKPI.json
+|   |-- openFoamCase.tar
+|   |-- points.dat
+|   |-- pwParams.run
+|   `-- sweepParams.run
+|-- makeGeomRun.sh
+|-- makeMeshRun.sh
+|-- output.txt
+|-- outputs
+|   `-- simParamFiles
+|       `-- caseParamFile0.in
+|-- params.in
+|-- paramsFile_localCopy
+|-- prepInputs.sh
+|-- prepInputs_surr.sh
+|-- problemFaces
+|-- pvpythonExtractScript_localCopy.py
+|-- pvpythonRun.sh
+|-- pvutils.py
+|-- pvutils.pyc
+|-- runDakota.sh
+|-- runDakota_surr.sh
+|-- runOFA.sh
+|-- runSimCommands.sh
+|-- sim.log
+|-- simulator_script
+|-- start_docker.sh
+|-- start_docker_surr.sh
+|-- swift.conf
+|-- swift_driver
+|-- tree
+|-- utils
+|   |-- PVExtract.sh
+|   |-- data_IO.py
+|   |-- elbow3D_inputFile.py
+|   |-- expandSweep.py
+|   |-- extract.py
+|   |-- foamutils.py
+|   |-- killSalome.sh
+|   |-- makeFoamMesh.sh
+|   |-- makeFoamMesh2.sh
+|   |-- makeGeom.sh
+|   |-- makeMesh.sh
+|   |-- preProcess.sh
+|   |-- pvutils.py
+|   |-- runOpenFOAM.sh
+|   |-- runSim.sh
+|   |-- runSimPVExtract.sh
+|   |-- writeBlockMeshDictFile.py
+|   |-- writeBoundaryFile.py
+|   `-- writeSimParamFiles.py
+`-- writeBlockMeshDictScript_localCopy.py
+
+4 directories, 64 files
+L2,36.356719,Inlet1_Velocity,2.796407,R,8,r,2,L1,32,Rcurve,24,xIn2,54.5,yIn2,-4.5,Inlet2_Velocity,4.0,endTime,5.0,writeInterval,1.0,meshMinLevel,0,meshMaxLevel,1,.tar.gz
+dakota_DOE.in
+dakota_cleanup
+dakota_surr.in
+dprepro
+graph.py
+graph_sensitivity.py
+input.in
+input.template
+input_parser.py
+inputs/
+inputs/sweepParams.run
+inputs/points.dat
+inputs/pwParams.run
+inputs/elbowKPI.json
+inputs/openFoamCase.tar
+outputs/
+outputs/simParamFiles/
+outputs/simParamFiles/caseParamFile0.in
+params.in
+prepInputs.sh
+prepInputs_surr.sh
+runDakota.sh
+runDakota_surr.sh
+runOFA.sh
+simulator_script
+start_docker.sh
+start_docker_surr.sh
+swift.conf
+swift_driver
+tree
+utils/
+utils/pvutils.py
+utils/runSim.sh
+utils/elbow3D_inputFile.py
+utils/killSalome.sh
+utils/PVExtract.sh
+utils/extract.py
+utils/preProcess.sh
+utils/runOpenFOAM.sh
+utils/makeFoamMesh2.sh
+utils/makeMesh.sh
+utils/makeGeom.sh
+utils/makeFoamMesh.sh
+utils/expandSweep.py
+utils/writeSimParamFiles.py
+utils/data_IO.py
+utils/foamutils.py
+utils/runSimPVExtract.sh
+utils/writeBoundaryFile.py
+utils/writeBlockMeshDictFile.py
+Parameter Length: 26
+outputs/
+outputs/simParamFiles/
+outputs/simParamFiles/caseParamFile0.in
+outputs/logFiles/
+outputs/logFiles/extractRun0.out
+outputs/logFiles/mesh0.out
+outputs/case0/
+outputs/case0/openFoamCase/
+outputs/case0/openFoamCase/3/
+outputs/case0/openFoamCase/3/U
+outputs/case0/openFoamCase/3/p
+outputs/case0/openFoamCase/3/uniform/
+outputs/case0/openFoamCase/3/uniform/time
+outputs/case0/openFoamCase/3/phi
+outputs/case0/openFoamCase/5/
+outputs/case0/openFoamCase/5/U
+outputs/case0/openFoamCase/5/p
+outputs/case0/openFoamCase/5/uniform/
+outputs/case0/openFoamCase/5/uniform/time
+outputs/case0/openFoamCase/5/phi
+outputs/case0/openFoamCase/constant/
+outputs/case0/openFoamCase/constant/dynamicMeshDict
+outputs/case0/openFoamCase/constant/polyMesh/
+outputs/case0/openFoamCase/constant/polyMesh/faces
+outputs/case0/openFoamCase/constant/polyMesh/cellLevel
+outputs/case0/openFoamCase/constant/polyMesh/pointLevel
+outputs/case0/openFoamCase/constant/polyMesh/surfaceIndex
+outputs/case0/openFoamCase/constant/polyMesh/boundary.orig
+outputs/case0/openFoamCase/constant/polyMesh/neighbour
+outputs/case0/openFoamCase/constant/polyMesh/level0Edge
+outputs/case0/openFoamCase/constant/polyMesh/points
+outputs/case0/openFoamCase/constant/polyMesh/owner
+outputs/case0/openFoamCase/constant/polyMesh/pointZones
+outputs/case0/openFoamCase/constant/polyMesh/faceZones
+outputs/case0/openFoamCase/constant/polyMesh/refinementHistory
+outputs/case0/openFoamCase/constant/polyMesh/boundary
+outputs/case0/openFoamCase/constant/polyMesh/cellZones
+outputs/case0/openFoamCase/constant/polyMesh/boundary.ref
+outputs/case0/openFoamCase/constant/transportProperties
+outputs/case0/openFoamCase/constant/turbulenceProperties
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_internalEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_openEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls.extendedFeatureEdgeMesh
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_concaveFeaturePts.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_edgeMesh.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_externalEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_convexFeaturePts.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_flatEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_mixedFeaturePtsStructure.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_multipleEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_regionEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_mixedFeaturePts.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_edgeDirections.obj
+outputs/case0/openFoamCase/constant/triSurface/
+outputs/case0/openFoamCase/constant/triSurface/walls.stl
+outputs/case0/openFoamCase/constant/triSurface/velocity-inlet-2.stl
+outputs/case0/openFoamCase/constant/triSurface/pressure-outlet.stl
+outputs/case0/openFoamCase/constant/triSurface/velocity-inlet-1.stl
+outputs/case0/openFoamCase/constant/triSurface/walls.eMesh
+outputs/case0/openFoamCase/constant/MRFProperties
+outputs/case0/openFoamCase/4/
+outputs/case0/openFoamCase/4/U
+outputs/case0/openFoamCase/4/p
+outputs/case0/openFoamCase/4/uniform/
+outputs/case0/openFoamCase/4/uniform/time
+outputs/case0/openFoamCase/4/phi
+outputs/case0/openFoamCase/system/
+outputs/case0/openFoamCase/system/stretchMeshDict
+outputs/case0/openFoamCase/system/projectDict
+outputs/case0/openFoamCase/system/blockMeshDict
+outputs/case0/openFoamCase/system/customNodeDict
+outputs/case0/openFoamCase/system/setFieldsDict
+outputs/case0/openFoamCase/system/mapFieldsDict
+outputs/case0/openFoamCase/system/fvOptions
+outputs/case0/openFoamCase/system/controlDict
+outputs/case0/openFoamCase/system/snappyHexMeshDict
+outputs/case0/openFoamCase/system/fvSchemes
+outputs/case0/openFoamCase/system/surfaceFeatureExtractDict
+outputs/case0/openFoamCase/system/decomposeParDict
+outputs/case0/openFoamCase/system/fvSolution
+outputs/case0/openFoamCase/0/
+outputs/case0/openFoamCase/0/U
+outputs/case0/openFoamCase/0/polyMesh/
+outputs/case0/openFoamCase/0/p
+outputs/case0/openFoamCase/1/
+outputs/case0/openFoamCase/1/U
+outputs/case0/openFoamCase/1/p
+outputs/case0/openFoamCase/1/uniform/
+outputs/case0/openFoamCase/1/uniform/time
+outputs/case0/openFoamCase/1/phi
+outputs/case0/openFoamCase/2/
+outputs/case0/openFoamCase/2/U
+outputs/case0/openFoamCase/2/p
+outputs/case0/openFoamCase/2/uniform/
+outputs/case0/openFoamCase/2/uniform/time
+outputs/case0/openFoamCase/2/phi
+outputs/case0/metrics.csv
+outputs/case0/openFoamCase.tar
+outputs/png/
+outputs/png/0/
+outputs/png/0/streamlinesU_blender.tar
+outputs/png/0/out_stl.png
+outputs/png/0/out_streamlinesU.png
+outputs/png/0/out_ClipUy.png
+outputs/png/0/out_ClipUy.gif
+outputs/png/0/plot_lineP.csv
+outputs/png/0/plot_lineP.png
+outputs/errorFiles/
+outputs/errorFiles/mesh0.err
+outputs/errorFiles/extractRun0.err
+1.56557379883
+0.517672870693
+/scratch/work_dir/dakota_tmp.7
+total 10508
+-rw-r--r--  1 root root    20042 Jul 28 16:59 pvutils.py
+drwxr-xr-x  5 root root     4096 Jul 28 16:59 .
+-rwxrwxrwx  1 root root      773 Jul 28 16:59 swift.conf
+-rwxrwxrwx  1 root root      175 Jul 28 16:59 input.in
+-rw-r--r--  1 root root      214 Jul 28 16:59 pvpythonRun.sh
+drwxrwxrwx  2 root root     4096 Jul 28 16:56 utils
+-rw-r--r--  1 root root     4613 Jul 28 16:59 pvpythonExtractScript_localCopy.py
+-rw-r--r--  1 root root    18391 Jul 28 16:59 pvutils.pyc
+-rwxrwxrwx  1 root root     1979 Jul 28 16:59 dakota_surr.in
+-rw-r--r--  1 root root      774 Jul 28 16:59 problemFaces
+-rwxrwxrwx  1 root root      721 Jul 28 16:59 params.in
+drwxr-xr-x 12 root root     4096 Jul 28 16:56 ..
+-rwxrwxrwx  1 root root     2055 Jul 28 16:59 graph_sensitivity.py
+-rwxrwxrwx  1 root root      172 Jul 28 16:59 start_docker.sh
+-rw-r--r--  1 root root      175 Jul 28 16:59 paramsFile_localCopy
+-rwxrwxrwx  1 root root     3231 Jul 28 16:59 input_parser.py
+drwxrwxrwx  7 root root     4096 Jul 28 16:58 outputs
+drwxrwxrwx  2 root root     4096 Jul 28 16:56 inputs
+-rw-r--r--  1 root root   266240 Jul 28 16:59 cog_transfer.tar
+-rw-r--r--  1 root root      120 Jul 28 16:59 makeGeomRun.sh
+-rwxrwxrwx  1 root root      887 Jul 28 16:59 runOFA.sh
+-rwxrwxrwx  1 root root    57176 Jul 28 16:59 tree
+-rw-r--r--  1 root root        0 Jul 28 16:59 sim.log
+-rw-r--r--  1 root root       29 Jul 28 16:59 results.out
+-rwxrwxrwx  1 root root     1596 Jul 28 16:59 dakota_DOE.in
+-rwxrwxrwx  1 root root      110 Jul 28 16:59 dakota_cleanup
+-rwxrwxrwx  1 root root      179 Jul 28 16:59 input.template
+-rw-r--r--  1 root root      339 Jul 28 16:59 makeMeshRun.sh
+-rw-r--r--  1 root root       81 Jul 28 16:59 runSimCommands.sh
+-rwxrwxrwx  1 root root 10194369 Jul 28 16:59 L2,36.356719,Inlet1_Velocity,2.796407,R,8,r,2,L1,32,Rcurve,24,xIn2,54.5,yIn2,-4.5,Inlet2_Velocity,4.0,endTime,5.0,writeInterval,1.0,meshMinLevel,0,meshMaxLevel,1,.tar.gz
+-rwxrwxrwx  1 root root     1813 Jul 28 16:59 simulator_script
+-rwxrwxrwx  1 root root      451 Jul 28 16:59 prepInputs_surr.sh
+-rwxrwxrwx  1 root root      417 Jul 28 16:59 prepInputs.sh
+-rw-r--r--  1 root root     6038 Jul 28 16:59 geomScript_localCopy.py
+-rwxrwxrwx  1 root root     1715 Jul 28 16:59 graph.py
+-rwxrwxrwx  1 root root     2047 Jul 28 16:59 runDakota_surr.sh
+-rwxrwxrwx  1 root root      674 Jul 28 16:59 swift_driver
+-rw-r--r--  1 root root       29 Jul 28 16:59 results.txt
+-rw-r--r--  1 root root     2459 Jul 28 16:59 writeBlockMeshDictScript_localCopy.py
+-rw-r--r--  1 root root     5072 Jul 28 16:59 data_IO.pyc
+-rw-r--r--  1 root root     6144 Jul 28 16:59 output.txt
+-rw-r--r--  1 root root     4928 Jul 28 16:59 data_IO.py
+-rw-r--r--  1 root root     4224 Jul 28 16:59 foamutils.py
+-rwxrwxrwx  1 root root    12889 Jul 28 16:59 dprepro
+-rwxrwxrwx  1 root root     2017 Jul 28 16:59 runDakota.sh
+-rwxrwxrwx  1 root root      180 Jul 28 16:59 start_docker_surr.sh
+I1 evaluation 7 has completed
+Waiting on completed jobs
+.
+|-- L2,34.935348,Inlet1_Velocity,8.070384,R,8,r,2,L1,32,Rcurve,24,xIn2,54.5,yIn2,-4.5,Inlet2_Velocity,4.0,endTime,5.0,writeInterval,1.0,meshMinLevel,0,meshMaxLevel,1,.tar.gz
+|-- cog_transfer.tar
+|-- dakota_DOE.in
+|-- dakota_cleanup
+|-- dakota_surr.in
+|-- data_IO.py
+|-- data_IO.pyc
+|-- dprepro
+|-- foamutils.py
+|-- geomScript_localCopy.py
+|-- graph.py
+|-- graph_sensitivity.py
+|-- input.in
+|-- input.template
+|-- input_parser.py
+|-- inputs
+|   |-- elbowKPI.json
+|   |-- openFoamCase.tar
+|   |-- points.dat
+|   |-- pwParams.run
+|   `-- sweepParams.run
+|-- makeGeomRun.sh
+|-- makeMeshRun.sh
+|-- output.txt
+|-- outputs
+|   `-- simParamFiles
+|       `-- caseParamFile0.in
+|-- params.in
+|-- paramsFile_localCopy
+|-- prepInputs.sh
+|-- prepInputs_surr.sh
+|-- problemFaces
+|-- pvpythonExtractScript_localCopy.py
+|-- pvpythonRun.sh
+|-- pvutils.py
+|-- pvutils.pyc
+|-- runDakota.sh
+|-- runDakota_surr.sh
+|-- runOFA.sh
+|-- runSimCommands.sh
+|-- sim.log
+|-- simulator_script
+|-- start_docker.sh
+|-- start_docker_surr.sh
+|-- swift.conf
+|-- swift_driver
+|-- tree
+|-- utils
+|   |-- PVExtract.sh
+|   |-- data_IO.py
+|   |-- elbow3D_inputFile.py
+|   |-- expandSweep.py
+|   |-- extract.py
+|   |-- foamutils.py
+|   |-- killSalome.sh
+|   |-- makeFoamMesh.sh
+|   |-- makeFoamMesh2.sh
+|   |-- makeGeom.sh
+|   |-- makeMesh.sh
+|   |-- preProcess.sh
+|   |-- pvutils.py
+|   |-- runOpenFOAM.sh
+|   |-- runSim.sh
+|   |-- runSimPVExtract.sh
+|   |-- writeBlockMeshDictFile.py
+|   |-- writeBoundaryFile.py
+|   `-- writeSimParamFiles.py
+`-- writeBlockMeshDictScript_localCopy.py
+
+4 directories, 64 files
+L2,34.935348,Inlet1_Velocity,8.070384,R,8,r,2,L1,32,Rcurve,24,xIn2,54.5,yIn2,-4.5,Inlet2_Velocity,4.0,endTime,5.0,writeInterval,1.0,meshMinLevel,0,meshMaxLevel,1,.tar.gz
+dakota_DOE.in
+dakota_cleanup
+dakota_surr.in
+dprepro
+graph.py
+graph_sensitivity.py
+input.in
+input.template
+input_parser.py
+inputs/
+inputs/sweepParams.run
+inputs/points.dat
+inputs/pwParams.run
+inputs/elbowKPI.json
+inputs/openFoamCase.tar
+outputs/
+outputs/simParamFiles/
+outputs/simParamFiles/caseParamFile0.in
+params.in
+prepInputs.sh
+prepInputs_surr.sh
+runDakota.sh
+runDakota_surr.sh
+runOFA.sh
+simulator_script
+start_docker.sh
+start_docker_surr.sh
+swift.conf
+swift_driver
+tree
+utils/
+utils/pvutils.py
+utils/runSim.sh
+utils/elbow3D_inputFile.py
+utils/killSalome.sh
+utils/PVExtract.sh
+utils/extract.py
+utils/preProcess.sh
+utils/runOpenFOAM.sh
+utils/makeFoamMesh2.sh
+utils/makeMesh.sh
+utils/makeGeom.sh
+utils/makeFoamMesh.sh
+utils/expandSweep.py
+utils/writeSimParamFiles.py
+utils/data_IO.py
+utils/foamutils.py
+utils/runSimPVExtract.sh
+utils/writeBoundaryFile.py
+utils/writeBlockMeshDictFile.py
+Parameter Length: 26
+outputs/
+outputs/simParamFiles/
+outputs/simParamFiles/caseParamFile0.in
+outputs/logFiles/
+outputs/logFiles/extractRun0.out
+outputs/logFiles/mesh0.out
+outputs/case0/
+outputs/case0/openFoamCase/
+outputs/case0/openFoamCase/3/
+outputs/case0/openFoamCase/3/U
+outputs/case0/openFoamCase/3/p
+outputs/case0/openFoamCase/3/uniform/
+outputs/case0/openFoamCase/3/uniform/time
+outputs/case0/openFoamCase/3/phi
+outputs/case0/openFoamCase/5/
+outputs/case0/openFoamCase/5/U
+outputs/case0/openFoamCase/5/p
+outputs/case0/openFoamCase/5/uniform/
+outputs/case0/openFoamCase/5/uniform/time
+outputs/case0/openFoamCase/5/phi
+outputs/case0/openFoamCase/constant/
+outputs/case0/openFoamCase/constant/dynamicMeshDict
+outputs/case0/openFoamCase/constant/polyMesh/
+outputs/case0/openFoamCase/constant/polyMesh/faces
+outputs/case0/openFoamCase/constant/polyMesh/cellLevel
+outputs/case0/openFoamCase/constant/polyMesh/pointLevel
+outputs/case0/openFoamCase/constant/polyMesh/surfaceIndex
+outputs/case0/openFoamCase/constant/polyMesh/boundary.orig
+outputs/case0/openFoamCase/constant/polyMesh/neighbour
+outputs/case0/openFoamCase/constant/polyMesh/level0Edge
+outputs/case0/openFoamCase/constant/polyMesh/points
+outputs/case0/openFoamCase/constant/polyMesh/owner
+outputs/case0/openFoamCase/constant/polyMesh/pointZones
+outputs/case0/openFoamCase/constant/polyMesh/faceZones
+outputs/case0/openFoamCase/constant/polyMesh/refinementHistory
+outputs/case0/openFoamCase/constant/polyMesh/boundary
+outputs/case0/openFoamCase/constant/polyMesh/cellZones
+outputs/case0/openFoamCase/constant/polyMesh/boundary.ref
+outputs/case0/openFoamCase/constant/transportProperties
+outputs/case0/openFoamCase/constant/turbulenceProperties
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_internalEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_openEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls.extendedFeatureEdgeMesh
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_concaveFeaturePts.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_edgeMesh.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_externalEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_convexFeaturePts.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_flatEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_mixedFeaturePtsStructure.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_multipleEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_regionEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_mixedFeaturePts.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_edgeDirections.obj
+outputs/case0/openFoamCase/constant/triSurface/
+outputs/case0/openFoamCase/constant/triSurface/walls.stl
+outputs/case0/openFoamCase/constant/triSurface/velocity-inlet-2.stl
+outputs/case0/openFoamCase/constant/triSurface/pressure-outlet.stl
+outputs/case0/openFoamCase/constant/triSurface/velocity-inlet-1.stl
+outputs/case0/openFoamCase/constant/triSurface/walls.eMesh
+outputs/case0/openFoamCase/constant/MRFProperties
+outputs/case0/openFoamCase/4/
+outputs/case0/openFoamCase/4/U
+outputs/case0/openFoamCase/4/p
+outputs/case0/openFoamCase/4/uniform/
+outputs/case0/openFoamCase/4/uniform/time
+outputs/case0/openFoamCase/4/phi
+outputs/case0/openFoamCase/system/
+outputs/case0/openFoamCase/system/stretchMeshDict
+outputs/case0/openFoamCase/system/projectDict
+outputs/case0/openFoamCase/system/blockMeshDict
+outputs/case0/openFoamCase/system/customNodeDict
+outputs/case0/openFoamCase/system/setFieldsDict
+outputs/case0/openFoamCase/system/mapFieldsDict
+outputs/case0/openFoamCase/system/fvOptions
+outputs/case0/openFoamCase/system/controlDict
+outputs/case0/openFoamCase/system/snappyHexMeshDict
+outputs/case0/openFoamCase/system/fvSchemes
+outputs/case0/openFoamCase/system/surfaceFeatureExtractDict
+outputs/case0/openFoamCase/system/decomposeParDict
+outputs/case0/openFoamCase/system/fvSolution
+outputs/case0/openFoamCase/0/
+outputs/case0/openFoamCase/0/U
+outputs/case0/openFoamCase/0/polyMesh/
+outputs/case0/openFoamCase/0/p
+outputs/case0/openFoamCase/1/
+outputs/case0/openFoamCase/1/U
+outputs/case0/openFoamCase/1/p
+outputs/case0/openFoamCase/1/uniform/
+outputs/case0/openFoamCase/1/uniform/time
+outputs/case0/openFoamCase/1/phi
+outputs/case0/openFoamCase/2/
+outputs/case0/openFoamCase/2/U
+outputs/case0/openFoamCase/2/p
+outputs/case0/openFoamCase/2/uniform/
+outputs/case0/openFoamCase/2/uniform/time
+outputs/case0/openFoamCase/2/phi
+outputs/case0/metrics.csv
+outputs/case0/openFoamCase.tar
+outputs/png/
+outputs/png/0/
+outputs/png/0/streamlinesU_blender.tar
+outputs/png/0/out_stl.png
+outputs/png/0/out_streamlinesU.png
+outputs/png/0/out_ClipUy.png
+outputs/png/0/out_ClipUy.gif
+outputs/png/0/plot_lineP.csv
+outputs/png/0/plot_lineP.png
+outputs/errorFiles/
+outputs/errorFiles/mesh0.err
+outputs/errorFiles/extractRun0.err
+4.19809171881
+5.94421742473
+/scratch/work_dir/dakota_tmp.10
+total 10296
+-rw-r--r--  1 root root   20042 Jul 28 17:00 pvutils.py
+drwxr-xr-x  5 root root    4096 Jul 28 17:00 .
+-rwxrwxrwx  1 root root     773 Jul 28 17:00 swift.conf
+-rwxrwxrwx  1 root root     175 Jul 28 17:00 input.in
+-rw-r--r--  1 root root     214 Jul 28 17:00 pvpythonRun.sh
+drwxrwxrwx  2 root root    4096 Jul 28 16:56 utils
+-rw-r--r--  1 root root    4613 Jul 28 17:00 pvpythonExtractScript_localCopy.py
+-rw-r--r--  1 root root   18391 Jul 28 17:00 pvutils.pyc
+-rwxrwxrwx  1 root root    1979 Jul 28 17:00 dakota_surr.in
+-rw-r--r--  1 root root     794 Jul 28 17:00 problemFaces
+-rwxrwxrwx  1 root root     721 Jul 28 17:00 params.in
+drwxr-xr-x 12 root root    4096 Jul 28 16:56 ..
+-rwxrwxrwx  1 root root    2055 Jul 28 17:00 graph_sensitivity.py
+-rwxrwxrwx  1 root root     172 Jul 28 17:00 start_docker.sh
+-rw-r--r--  1 root root     175 Jul 28 17:00 paramsFile_localCopy
+-rwxrwxrwx  1 root root    3231 Jul 28 17:00 input_parser.py
+drwxrwxrwx  7 root root    4096 Jul 28 17:00 outputs
+drwxrwxrwx  2 root root    4096 Jul 28 16:56 inputs
+-rw-r--r--  1 root root  266240 Jul 28 17:00 cog_transfer.tar
+-rw-r--r--  1 root root     120 Jul 28 17:00 makeGeomRun.sh
+-rwxrwxrwx  1 root root     887 Jul 28 17:00 runOFA.sh
+-rwxrwxrwx  1 root root   57176 Jul 28 17:00 tree
+-rw-r--r--  1 root root       0 Jul 28 17:00 sim.log
+-rw-r--r--  1 root root      28 Jul 28 17:00 results.out
+-rwxrwxrwx  1 root root    1596 Jul 28 17:00 dakota_DOE.in
+-rwxrwxrwx  1 root root     110 Jul 28 17:00 dakota_cleanup
+-rwxrwxrwx  1 root root     179 Jul 28 17:00 input.template
+-rw-r--r--  1 root root     339 Jul 28 17:00 makeMeshRun.sh
+-rw-r--r--  1 root root      81 Jul 28 17:00 runSimCommands.sh
+-rwxrwxrwx  1 root root    1813 Jul 28 17:00 simulator_script
+-rwxrwxrwx  1 root root     451 Jul 28 17:00 prepInputs_surr.sh
+-rwxrwxrwx  1 root root     417 Jul 28 17:00 prepInputs.sh
+-rwxrwxrwx  1 root root 9976082 Jul 28 17:00 L2,34.935348,Inlet1_Velocity,8.070384,R,8,r,2,L1,32,Rcurve,24,xIn2,54.5,yIn2,-4.5,Inlet2_Velocity,4.0,endTime,5.0,writeInterval,1.0,meshMinLevel,0,meshMaxLevel,1,.tar.gz
+-rw-r--r--  1 root root    6038 Jul 28 17:00 geomScript_localCopy.py
+-rwxrwxrwx  1 root root    1715 Jul 28 17:00 graph.py
+-rwxrwxrwx  1 root root    2047 Jul 28 17:00 runDakota_surr.sh
+-rwxrwxrwx  1 root root     674 Jul 28 17:00 swift_driver
+-rw-r--r--  1 root root      28 Jul 28 17:00 results.txt
+-rw-r--r--  1 root root    2459 Jul 28 17:00 writeBlockMeshDictScript_localCopy.py
+-rw-r--r--  1 root root    5072 Jul 28 17:00 data_IO.pyc
+-rw-r--r--  1 root root    6144 Jul 28 17:00 output.txt
+-rw-r--r--  1 root root    4928 Jul 28 17:00 data_IO.py
+-rw-r--r--  1 root root    4224 Jul 28 17:00 foamutils.py
+-rwxrwxrwx  1 root root   12889 Jul 28 17:00 dprepro
+-rwxrwxrwx  1 root root    2017 Jul 28 17:00 runDakota.sh
+-rwxrwxrwx  1 root root     180 Jul 28 17:00 start_docker_surr.sh
+I1 evaluation 10 has completed
+Waiting on completed jobs
+.
+|-- L2,39.309959,Inlet1_Velocity,9.838721,R,8,r,2,L1,32,Rcurve,24,xIn2,54.5,yIn2,-4.5,Inlet2_Velocity,4.0,endTime,5.0,writeInterval,1.0,meshMinLevel,0,meshMaxLevel,1,.tar.gz
+|-- cog_transfer.tar
+|-- dakota_DOE.in
+|-- dakota_cleanup
+|-- dakota_surr.in
+|-- data_IO.py
+|-- data_IO.pyc
+|-- dprepro
+|-- foamutils.py
+|-- geomScript_localCopy.py
+|-- graph.py
+|-- graph_sensitivity.py
+|-- input.in
+|-- input.template
+|-- input_parser.py
+|-- inputs
+|   |-- elbowKPI.json
+|   |-- openFoamCase.tar
+|   |-- points.dat
+|   |-- pwParams.run
+|   `-- sweepParams.run
+|-- makeGeomRun.sh
+|-- makeMeshRun.sh
+|-- output.txt
+|-- outputs
+|   `-- simParamFiles
+|       `-- caseParamFile0.in
+|-- params.in
+|-- paramsFile_localCopy
+|-- prepInputs.sh
+|-- prepInputs_surr.sh
+|-- problemFaces
+|-- pvpythonExtractScript_localCopy.py
+|-- pvpythonRun.sh
+|-- pvutils.py
+|-- pvutils.pyc
+|-- runDakota.sh
+|-- runDakota_surr.sh
+|-- runOFA.sh
+|-- runSimCommands.sh
+|-- sim.log
+|-- simulator_script
+|-- start_docker.sh
+|-- start_docker_surr.sh
+|-- swift.conf
+|-- swift_driver
+|-- tree
+|-- utils
+|   |-- PVExtract.sh
+|   |-- data_IO.py
+|   |-- elbow3D_inputFile.py
+|   |-- expandSweep.py
+|   |-- extract.py
+|   |-- foamutils.py
+|   |-- killSalome.sh
+|   |-- makeFoamMesh.sh
+|   |-- makeFoamMesh2.sh
+|   |-- makeGeom.sh
+|   |-- makeMesh.sh
+|   |-- preProcess.sh
+|   |-- pvutils.py
+|   |-- runOpenFOAM.sh
+|   |-- runSim.sh
+|   |-- runSimPVExtract.sh
+|   |-- writeBlockMeshDictFile.py
+|   |-- writeBoundaryFile.py
+|   `-- writeSimParamFiles.py
+`-- writeBlockMeshDictScript_localCopy.py
+
+4 directories, 64 files
+L2,39.309959,Inlet1_Velocity,9.838721,R,8,r,2,L1,32,Rcurve,24,xIn2,54.5,yIn2,-4.5,Inlet2_Velocity,4.0,endTime,5.0,writeInterval,1.0,meshMinLevel,0,meshMaxLevel,1,.tar.gz
+dakota_DOE.in
+dakota_cleanup
+dakota_surr.in
+dprepro
+graph.py
+graph_sensitivity.py
+input.in
+input.template
+input_parser.py
+inputs/
+inputs/sweepParams.run
+inputs/points.dat
+inputs/pwParams.run
+inputs/elbowKPI.json
+inputs/openFoamCase.tar
+outputs/
+outputs/simParamFiles/
+outputs/simParamFiles/caseParamFile0.in
+params.in
+prepInputs.sh
+prepInputs_surr.sh
+runDakota.sh
+runDakota_surr.sh
+runOFA.sh
+simulator_script
+start_docker.sh
+start_docker_surr.sh
+swift.conf
+swift_driver
+tree
+utils/
+utils/pvutils.py
+utils/runSim.sh
+utils/elbow3D_inputFile.py
+utils/killSalome.sh
+utils/PVExtract.sh
+utils/extract.py
+utils/preProcess.sh
+utils/runOpenFOAM.sh
+utils/makeFoamMesh2.sh
+utils/makeMesh.sh
+utils/makeGeom.sh
+utils/makeFoamMesh.sh
+utils/expandSweep.py
+utils/writeSimParamFiles.py
+utils/data_IO.py
+utils/foamutils.py
+utils/runSimPVExtract.sh
+utils/writeBoundaryFile.py
+utils/writeBlockMeshDictFile.py
+Parameter Length: 26
+outputs/
+outputs/simParamFiles/
+outputs/simParamFiles/caseParamFile0.in
+outputs/logFiles/
+outputs/logFiles/extractRun0.out
+outputs/logFiles/mesh0.out
+outputs/case0/
+outputs/case0/openFoamCase/
+outputs/case0/openFoamCase/3/
+outputs/case0/openFoamCase/3/U
+outputs/case0/openFoamCase/3/p
+outputs/case0/openFoamCase/3/uniform/
+outputs/case0/openFoamCase/3/uniform/time
+outputs/case0/openFoamCase/3/phi
+outputs/case0/openFoamCase/5/
+outputs/case0/openFoamCase/5/U
+outputs/case0/openFoamCase/5/p
+outputs/case0/openFoamCase/5/uniform/
+outputs/case0/openFoamCase/5/uniform/time
+outputs/case0/openFoamCase/5/phi
+outputs/case0/openFoamCase/constant/
+outputs/case0/openFoamCase/constant/dynamicMeshDict
+outputs/case0/openFoamCase/constant/polyMesh/
+outputs/case0/openFoamCase/constant/polyMesh/faces
+outputs/case0/openFoamCase/constant/polyMesh/cellLevel
+outputs/case0/openFoamCase/constant/polyMesh/pointLevel
+outputs/case0/openFoamCase/constant/polyMesh/surfaceIndex
+outputs/case0/openFoamCase/constant/polyMesh/boundary.orig
+outputs/case0/openFoamCase/constant/polyMesh/neighbour
+outputs/case0/openFoamCase/constant/polyMesh/level0Edge
+outputs/case0/openFoamCase/constant/polyMesh/points
+outputs/case0/openFoamCase/constant/polyMesh/owner
+outputs/case0/openFoamCase/constant/polyMesh/pointZones
+outputs/case0/openFoamCase/constant/polyMesh/faceZones
+outputs/case0/openFoamCase/constant/polyMesh/refinementHistory
+outputs/case0/openFoamCase/constant/polyMesh/boundary
+outputs/case0/openFoamCase/constant/polyMesh/cellZones
+outputs/case0/openFoamCase/constant/polyMesh/boundary.ref
+outputs/case0/openFoamCase/constant/transportProperties
+outputs/case0/openFoamCase/constant/turbulenceProperties
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_internalEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_openEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls.extendedFeatureEdgeMesh
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_concaveFeaturePts.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_edgeMesh.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_externalEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_convexFeaturePts.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_flatEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_mixedFeaturePtsStructure.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_multipleEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_regionEdges.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_mixedFeaturePts.obj
+outputs/case0/openFoamCase/constant/extendedFeatureEdgeMesh/walls_edgeDirections.obj
+outputs/case0/openFoamCase/constant/triSurface/
+outputs/case0/openFoamCase/constant/triSurface/walls.stl
+outputs/case0/openFoamCase/constant/triSurface/velocity-inlet-2.stl
+outputs/case0/openFoamCase/constant/triSurface/pressure-outlet.stl
+outputs/case0/openFoamCase/constant/triSurface/velocity-inlet-1.stl
+outputs/case0/openFoamCase/constant/triSurface/walls.eMesh
+outputs/case0/openFoamCase/constant/MRFProperties
+outputs/case0/openFoamCase/4/
+outputs/case0/openFoamCase/4/U
+outputs/case0/openFoamCase/4/p
+outputs/case0/openFoamCase/4/uniform/
+outputs/case0/openFoamCase/4/uniform/time
+outputs/case0/openFoamCase/4/phi
+outputs/case0/openFoamCase/system/
+outputs/case0/openFoamCase/system/stretchMeshDict
+outputs/case0/openFoamCase/system/projectDict
+outputs/case0/openFoamCase/system/blockMeshDict
+outputs/case0/openFoamCase/system/customNodeDict
+outputs/case0/openFoamCase/system/setFieldsDict
+outputs/case0/openFoamCase/system/mapFieldsDict
+outputs/case0/openFoamCase/system/fvOptions
+outputs/case0/openFoamCase/system/controlDict
+outputs/case0/openFoamCase/system/snappyHexMeshDict
+outputs/case0/openFoamCase/system/fvSchemes
+outputs/case0/openFoamCase/system/surfaceFeatureExtractDict
+outputs/case0/openFoamCase/system/decomposeParDict
+outputs/case0/openFoamCase/system/fvSolution
+outputs/case0/openFoamCase/0/
+outputs/case0/openFoamCase/0/U
+outputs/case0/openFoamCase/0/polyMesh/
+outputs/case0/openFoamCase/0/p
+outputs/case0/openFoamCase/1/
+outputs/case0/openFoamCase/1/U
+outputs/case0/openFoamCase/1/p
+outputs/case0/openFoamCase/1/uniform/
+outputs/case0/openFoamCase/1/uniform/time
+outputs/case0/openFoamCase/1/phi
+outputs/case0/openFoamCase/2/
+outputs/case0/openFoamCase/2/U
+outputs/case0/openFoamCase/2/p
+outputs/case0/openFoamCase/2/uniform/
+outputs/case0/openFoamCase/2/uniform/time
+outputs/case0/openFoamCase/2/phi
+outputs/case0/metrics.csv
+outputs/case0/openFoamCase.tar
+outputs/png/
+outputs/png/0/
+outputs/png/0/streamlinesU_blender.tar
+outputs/png/0/out_stl.png
+outputs/png/0/out_streamlinesU.png
+outputs/png/0/out_ClipUy.png
+outputs/png/0/out_ClipUy.gif
+outputs/png/0/plot_lineP.csv
+outputs/png/0/plot_lineP.png
+outputs/errorFiles/
+outputs/errorFiles/mesh0.err
+outputs/errorFiles/extractRun0.err
+5.24668203235
+8.76686396405
+/scratch/work_dir/dakota_tmp.4
+total 10816
+-rw-r--r--  1 root root    20042 Jul 28 17:00 pvutils.py
+drwxr-xr-x  5 root root     4096 Jul 28 17:00 .
+-rwxrwxrwx  1 root root      773 Jul 28 17:00 swift.conf
+-rwxrwxrwx  1 root root      175 Jul 28 17:00 input.in
+-rw-r--r--  1 root root      214 Jul 28 17:00 pvpythonRun.sh
+drwxrwxrwx  2 root root     4096 Jul 28 16:56 utils
+-rw-r--r--  1 root root     4613 Jul 28 17:00 pvpythonExtractScript_localCopy.py
+-rw-r--r--  1 root root    18391 Jul 28 17:00 pvutils.pyc
+-rwxrwxrwx  1 root root     1979 Jul 28 17:00 dakota_surr.in
+-rw-r--r--  1 root root      774 Jul 28 17:00 problemFaces
+-rwxrwxrwx  1 root root      721 Jul 28 17:00 params.in
+drwxr-xr-x 12 root root     4096 Jul 28 16:56 ..
+-rwxrwxrwx  1 root root     2055 Jul 28 17:00 graph_sensitivity.py
+-rwxrwxrwx  1 root root      172 Jul 28 17:00 start_docker.sh
+-rw-r--r--  1 root root      175 Jul 28 17:00 paramsFile_localCopy
+-rwxrwxrwx  1 root root     3231 Jul 28 17:00 input_parser.py
+drwxrwxrwx  7 root root     4096 Jul 28 17:00 outputs
+drwxrwxrwx  2 root root     4096 Jul 28 16:56 inputs
+-rw-r--r--  1 root root   266240 Jul 28 17:00 cog_transfer.tar
+-rw-r--r--  1 root root      120 Jul 28 17:00 makeGeomRun.sh
+-rwxrwxrwx  1 root root      887 Jul 28 17:00 runOFA.sh
+-rwxrwxrwx  1 root root    57176 Jul 28 17:00 tree
+-rw-r--r--  1 root root        0 Jul 28 17:00 sim.log
+-rw-r--r--  1 root root       28 Jul 28 17:00 results.out
+-rwxrwxrwx  1 root root     1596 Jul 28 17:00 dakota_DOE.in
+-rwxrwxrwx  1 root root      110 Jul 28 17:00 dakota_cleanup
+-rwxrwxrwx  1 root root      179 Jul 28 17:00 input.template
+-rw-r--r--  1 root root      339 Jul 28 17:00 makeMeshRun.sh
+-rw-r--r--  1 root root       81 Jul 28 17:00 runSimCommands.sh
+-rwxrwxrwx  1 root root     1813 Jul 28 17:00 simulator_script
+-rwxrwxrwx  1 root root      451 Jul 28 17:00 prepInputs_surr.sh
+-rwxrwxrwx  1 root root      417 Jul 28 17:00 prepInputs.sh
+-rw-r--r--  1 root root     6038 Jul 28 17:00 geomScript_localCopy.py
+-rwxrwxrwx  1 root root     1715 Jul 28 17:00 graph.py
+-rwxrwxrwx  1 root root     2047 Jul 28 17:00 runDakota_surr.sh
+-rwxrwxrwx  1 root root      674 Jul 28 17:00 swift_driver
+-rw-r--r--  1 root root       28 Jul 28 17:00 results.txt
+-rw-r--r--  1 root root     2459 Jul 28 17:00 writeBlockMeshDictScript_localCopy.py
+-rw-r--r--  1 root root     5072 Jul 28 17:00 data_IO.pyc
+-rw-r--r--  1 root root     6144 Jul 28 17:00 output.txt
+-rw-r--r--  1 root root     4928 Jul 28 17:00 data_IO.py
+-rw-r--r--  1 root root     4224 Jul 28 17:00 foamutils.py
+-rwxrwxrwx  1 root root    12889 Jul 28 17:00 dprepro
+-rwxrwxrwx  1 root root 10508673 Jul 28 17:00 L2,39.309959,Inlet1_Velocity,9.838721,R,8,r,2,L1,32,Rcurve,24,xIn2,54.5,yIn2,-4.5,Inlet2_Velocity,4.0,endTime,5.0,writeInterval,1.0,meshMinLevel,0,meshMaxLevel,1,.tar.gz
+-rwxrwxrwx  1 root root     2017 Jul 28 17:00 runDakota.sh
+-rwxrwxrwx  1 root root      180 Jul 28 17:00 start_docker_surr.sh
+I1 evaluation 4 has completed
+
+Active response data for I1 evaluation 1:
+Active set vector = { 1 1 }
+                      2.1319140303e+00 ClipUy
+                      1.3644561887e+00 lineP
+
+
+Active response data for I1 evaluation 2:
+Active set vector = { 1 1 }
+                      2.8061897815e+00 ClipUy
+                      2.5190383034e+00 lineP
+
+
+Active response data for I1 evaluation 3:
+Active set vector = { 1 1 }
+                      7.6033726617e-01 ClipUy
+                     -1.1574572061e-01 lineP
+
+
+Active response data for I1 evaluation 4:
+Active set vector = { 1 1 }
+                      5.2466820323e+00 ClipUy
+                      8.7668639640e+00 lineP
+
+
+Active response data for I1 evaluation 5:
+Active set vector = { 1 1 }
+                      2.9709305923e+00 ClipUy
+                      2.9114434877e+00 lineP
+
+
+Active response data for I1 evaluation 6:
+Active set vector = { 1 1 }
+                      1.6292455396e+00 ClipUy
+                      5.6454186346e-01 lineP
+
+
+Active response data for I1 evaluation 7:
+Active set vector = { 1 1 }
+                      1.5655737988e+00 ClipUy
+                      5.1767287069e-01 lineP
+
+
+Active response data for I1 evaluation 8:
+Active set vector = { 1 1 }
+                      4.3645324290e+00 ClipUy
+                      6.2053611836e+00 lineP
+
+
+Active response data for I1 evaluation 9:
+Active set vector = { 1 1 }
+                      3.3343230634e+00 ClipUy
+                      3.8411343198e+00 lineP
+
+
+Active response data for I1 evaluation 10:
+Active set vector = { 1 1 }
+                      4.1980917188e+00 ClipUy
+                      5.9442174247e+00 lineP
+
+<<<<< Function evaluation summary (I1): 10 total (10 new, 0 duplicate)
+-----------------------------------------------------------------------------
+Statistics based on 10 samples:
+
+Sample moment statistics for each response function:
+                            Mean           Std Dev          Skewness          Kurtosis
+        ClipUy  2.9007820252e+00  1.4182500437e+00  1.7592564551e-01 -8.3953664444e-01
+         lineP  3.2518983885e+00  2.9247583220e+00  7.1069019311e-01 -4.5148330548e-01
+
+95% confidence intervals for each response function:
+                    LowerCI_Mean      UpperCI_Mean    LowerCI_StdDev    UpperCI_StdDev
+        ClipUy  1.8862270621e+00  3.9153369884e+00  9.7552231201e-01  2.5891717211e+00
+         lineP  1.1596523246e+00  5.3441444525e+00  2.0117517451e+00  5.3394685740e+00
+
+Simple Correlation Matrix among all inputs and outputs:
+                       L2 Inlet1_Velocity       ClipUy        lineP 
+          L2  1.00000e+00 
+Inlet1_Velocity -1.32528e-03  1.00000e+00 
+      ClipUy  3.76648e-02  9.99171e-01  1.00000e+00 
+       lineP  1.47454e-01  9.79949e-01  9.85249e-01  1.00000e+00 
+
+Partial Correlation Matrix between input and output:
+                   ClipUy        lineP 
+          L2  9.57446e-01  7.46565e-01 
+Inlet1_Velocity  9.99931e-01  9.90977e-01 
+
+Simple Rank Correlation Matrix among all inputs and outputs:
+                       L2 Inlet1_Velocity       ClipUy        lineP 
+          L2  1.00000e+00 
+Inlet1_Velocity -3.03030e-02  1.00000e+00 
+      ClipUy -3.03030e-02  1.00000e+00  1.00000e+00 
+       lineP -3.03030e-02  1.00000e+00  1.00000e+00  1.00000e+00 
+
+Partial Rank Correlation Matrix between input and output:
+                   ClipUy        lineP 
+          L2 -4.73808e-10 -4.73808e-10 
+Inlet1_Velocity  1.00000e+00  1.00000e+00 
+
+-----------------------------------------------------------------------------
+
+<<<<< Iterator random_sampling completed.
+<<<<< Environment execution completed.
+DAKOTA execution time in seconds:
+  Total CPU        =   0.035737 [parent =   0.036473, child =  -0.000736]
+  Total wall clock =     261.05
+This is the format of your plot grid:
+[ (1,1) x1,y1 ]  [ (1,2) x2,y1 ]
+[ (2,1) x1,y2 ]  [ (2,2) x2,y2 ]
+

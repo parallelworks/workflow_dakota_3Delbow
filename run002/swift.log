@@ -1,0 +1,584 @@
+2017-07-28 12:33:00,702-0400 INFO  Loader JAVA Oracle Corporation Java HotSpot(TM) 64-Bit Server VM 1.8.0_131
+2017-07-28 12:33:00,703-0400 INFO  Loader VERSION Swift trunk git-rev: 04208acc2a9af9ea900ae5c4a1d01bcc93ac07d2 heads/master 6744
+2017-07-28 12:33:00,704-0400 INFO  Loader RUN_ID run002
+2017-07-28 12:33:00,704-0400 INFO  Loader ARGUMENTS [-runid, run002, -logfile, /core/xinchen/workflow_dakota_3Delbow/run002/swift.log, dakota.swift]
+2017-07-28 12:33:00,704-0400 INFO  Loader MAX_HEAP 954728448
+2017-07-28 12:33:00,704-0400 INFO  Loader GLOBUS_HOSTNAME dev.parallel.works
+2017-07-28 12:33:00,704-0400 INFO  Loader CWD /core/xinchen/workflow_dakota_3Delbow/.
+2017-07-28 12:33:00,705-0400 DEBUG Loader SWIFT_CONFIGURATION 
+[D] /core/xinchen/swift-k/dist/swift-svn/etc/swift.conf
+[R] swift.conf
+[C] <Command Line>
+{
+	TCPPortRange: "50000, 50100"                               # [D] line 27
+	alwaysTransferWrapperLog: false                            # [R] line 41
+	executionRetries: 0                                        # [R] line 38
+	fileOperationsThrottle: 8                                  # [D] line 121
+	fileTransfersThrottle: 4                                   # [D] line 107
+	hostJobSubmitThrottle: 2                                   # [D] line 95
+	jobSubmitThrottle: 4                                       # [D] line 83
+	keepSiteDir: true                                          # [R] line 39
+	lazyErrors: true                                           # [R] line 37
+	logProvenance: false                                       # [D] line 200
+	maxForeachThreads: 16384                                   # [D] line 194
+	providerStagingPinSwiftFiles: false                        # [R] line 40
+	replicationEnabled: false                                  # [D] line 146
+	replicationLimit: 3                                        # [D] line 157
+	replicationMinQueueTime: 60                                # [D] line 153
+	site {
+		linuxpool {
+			app.ALL.executable: "*"                                  # [R] line 16
+			execution {
+				URL: "http://52.38.246.211:4030"                        # [R] line 6
+				type: "coaster-persistent"                              # [R] line 5
+			}
+			initialParallelTasks: 999999                             # [R] line 9
+			maxParallelTasks: 999999                                 # [R] line 10
+			staging: "local"                                         # [R] line 8
+			workDirectory: "/tmp/swiftwork"                          # [R] line 11
+		}
+		local {
+			app.ALL.executable: "*"                                  # [D] line 232
+			execution.type: "local"                                  # [D] line 223
+			filesystem.type: "local"                                 # [D] line 226
+			workDirectory: "swiftwork"                               # [D] line 229
+		}
+	}
+	sites: [linuxpool]                                         # [R] line 1
+	tracingEnabled: false                                      # [D] line 51
+}
+
+2017-07-28 12:33:00,706-0400 DEBUG textfiles BEGIN SWIFTSCRIPT:
+# GENERAL DAKOTA CASE RUNNER
+type file;
+
+# -- INPUT / OUTPUT DEFINITIONS
+# Parallel.Works automates the creation of the Swift run command using your workflow definition
+# Swift needs to pick up the run arguments with the arg() command
+
+# inputs
+#file casein         <arg("case","dakota/dakota_case.in")>;
+
+# outputs
+file outdat         <arg("dat","results/out.dat")>;
+file outhtml        <arg("html","results/out.html")>;
+file outtar         <arg("tar","results/out.tar")>;
+# these are external files needed by the Swift workflow
+#file execute        <"runDakota.sh">;
+file swiftconf      <"swift.conf">;
+#file openfoamcase   <"
+#file[] utils        <FilesysMapper;location="utils">;
+
+file[] openfoam <Ext;exec="mapper.sh",root="openfoam">; 
+file[] dakota <Ext;exec="mapper.sh",root="dakota">; 
+file[] templatedir <Ext;exec="mapper.sh",root="templatedir">; 
+file[] templatedir_ofa <Ext;exec="mapper_ofa.sh">;
+ 
+# -- APP DEFINITIONS
+# this app generates the list of fitness values
+#app (file pout,file perr,file outd,file outh) runDAKOTA (file[] templatedir, file[] dakota, file swiftconf, string i5xmin, string i5xmax, string i6ymin, string i6ymax, string ncase) {
+#    bash "dakota/update_params.sh" i5xmin i5xmax i6ymin i6ymax ncase "dakota/dakota_case.in" "dakota/runDakota.sh"; # stdout=@pout stderr=@perr;
+#    bash "dakota/start_docker.sh" stdout=@pout stderr=@perr;
+#}
+
+
+app (file pout, file perr, file dout, file derr, file outdat, file outhtml ) prepInputs (file[] openfoam, file[] dakota, file swiftconf) {
+    bash "dakota/utils/prepInputs.sh" "inputs/sweepParams.run" "inputs/elbowKPI.json" stdout=@pout stderr=@perr;
+#	tree stdout=@pout stderr=@perr;
+    bash "templatedir/start_docker.sh" stdout=@dout stderr=@derr;
+}
+
+#app (file pout, file perr) tree (file[] openfoam)
+#{
+#    tree stdout=@pout stderr=@perr;
+#}
+
+# -- WORKFLOW COMMANDS
+# this commpand runs app specified above
+file pout   <"logs/prep.out">;
+file perr   <"logs/prep.err">;
+file dout   <"logs/dakota.out">;
+file derr   <"logs/dakota.err">;
+(pout,perr, dout, derr, outdat, outhtml) = prepInputs(openfoam, dakota, swiftconf);
+#(dout,derr,outdat,outhtml) = runDAKOTA(templatedir_ofa,dakota,swiftconf, inlet5_X_min, inlet5_X_max, inlet6_Y_min, inlet6_Y_max, num_cases);
+
+#(sout,serr)=tree(openfoam);
+
+
+2017-07-28 12:33:00,706-0400 DEBUG textfiles END SWIFTSCRIPT:
+2017-07-28 12:33:00,706-0400 DEBUG Loader kmlversion is >03153d0c-11a0-45f9-8495-1d1a00295d88-no-provenance<
+2017-07-28 12:33:00,706-0400 DEBUG Loader build version is >03153d0c-11a0-45f9-8495-1d1a00295d88-no-provenance<
+2017-07-28 12:33:00,706-0400 DEBUG Loader Recompilation suppressed.
+2017-07-28 12:33:01,143-0400 INFO  Loader RUN_START
+2017-07-28 12:33:01,146-0400 INFO  SwiftExecutor swift.home = /core/xinchen/swift-k/dist/swift-svn
+2017-07-28 12:33:01,166-0400 INFO  AbstractScheduler Setting resources to: {linuxpool=linuxpool}
+2017-07-28 12:33:01,171-0400 INFO  GlobalSubmitQueue No global submit throttle set. Using default (1024)
+2017-07-28 12:33:01,182-0400 INFO  LateBindingScheduler jobs queued: 0
+2017-07-28 12:33:01,184-0400 INFO  LateBindingScheduler jobs queued: 0
+2017-07-28 12:33:01,186-0400 INFO  LateBindingScheduler jobs queued: 0
+2017-07-28 12:33:01,210-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 81927624, JVMThreads: 16
+2017-07-28 12:33:01,211-0400 INFO  RuntimeStats$ProgressTicker 
+2017-07-28 12:33:01,219-0400 DEBUG swift PROCEDURE line=34 thread=2-0-18-15 name=prepInputs
+2017-07-28 12:33:01,283-0400 DEBUG swift JOB_INIT jobid=prepInputs-z9puhnbn tr=prepInputs
+2017-07-28 12:33:01,283-0400 DEBUG swift JOB_SITE_SELECT jobid=prepInputs-z9puhnbn-0
+2017-07-28 12:33:01,286-0400 DEBUG swift THREAD_ASSOCIATION jobid=prepInputs-z9puhnbn-0 host=linuxpool thread=2-0-18-15
+2017-07-28 12:33:01,287-0400 DEBUG swift JOB_START jobid=prepInputs-z9puhnbn-0 tr=prepInputs[bash dakota/utils/prepInputs.sh inputs/sweepParams.run inputs/elbowKPI.json, bash templatedir/start_docker.sh] tmpdir=dakota-run002/jobs/p/prepInputs-z9puhnbn-0
+2017-07-28 12:33:01,293-0400 INFO  Execute JOB_TASK jobid=prepInputs-z9puhnbn-0 taskid=task-18 exec=/bin/bash dir=dakota-run002/jobs/p/prepInputs-z9puhnbn-0 args=_swiftwrap.staging -d openfoam/utils|openfoam/inputs|dakota||logs|openfoam|results|dakota/utils -if openfoam/utils/writeBlockMeshDictFile.py|dakota/dakota_DOE.in|openfoam/utils/PVExtract.sh|openfoam/utils/extract.py|openfoam/utils/expandSweep.py|openfoam/runOFA.sh|openfoam/utils/makeGeom.sh|openfoam/utils/makeFoamMesh.sh|dakota/utils/dprepro|openfoam/utils/writeBoundaryFile.py|openfoam/inputs/sweepParams.run|dakota/start_docker_surr.sh|openfoam/utils/data_IO.py|openfoam/inputs/pwParams.run|openfoam/inputs/points.dat|openfoam/utils/foamutils.py|dakota/utils/input_parser.py|openfoam/utils/preProcess.sh|openfoam/utils/makeFoamMesh2.sh|dakota/utils/dakota_cleanup|dakota/start_docker.sh|openfoam/utils/elbow3D_inputFile.py|openfoam/utils/pvutils.py|openfoam/utils/writeSimParamFiles.py|openfoam/inputs/elbowKPI.json|dakota/runDakota_surr.sh|openfoam/utils/killSalome.sh|swift.conf|openfoam/utils/makeMesh.sh|dakota/utils/prepInputs_surr.sh|dakota/dakota_surr.in|dakota/utils/graph.py|dakota/utils/swift_driver|dakota/utils/graph_sensitivity.py|dakota/runDakota.sh|openfoam/inputs/openFoamCase.tar|dakota/simulator_script|dakota/utils/tree|dakota/utils/prepInputs.sh -of logs/prep.out|results/out.dat|logs/prep.err|logs/dakota.out|logs/dakota.err|results/out.html -cf  -cdmfile  -status provider -e bash -out logs/prep.out -err logs/prep.err -i -a dakota/utils/prepInputs.sh inputs/sweepParams.run inputs/elbowKPI.json -e bash -out logs/dakota.out -err logs/dakota.err -i -a templatedir/start_docker.sh
+2017-07-28 12:33:01,298-0400 INFO  Execute TASK_STATUS_CHANGE taskid=task-18 status=8
+2017-07-28 12:33:01,310-0400 INFO  AbstractCoasterChannel TCPChannel[client, http://52.38.246.211:4030] setting name to http://52.38.246.211:4030
+2017-07-28 12:33:01,316-0400 INFO  AbstractTCPChannel http://52.38.246.211:4030: channel started
+2017-07-28 12:33:01,317-0400 INFO  AbstractCoasterChannel Timeout check started for http://52.38.246.211:4030
+2017-07-28 12:33:01,318-0400 INFO  AbstractStreamCoasterChannel Using NIO sender for http://52.38.246.211:4030
+2017-07-28 12:33:01,439-0400 INFO  Execute TASK_STATUS_CHANGE taskid=task-18 status=1
+2017-07-28 12:33:01,453-0400 INFO  Execute TASK_STATUS_CHANGE taskid=task-18 status=16 workerid=local:000000
+2017-07-28 12:33:01,454-0400 INFO  GetFileHandler Handler(tag: 4, GET) request complete; src=file://localhost/openfoam/utils/preProcess.sh
+2017-07-28 12:33:01,457-0400 INFO  GetFileHandler Handler(tag: 4, GET) reader: LR-Handler(tag: 4, GET)
+2017-07-28 12:33:01,457-0400 INFO  GetFileHandler Handler(tag: 4, GET) sending length: 2290, 1197716995
+2017-07-28 12:33:01,460-0400 INFO  ReadBuffer RB-LR-Handler(tag: 4, GET) will ask for 1 buffers for a size of 2290
+2017-07-28 12:33:01,461-0400 INFO  ReadBuffer RB-LR-Handler(tag: 4, GET) actual allocated buffers 1(0 queued)
+2017-07-28 12:33:01,461-0400 INFO  LocalIOProvider LR-Handler(tag: 4, GET) rbuf: RB-LR-Handler(tag: 4, GET)
+2017-07-28 12:33:01,462-0400 INFO  GetFileHandler Handler(tag: 4, GET) unregistering (last)
+2017-07-28 12:33:01,462-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 12:33:01,519-0400 INFO  GetFileHandler Handler(tag: 5, GET) request complete; src=file://localhost/dakota/start_docker.sh
+2017-07-28 12:33:01,519-0400 INFO  GetFileHandler Handler(tag: 5, GET) reader: LR-Handler(tag: 5, GET)
+2017-07-28 12:33:01,519-0400 INFO  GetFileHandler Handler(tag: 5, GET) sending length: 172, 815088675
+2017-07-28 12:33:01,519-0400 INFO  ReadBuffer RB-LR-Handler(tag: 5, GET) will ask for 1 buffers for a size of 172
+2017-07-28 12:33:01,519-0400 INFO  ReadBuffer RB-LR-Handler(tag: 5, GET) actual allocated buffers 1(0 queued)
+2017-07-28 12:33:01,520-0400 INFO  LocalIOProvider LR-Handler(tag: 5, GET) rbuf: RB-LR-Handler(tag: 5, GET)
+2017-07-28 12:33:01,520-0400 INFO  GetFileHandler Handler(tag: 5, GET) unregistering (last)
+2017-07-28 12:33:01,520-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 12:33:01,599-0400 INFO  GetFileHandler Handler(tag: 6, GET) request complete; src=file://localhost/openfoam/utils/writeBoundaryFile.py
+2017-07-28 12:33:01,599-0400 INFO  GetFileHandler Handler(tag: 6, GET) reader: LR-Handler(tag: 6, GET)
+2017-07-28 12:33:01,599-0400 INFO  GetFileHandler Handler(tag: 6, GET) sending length: 1679, 281300042
+2017-07-28 12:33:01,599-0400 INFO  ReadBuffer RB-LR-Handler(tag: 6, GET) will ask for 1 buffers for a size of 1679
+2017-07-28 12:33:01,599-0400 INFO  ReadBuffer RB-LR-Handler(tag: 6, GET) actual allocated buffers 1(0 queued)
+2017-07-28 12:33:01,599-0400 INFO  LocalIOProvider LR-Handler(tag: 6, GET) rbuf: RB-LR-Handler(tag: 6, GET)
+2017-07-28 12:33:01,600-0400 INFO  GetFileHandler Handler(tag: 6, GET) unregistering (last)
+2017-07-28 12:33:01,600-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 12:33:01,639-0400 INFO  GetFileHandler Handler(tag: 7, GET) request complete; src=file://localhost/openfoam/utils/PVExtract.sh
+2017-07-28 12:33:01,640-0400 INFO  GetFileHandler Handler(tag: 7, GET) reader: LR-Handler(tag: 7, GET)
+2017-07-28 12:33:01,640-0400 INFO  GetFileHandler Handler(tag: 7, GET) sending length: 1492, 642139623
+2017-07-28 12:33:01,640-0400 INFO  ReadBuffer RB-LR-Handler(tag: 7, GET) will ask for 1 buffers for a size of 1492
+2017-07-28 12:33:01,640-0400 INFO  ReadBuffer RB-LR-Handler(tag: 7, GET) actual allocated buffers 1(0 queued)
+2017-07-28 12:33:01,640-0400 INFO  LocalIOProvider LR-Handler(tag: 7, GET) rbuf: RB-LR-Handler(tag: 7, GET)
+2017-07-28 12:33:01,640-0400 INFO  GetFileHandler Handler(tag: 7, GET) unregistering (last)
+2017-07-28 12:33:01,640-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 12:33:01,683-0400 INFO  GetFileHandler Handler(tag: 8, GET) request complete; src=file://localhost/dakota/utils/swift_driver
+2017-07-28 12:33:01,684-0400 INFO  GetFileHandler Handler(tag: 8, GET) reader: LR-Handler(tag: 8, GET)
+2017-07-28 12:33:01,684-0400 INFO  GetFileHandler Handler(tag: 8, GET) sending length: 674, 1960998360
+2017-07-28 12:33:01,684-0400 INFO  ReadBuffer RB-LR-Handler(tag: 8, GET) will ask for 1 buffers for a size of 674
+2017-07-28 12:33:01,684-0400 INFO  ReadBuffer RB-LR-Handler(tag: 8, GET) actual allocated buffers 1(0 queued)
+2017-07-28 12:33:01,684-0400 INFO  LocalIOProvider LR-Handler(tag: 8, GET) rbuf: RB-LR-Handler(tag: 8, GET)
+2017-07-28 12:33:01,684-0400 INFO  GetFileHandler Handler(tag: 8, GET) unregistering (last)
+2017-07-28 12:33:01,684-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 12:33:01,783-0400 INFO  GetFileHandler Handler(tag: 9, GET) request complete; src=file://localhost/openfoam/inputs/points.dat
+2017-07-28 12:33:01,783-0400 INFO  GetFileHandler Handler(tag: 9, GET) reader: LR-Handler(tag: 9, GET)
+2017-07-28 12:33:01,783-0400 INFO  GetFileHandler Handler(tag: 9, GET) sending length: 40, 425612541
+2017-07-28 12:33:01,784-0400 INFO  ReadBuffer RB-LR-Handler(tag: 9, GET) will ask for 1 buffers for a size of 40
+2017-07-28 12:33:01,784-0400 INFO  ReadBuffer RB-LR-Handler(tag: 9, GET) actual allocated buffers 1(0 queued)
+2017-07-28 12:33:01,784-0400 INFO  LocalIOProvider LR-Handler(tag: 9, GET) rbuf: RB-LR-Handler(tag: 9, GET)
+2017-07-28 12:33:01,784-0400 INFO  GetFileHandler Handler(tag: 9, GET) unregistering (last)
+2017-07-28 12:33:01,784-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 12:33:01,863-0400 INFO  GetFileHandler Handler(tag: 10, GET) request complete; src=file://localhost/openfoam/inputs/openFoamCase.tar
+2017-07-28 12:33:01,863-0400 INFO  GetFileHandler Handler(tag: 10, GET) reader: LR-Handler(tag: 10, GET)
+2017-07-28 12:33:01,863-0400 INFO  GetFileHandler Handler(tag: 10, GET) sending length: 61440, 239712272
+2017-07-28 12:33:01,864-0400 INFO  ReadBuffer RB-LR-Handler(tag: 10, GET) will ask for 1 buffers for a size of 61440
+2017-07-28 12:33:01,864-0400 INFO  ReadBuffer RB-LR-Handler(tag: 10, GET) actual allocated buffers 1(0 queued)
+2017-07-28 12:33:01,864-0400 INFO  LocalIOProvider LR-Handler(tag: 10, GET) rbuf: RB-LR-Handler(tag: 10, GET)
+2017-07-28 12:33:01,864-0400 INFO  GetFileHandler Handler(tag: 10, GET) unregistering (last)
+2017-07-28 12:33:01,864-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 12:33:01,943-0400 INFO  GetFileHandler Handler(tag: 11, GET) request complete; src=file://localhost/dakota/utils/input_parser.py
+2017-07-28 12:33:01,943-0400 INFO  GetFileHandler Handler(tag: 11, GET) reader: LR-Handler(tag: 11, GET)
+2017-07-28 12:33:01,943-0400 INFO  GetFileHandler Handler(tag: 11, GET) sending length: 3231, 1927351100
+2017-07-28 12:33:01,944-0400 INFO  ReadBuffer RB-LR-Handler(tag: 11, GET) will ask for 1 buffers for a size of 3231
+2017-07-28 12:33:01,944-0400 INFO  ReadBuffer RB-LR-Handler(tag: 11, GET) actual allocated buffers 1(0 queued)
+2017-07-28 12:33:01,944-0400 INFO  LocalIOProvider LR-Handler(tag: 11, GET) rbuf: RB-LR-Handler(tag: 11, GET)
+2017-07-28 12:33:01,944-0400 INFO  GetFileHandler Handler(tag: 11, GET) unregistering (last)
+2017-07-28 12:33:01,944-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 12:33:01,983-0400 INFO  GetFileHandler Handler(tag: 12, GET) request complete; src=file://localhost/dakota/utils/prepInputs_surr.sh
+2017-07-28 12:33:01,984-0400 INFO  GetFileHandler Handler(tag: 12, GET) reader: LR-Handler(tag: 12, GET)
+2017-07-28 12:33:01,984-0400 INFO  GetFileHandler Handler(tag: 12, GET) sending length: 451, 1255207294
+2017-07-28 12:33:01,984-0400 INFO  ReadBuffer RB-LR-Handler(tag: 12, GET) will ask for 1 buffers for a size of 451
+2017-07-28 12:33:01,984-0400 INFO  ReadBuffer RB-LR-Handler(tag: 12, GET) actual allocated buffers 1(0 queued)
+2017-07-28 12:33:01,984-0400 INFO  LocalIOProvider LR-Handler(tag: 12, GET) rbuf: RB-LR-Handler(tag: 12, GET)
+2017-07-28 12:33:01,984-0400 INFO  GetFileHandler Handler(tag: 12, GET) unregistering (last)
+2017-07-28 12:33:01,984-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 12:33:02,063-0400 INFO  GetFileHandler Handler(tag: 13, GET) request complete; src=file://localhost/openfoam/utils/makeFoamMesh2.sh
+2017-07-28 12:33:02,063-0400 INFO  GetFileHandler Handler(tag: 13, GET) reader: LR-Handler(tag: 13, GET)
+2017-07-28 12:33:02,063-0400 INFO  GetFileHandler Handler(tag: 13, GET) sending length: 1826, 856227404
+2017-07-28 12:33:02,064-0400 INFO  ReadBuffer RB-LR-Handler(tag: 13, GET) will ask for 1 buffers for a size of 1826
+2017-07-28 12:33:02,064-0400 INFO  ReadBuffer RB-LR-Handler(tag: 13, GET) actual allocated buffers 1(0 queued)
+2017-07-28 12:33:02,064-0400 INFO  LocalIOProvider LR-Handler(tag: 13, GET) rbuf: RB-LR-Handler(tag: 13, GET)
+2017-07-28 12:33:02,069-0400 INFO  GetFileHandler Handler(tag: 13, GET) unregistering (last)
+2017-07-28 12:33:02,069-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 12:33:02,123-0400 INFO  GetFileHandler Handler(tag: 14, GET) request complete; src=file://localhost/dakota/dakota_surr.in
+2017-07-28 12:33:02,123-0400 INFO  GetFileHandler Handler(tag: 14, GET) reader: LR-Handler(tag: 14, GET)
+2017-07-28 12:33:02,123-0400 INFO  GetFileHandler Handler(tag: 14, GET) sending length: 1979, 626280406
+2017-07-28 12:33:02,123-0400 INFO  ReadBuffer RB-LR-Handler(tag: 14, GET) will ask for 1 buffers for a size of 1979
+2017-07-28 12:33:02,123-0400 INFO  ReadBuffer RB-LR-Handler(tag: 14, GET) actual allocated buffers 1(0 queued)
+2017-07-28 12:33:02,124-0400 INFO  LocalIOProvider LR-Handler(tag: 14, GET) rbuf: RB-LR-Handler(tag: 14, GET)
+2017-07-28 12:33:02,124-0400 INFO  GetFileHandler Handler(tag: 14, GET) unregistering (last)
+2017-07-28 12:33:02,124-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 12:33:02,167-0400 INFO  GetFileHandler Handler(tag: 15, GET) request complete; src=file://localhost/openfoam/utils/killSalome.sh
+2017-07-28 12:33:02,167-0400 INFO  GetFileHandler Handler(tag: 15, GET) reader: LR-Handler(tag: 15, GET)
+2017-07-28 12:33:02,167-0400 INFO  GetFileHandler Handler(tag: 15, GET) sending length: 749, 1294564108
+2017-07-28 12:33:02,167-0400 INFO  ReadBuffer RB-LR-Handler(tag: 15, GET) will ask for 1 buffers for a size of 749
+2017-07-28 12:33:02,167-0400 INFO  ReadBuffer RB-LR-Handler(tag: 15, GET) actual allocated buffers 1(0 queued)
+2017-07-28 12:33:02,168-0400 INFO  LocalIOProvider LR-Handler(tag: 15, GET) rbuf: RB-LR-Handler(tag: 15, GET)
+2017-07-28 12:33:02,168-0400 INFO  GetFileHandler Handler(tag: 15, GET) unregistering (last)
+2017-07-28 12:33:02,168-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 12:33:02,212-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 132120576, JVMThreads: 34
+2017-07-28 12:33:02,212-0400 INFO  RuntimeStats$ProgressTicker   Stage in:1
+2017-07-28 12:33:02,267-0400 INFO  GetFileHandler Handler(tag: 16, GET) request complete; src=file://localhost/openfoam/utils/makeFoamMesh.sh
+2017-07-28 12:33:02,267-0400 INFO  GetFileHandler Handler(tag: 16, GET) reader: LR-Handler(tag: 16, GET)
+2017-07-28 12:33:02,267-0400 INFO  GetFileHandler Handler(tag: 16, GET) sending length: 1438, 846935555
+2017-07-28 12:33:02,267-0400 INFO  ReadBuffer RB-LR-Handler(tag: 16, GET) will ask for 1 buffers for a size of 1438
+2017-07-28 12:33:02,268-0400 INFO  ReadBuffer RB-LR-Handler(tag: 16, GET) actual allocated buffers 1(0 queued)
+2017-07-28 12:33:02,268-0400 INFO  LocalIOProvider LR-Handler(tag: 16, GET) rbuf: RB-LR-Handler(tag: 16, GET)
+2017-07-28 12:33:02,268-0400 INFO  GetFileHandler Handler(tag: 16, GET) unregistering (last)
+2017-07-28 12:33:02,268-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 12:33:02,327-0400 INFO  GetFileHandler Handler(tag: 17, GET) request complete; src=file://localhost/openfoam/utils/makeMesh.sh
+2017-07-28 12:33:02,327-0400 INFO  GetFileHandler Handler(tag: 17, GET) reader: LR-Handler(tag: 17, GET)
+2017-07-28 12:33:02,327-0400 INFO  GetFileHandler Handler(tag: 17, GET) sending length: 2454, 896365578
+2017-07-28 12:33:02,327-0400 INFO  ReadBuffer RB-LR-Handler(tag: 17, GET) will ask for 1 buffers for a size of 2454
+2017-07-28 12:33:02,328-0400 INFO  ReadBuffer RB-LR-Handler(tag: 17, GET) actual allocated buffers 1(0 queued)
+2017-07-28 12:33:02,328-0400 INFO  LocalIOProvider LR-Handler(tag: 17, GET) rbuf: RB-LR-Handler(tag: 17, GET)
+2017-07-28 12:33:02,328-0400 INFO  GetFileHandler Handler(tag: 17, GET) unregistering (last)
+2017-07-28 12:33:02,328-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 12:33:02,367-0400 INFO  GetFileHandler Handler(tag: 18, GET) request complete; src=file://localhost/openfoam/utils/expandSweep.py
+2017-07-28 12:33:02,367-0400 INFO  GetFileHandler Handler(tag: 18, GET) reader: LR-Handler(tag: 18, GET)
+2017-07-28 12:33:02,367-0400 INFO  GetFileHandler Handler(tag: 18, GET) sending length: 1557, 1589073429
+2017-07-28 12:33:02,368-0400 INFO  ReadBuffer RB-LR-Handler(tag: 18, GET) will ask for 1 buffers for a size of 1557
+2017-07-28 12:33:02,368-0400 INFO  ReadBuffer RB-LR-Handler(tag: 18, GET) actual allocated buffers 1(0 queued)
+2017-07-28 12:33:02,368-0400 INFO  LocalIOProvider LR-Handler(tag: 18, GET) rbuf: RB-LR-Handler(tag: 18, GET)
+2017-07-28 12:33:02,368-0400 INFO  GetFileHandler Handler(tag: 18, GET) unregistering (last)
+2017-07-28 12:33:02,368-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 12:33:02,408-0400 INFO  GetFileHandler Handler(tag: 19, GET) request complete; src=file://localhost/openfoam/utils/writeBlockMeshDictFile.py
+2017-07-28 12:33:02,408-0400 INFO  GetFileHandler Handler(tag: 19, GET) reader: LR-Handler(tag: 19, GET)
+2017-07-28 12:33:02,408-0400 INFO  GetFileHandler Handler(tag: 19, GET) sending length: 2459, 1873363158
+2017-07-28 12:33:02,408-0400 INFO  ReadBuffer RB-LR-Handler(tag: 19, GET) will ask for 1 buffers for a size of 2459
+2017-07-28 12:33:02,408-0400 INFO  ReadBuffer RB-LR-Handler(tag: 19, GET) actual allocated buffers 1(0 queued)
+2017-07-28 12:33:02,408-0400 INFO  LocalIOProvider LR-Handler(tag: 19, GET) rbuf: RB-LR-Handler(tag: 19, GET)
+2017-07-28 12:33:02,408-0400 INFO  GetFileHandler Handler(tag: 19, GET) unregistering (last)
+2017-07-28 12:33:02,408-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 12:33:02,448-0400 INFO  GetFileHandler Handler(tag: 20, GET) request complete; src=file://localhost/dakota/utils/tree
+2017-07-28 12:33:02,448-0400 INFO  GetFileHandler Handler(tag: 20, GET) reader: LR-Handler(tag: 20, GET)
+2017-07-28 12:33:02,448-0400 INFO  GetFileHandler Handler(tag: 20, GET) sending length: 57176, 2035489312
+2017-07-28 12:33:02,448-0400 INFO  ReadBuffer RB-LR-Handler(tag: 20, GET) will ask for 1 buffers for a size of 57176
+2017-07-28 12:33:02,448-0400 INFO  ReadBuffer RB-LR-Handler(tag: 20, GET) actual allocated buffers 1(0 queued)
+2017-07-28 12:33:02,448-0400 INFO  LocalIOProvider LR-Handler(tag: 20, GET) rbuf: RB-LR-Handler(tag: 20, GET)
+2017-07-28 12:33:02,448-0400 INFO  GetFileHandler Handler(tag: 20, GET) unregistering (last)
+2017-07-28 12:33:02,448-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 12:33:02,487-0400 INFO  GetFileHandler Handler(tag: 21, GET) request complete; src=file://localhost/openfoam/utils/writeSimParamFiles.py
+2017-07-28 12:33:02,487-0400 INFO  GetFileHandler Handler(tag: 21, GET) reader: LR-Handler(tag: 21, GET)
+2017-07-28 12:33:02,488-0400 INFO  GetFileHandler Handler(tag: 21, GET) sending length: 674, 1868732793
+2017-07-28 12:33:02,488-0400 INFO  ReadBuffer RB-LR-Handler(tag: 21, GET) will ask for 1 buffers for a size of 674
+2017-07-28 12:33:02,488-0400 INFO  ReadBuffer RB-LR-Handler(tag: 21, GET) actual allocated buffers 1(0 queued)
+2017-07-28 12:33:02,488-0400 INFO  LocalIOProvider LR-Handler(tag: 21, GET) rbuf: RB-LR-Handler(tag: 21, GET)
+2017-07-28 12:33:02,488-0400 INFO  GetFileHandler Handler(tag: 21, GET) unregistering (last)
+2017-07-28 12:33:02,488-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 12:33:02,571-0400 INFO  GetFileHandler Handler(tag: 22, GET) request complete; src=file://localhost/dakota/runDakota_surr.sh
+2017-07-28 12:33:02,572-0400 INFO  GetFileHandler Handler(tag: 22, GET) reader: LR-Handler(tag: 22, GET)
+2017-07-28 12:33:02,572-0400 INFO  GetFileHandler Handler(tag: 22, GET) sending length: 2047, 1345524393
+2017-07-28 12:33:02,572-0400 INFO  ReadBuffer RB-LR-Handler(tag: 22, GET) will ask for 1 buffers for a size of 2047
+2017-07-28 12:33:02,572-0400 INFO  ReadBuffer RB-LR-Handler(tag: 22, GET) actual allocated buffers 1(0 queued)
+2017-07-28 12:33:02,572-0400 INFO  LocalIOProvider LR-Handler(tag: 22, GET) rbuf: RB-LR-Handler(tag: 22, GET)
+2017-07-28 12:33:02,572-0400 INFO  GetFileHandler Handler(tag: 22, GET) unregistering (last)
+2017-07-28 12:33:02,572-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 12:33:02,631-0400 INFO  GetFileHandler Handler(tag: 23, GET) request complete; src=file://localhost/openfoam/inputs/pwParams.run
+2017-07-28 12:33:02,631-0400 INFO  GetFileHandler Handler(tag: 23, GET) reader: LR-Handler(tag: 23, GET)
+2017-07-28 12:33:02,631-0400 INFO  GetFileHandler Handler(tag: 23, GET) sending length: 222, 670901343
+2017-07-28 12:33:02,631-0400 INFO  ReadBuffer RB-LR-Handler(tag: 23, GET) will ask for 1 buffers for a size of 222
+2017-07-28 12:33:02,632-0400 INFO  ReadBuffer RB-LR-Handler(tag: 23, GET) actual allocated buffers 1(0 queued)
+2017-07-28 12:33:02,632-0400 INFO  LocalIOProvider LR-Handler(tag: 23, GET) rbuf: RB-LR-Handler(tag: 23, GET)
+2017-07-28 12:33:02,632-0400 INFO  GetFileHandler Handler(tag: 23, GET) unregistering (last)
+2017-07-28 12:33:02,632-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 12:33:02,711-0400 INFO  GetFileHandler Handler(tag: 24, GET) request complete; src=file://localhost/dakota/utils/prepInputs.sh
+2017-07-28 12:33:02,711-0400 INFO  GetFileHandler Handler(tag: 24, GET) reader: LR-Handler(tag: 24, GET)
+2017-07-28 12:33:02,711-0400 INFO  GetFileHandler Handler(tag: 24, GET) sending length: 417, 1511210993
+2017-07-28 12:33:02,712-0400 INFO  ReadBuffer RB-LR-Handler(tag: 24, GET) will ask for 1 buffers for a size of 417
+2017-07-28 12:33:02,712-0400 INFO  ReadBuffer RB-LR-Handler(tag: 24, GET) actual allocated buffers 1(0 queued)
+2017-07-28 12:33:02,712-0400 INFO  LocalIOProvider LR-Handler(tag: 24, GET) rbuf: RB-LR-Handler(tag: 24, GET)
+2017-07-28 12:33:02,712-0400 INFO  GetFileHandler Handler(tag: 24, GET) unregistering (last)
+2017-07-28 12:33:02,712-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 12:33:02,791-0400 INFO  GetFileHandler Handler(tag: 25, GET) request complete; src=file://localhost/openfoam/utils/data_IO.py
+2017-07-28 12:33:02,791-0400 INFO  GetFileHandler Handler(tag: 25, GET) reader: LR-Handler(tag: 25, GET)
+2017-07-28 12:33:02,791-0400 INFO  GetFileHandler Handler(tag: 25, GET) sending length: 4928, 909143937
+2017-07-28 12:33:02,792-0400 INFO  ReadBuffer RB-LR-Handler(tag: 25, GET) will ask for 1 buffers for a size of 4928
+2017-07-28 12:33:02,792-0400 INFO  ReadBuffer RB-LR-Handler(tag: 25, GET) actual allocated buffers 1(0 queued)
+2017-07-28 12:33:02,792-0400 INFO  LocalIOProvider LR-Handler(tag: 25, GET) rbuf: RB-LR-Handler(tag: 25, GET)
+2017-07-28 12:33:02,792-0400 INFO  GetFileHandler Handler(tag: 25, GET) unregistering (last)
+2017-07-28 12:33:02,792-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 12:33:02,831-0400 INFO  GetFileHandler Handler(tag: 26, GET) request complete; src=file://localhost/dakota/utils/graph.py
+2017-07-28 12:33:02,831-0400 INFO  GetFileHandler Handler(tag: 26, GET) reader: LR-Handler(tag: 26, GET)
+2017-07-28 12:33:02,832-0400 INFO  GetFileHandler Handler(tag: 26, GET) sending length: 1715, 160724386
+2017-07-28 12:33:02,832-0400 INFO  ReadBuffer RB-LR-Handler(tag: 26, GET) will ask for 1 buffers for a size of 1715
+2017-07-28 12:33:02,832-0400 INFO  ReadBuffer RB-LR-Handler(tag: 26, GET) actual allocated buffers 1(0 queued)
+2017-07-28 12:33:02,832-0400 INFO  LocalIOProvider LR-Handler(tag: 26, GET) rbuf: RB-LR-Handler(tag: 26, GET)
+2017-07-28 12:33:02,832-0400 INFO  GetFileHandler Handler(tag: 26, GET) unregistering (last)
+2017-07-28 12:33:02,832-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 12:33:02,871-0400 INFO  GetFileHandler Handler(tag: 27, GET) request complete; src=file://localhost/openfoam/utils/foamutils.py
+2017-07-28 12:33:02,871-0400 INFO  GetFileHandler Handler(tag: 27, GET) reader: LR-Handler(tag: 27, GET)
+2017-07-28 12:33:02,871-0400 INFO  GetFileHandler Handler(tag: 27, GET) sending length: 4224, 1328003816
+2017-07-28 12:33:02,871-0400 INFO  ReadBuffer RB-LR-Handler(tag: 27, GET) will ask for 1 buffers for a size of 4224
+2017-07-28 12:33:02,871-0400 INFO  ReadBuffer RB-LR-Handler(tag: 27, GET) actual allocated buffers 1(0 queued)
+2017-07-28 12:33:02,871-0400 INFO  LocalIOProvider LR-Handler(tag: 27, GET) rbuf: RB-LR-Handler(tag: 27, GET)
+2017-07-28 12:33:02,872-0400 INFO  GetFileHandler Handler(tag: 27, GET) unregistering (last)
+2017-07-28 12:33:02,872-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 12:33:02,911-0400 INFO  GetFileHandler Handler(tag: 28, GET) request complete; src=file://localhost/dakota/simulator_script
+2017-07-28 12:33:02,911-0400 INFO  GetFileHandler Handler(tag: 28, GET) reader: LR-Handler(tag: 28, GET)
+2017-07-28 12:33:02,911-0400 INFO  GetFileHandler Handler(tag: 28, GET) sending length: 1813, 1990282577
+2017-07-28 12:33:02,911-0400 INFO  ReadBuffer RB-LR-Handler(tag: 28, GET) will ask for 1 buffers for a size of 1813
+2017-07-28 12:33:02,912-0400 INFO  ReadBuffer RB-LR-Handler(tag: 28, GET) actual allocated buffers 1(0 queued)
+2017-07-28 12:33:02,912-0400 INFO  LocalIOProvider LR-Handler(tag: 28, GET) rbuf: RB-LR-Handler(tag: 28, GET)
+2017-07-28 12:33:02,912-0400 INFO  GetFileHandler Handler(tag: 28, GET) unregistering (last)
+2017-07-28 12:33:02,912-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 12:33:02,951-0400 INFO  GetFileHandler Handler(tag: 29, GET) request complete; src=file://localhost/dakota/dakota_DOE.in
+2017-07-28 12:33:02,951-0400 INFO  GetFileHandler Handler(tag: 29, GET) reader: LR-Handler(tag: 29, GET)
+2017-07-28 12:33:02,951-0400 INFO  GetFileHandler Handler(tag: 29, GET) sending length: 1665, 176278628
+2017-07-28 12:33:02,951-0400 INFO  ReadBuffer RB-LR-Handler(tag: 29, GET) will ask for 1 buffers for a size of 1665
+2017-07-28 12:33:02,952-0400 INFO  ReadBuffer RB-LR-Handler(tag: 29, GET) actual allocated buffers 1(0 queued)
+2017-07-28 12:33:02,952-0400 INFO  LocalIOProvider LR-Handler(tag: 29, GET) rbuf: RB-LR-Handler(tag: 29, GET)
+2017-07-28 12:33:02,952-0400 INFO  GetFileHandler Handler(tag: 29, GET) unregistering (last)
+2017-07-28 12:33:02,952-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 12:33:02,995-0400 INFO  GetFileHandler Handler(tag: 30, GET) request complete; src=file://localhost/openfoam/runOFA.sh
+2017-07-28 12:33:02,995-0400 INFO  GetFileHandler Handler(tag: 30, GET) reader: LR-Handler(tag: 30, GET)
+2017-07-28 12:33:02,995-0400 INFO  GetFileHandler Handler(tag: 30, GET) sending length: 750, 974660591
+2017-07-28 12:33:02,995-0400 INFO  ReadBuffer RB-LR-Handler(tag: 30, GET) will ask for 1 buffers for a size of 750
+2017-07-28 12:33:02,996-0400 INFO  ReadBuffer RB-LR-Handler(tag: 30, GET) actual allocated buffers 1(0 queued)
+2017-07-28 12:33:02,996-0400 INFO  LocalIOProvider LR-Handler(tag: 30, GET) rbuf: RB-LR-Handler(tag: 30, GET)
+2017-07-28 12:33:02,996-0400 INFO  GetFileHandler Handler(tag: 30, GET) unregistering (last)
+2017-07-28 12:33:02,996-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 12:33:03,095-0400 INFO  GetFileHandler Handler(tag: 31, GET) request complete; src=file://localhost/dakota/utils/dakota_cleanup
+2017-07-28 12:33:03,095-0400 INFO  GetFileHandler Handler(tag: 31, GET) reader: LR-Handler(tag: 31, GET)
+2017-07-28 12:33:03,095-0400 INFO  GetFileHandler Handler(tag: 31, GET) sending length: 110, 1490030637
+2017-07-28 12:33:03,095-0400 INFO  ReadBuffer RB-LR-Handler(tag: 31, GET) will ask for 1 buffers for a size of 110
+2017-07-28 12:33:03,095-0400 INFO  ReadBuffer RB-LR-Handler(tag: 31, GET) actual allocated buffers 1(0 queued)
+2017-07-28 12:33:03,095-0400 INFO  LocalIOProvider LR-Handler(tag: 31, GET) rbuf: RB-LR-Handler(tag: 31, GET)
+2017-07-28 12:33:03,095-0400 INFO  GetFileHandler Handler(tag: 31, GET) unregistering (last)
+2017-07-28 12:33:03,095-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 12:33:03,175-0400 INFO  GetFileHandler Handler(tag: 32, GET) request complete; src=file://localhost/dakota/utils/graph_sensitivity.py
+2017-07-28 12:33:03,176-0400 INFO  GetFileHandler Handler(tag: 32, GET) reader: LR-Handler(tag: 32, GET)
+2017-07-28 12:33:03,176-0400 INFO  GetFileHandler Handler(tag: 32, GET) sending length: 2055, 470883461
+2017-07-28 12:33:03,176-0400 INFO  ReadBuffer RB-LR-Handler(tag: 32, GET) will ask for 1 buffers for a size of 2055
+2017-07-28 12:33:03,176-0400 INFO  ReadBuffer RB-LR-Handler(tag: 32, GET) actual allocated buffers 1(0 queued)
+2017-07-28 12:33:03,176-0400 INFO  LocalIOProvider LR-Handler(tag: 32, GET) rbuf: RB-LR-Handler(tag: 32, GET)
+2017-07-28 12:33:03,176-0400 INFO  GetFileHandler Handler(tag: 32, GET) unregistering (last)
+2017-07-28 12:33:03,176-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 12:33:03,212-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 132120576, JVMThreads: 34
+2017-07-28 12:33:03,235-0400 INFO  GetFileHandler Handler(tag: 33, GET) request complete; src=file://localhost/openfoam/utils/pvutils.py
+2017-07-28 12:33:03,235-0400 INFO  GetFileHandler Handler(tag: 33, GET) reader: LR-Handler(tag: 33, GET)
+2017-07-28 12:33:03,235-0400 INFO  GetFileHandler Handler(tag: 33, GET) sending length: 20042, 678116064
+2017-07-28 12:33:03,235-0400 INFO  ReadBuffer RB-LR-Handler(tag: 33, GET) will ask for 1 buffers for a size of 20042
+2017-07-28 12:33:03,235-0400 INFO  ReadBuffer RB-LR-Handler(tag: 33, GET) actual allocated buffers 1(0 queued)
+2017-07-28 12:33:03,235-0400 INFO  LocalIOProvider LR-Handler(tag: 33, GET) rbuf: RB-LR-Handler(tag: 33, GET)
+2017-07-28 12:33:03,236-0400 INFO  GetFileHandler Handler(tag: 33, GET) unregistering (last)
+2017-07-28 12:33:03,236-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 12:33:03,275-0400 INFO  GetFileHandler Handler(tag: 34, GET) request complete; src=file://localhost/openfoam/utils/elbow3D_inputFile.py
+2017-07-28 12:33:03,275-0400 INFO  GetFileHandler Handler(tag: 34, GET) reader: LR-Handler(tag: 34, GET)
+2017-07-28 12:33:03,275-0400 INFO  GetFileHandler Handler(tag: 34, GET) sending length: 6038, 831315345
+2017-07-28 12:33:03,275-0400 INFO  ReadBuffer RB-LR-Handler(tag: 34, GET) will ask for 1 buffers for a size of 6038
+2017-07-28 12:33:03,275-0400 INFO  ReadBuffer RB-LR-Handler(tag: 34, GET) actual allocated buffers 1(0 queued)
+2017-07-28 12:33:03,275-0400 INFO  LocalIOProvider LR-Handler(tag: 34, GET) rbuf: RB-LR-Handler(tag: 34, GET)
+2017-07-28 12:33:03,275-0400 INFO  GetFileHandler Handler(tag: 34, GET) unregistering (last)
+2017-07-28 12:33:03,275-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 12:33:03,315-0400 INFO  GetFileHandler Handler(tag: 35, GET) request complete; src=file://localhost/openfoam/utils/makeGeom.sh
+2017-07-28 12:33:03,315-0400 INFO  GetFileHandler Handler(tag: 35, GET) reader: LR-Handler(tag: 35, GET)
+2017-07-28 12:33:03,315-0400 INFO  GetFileHandler Handler(tag: 35, GET) sending length: 1574, 539921834
+2017-07-28 12:33:03,315-0400 INFO  ReadBuffer RB-LR-Handler(tag: 35, GET) will ask for 1 buffers for a size of 1574
+2017-07-28 12:33:03,315-0400 INFO  ReadBuffer RB-LR-Handler(tag: 35, GET) actual allocated buffers 1(0 queued)
+2017-07-28 12:33:03,315-0400 INFO  LocalIOProvider LR-Handler(tag: 35, GET) rbuf: RB-LR-Handler(tag: 35, GET)
+2017-07-28 12:33:03,315-0400 INFO  GetFileHandler Handler(tag: 35, GET) unregistering (last)
+2017-07-28 12:33:03,315-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 12:33:03,355-0400 INFO  GetFileHandler Handler(tag: 36, GET) request complete; src=file://localhost/dakota/start_docker_surr.sh
+2017-07-28 12:33:03,355-0400 INFO  GetFileHandler Handler(tag: 36, GET) reader: LR-Handler(tag: 36, GET)
+2017-07-28 12:33:03,356-0400 INFO  GetFileHandler Handler(tag: 36, GET) sending length: 180, 981329983
+2017-07-28 12:33:03,356-0400 INFO  ReadBuffer RB-LR-Handler(tag: 36, GET) will ask for 1 buffers for a size of 180
+2017-07-28 12:33:03,356-0400 INFO  ReadBuffer RB-LR-Handler(tag: 36, GET) actual allocated buffers 1(0 queued)
+2017-07-28 12:33:03,356-0400 INFO  LocalIOProvider LR-Handler(tag: 36, GET) rbuf: RB-LR-Handler(tag: 36, GET)
+2017-07-28 12:33:03,356-0400 INFO  GetFileHandler Handler(tag: 36, GET) unregistering (last)
+2017-07-28 12:33:03,356-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 12:33:03,435-0400 INFO  GetFileHandler Handler(tag: 37, GET) request complete; src=file://localhost/openfoam/inputs/elbowKPI.json
+2017-07-28 12:33:03,435-0400 INFO  GetFileHandler Handler(tag: 37, GET) reader: LR-Handler(tag: 37, GET)
+2017-07-28 12:33:03,435-0400 INFO  GetFileHandler Handler(tag: 37, GET) sending length: 1211, 667613009
+2017-07-28 12:33:03,435-0400 INFO  ReadBuffer RB-LR-Handler(tag: 37, GET) will ask for 1 buffers for a size of 1211
+2017-07-28 12:33:03,435-0400 INFO  ReadBuffer RB-LR-Handler(tag: 37, GET) actual allocated buffers 1(0 queued)
+2017-07-28 12:33:03,435-0400 INFO  LocalIOProvider LR-Handler(tag: 37, GET) rbuf: RB-LR-Handler(tag: 37, GET)
+2017-07-28 12:33:03,435-0400 INFO  GetFileHandler Handler(tag: 37, GET) unregistering (last)
+2017-07-28 12:33:03,435-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 12:33:03,519-0400 INFO  GetFileHandler Handler(tag: 38, GET) request complete; src=file://localhost/openfoam/inputs/sweepParams.run
+2017-07-28 12:33:03,519-0400 INFO  GetFileHandler Handler(tag: 38, GET) reader: LR-Handler(tag: 38, GET)
+2017-07-28 12:33:03,519-0400 INFO  GetFileHandler Handler(tag: 38, GET) sending length: 227, 1230034050
+2017-07-28 12:33:03,519-0400 INFO  ReadBuffer RB-LR-Handler(tag: 38, GET) will ask for 1 buffers for a size of 227
+2017-07-28 12:33:03,519-0400 INFO  ReadBuffer RB-LR-Handler(tag: 38, GET) actual allocated buffers 1(0 queued)
+2017-07-28 12:33:03,520-0400 INFO  LocalIOProvider LR-Handler(tag: 38, GET) rbuf: RB-LR-Handler(tag: 38, GET)
+2017-07-28 12:33:03,520-0400 INFO  GetFileHandler Handler(tag: 38, GET) unregistering (last)
+2017-07-28 12:33:03,520-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 12:33:03,599-0400 INFO  GetFileHandler Handler(tag: 39, GET) request complete; src=file://localhost/dakota/utils/dprepro
+2017-07-28 12:33:03,599-0400 INFO  GetFileHandler Handler(tag: 39, GET) reader: LR-Handler(tag: 39, GET)
+2017-07-28 12:33:03,599-0400 INFO  GetFileHandler Handler(tag: 39, GET) sending length: 12889, 556769393
+2017-07-28 12:33:03,599-0400 INFO  ReadBuffer RB-LR-Handler(tag: 39, GET) will ask for 1 buffers for a size of 12889
+2017-07-28 12:33:03,600-0400 INFO  ReadBuffer RB-LR-Handler(tag: 39, GET) actual allocated buffers 1(0 queued)
+2017-07-28 12:33:03,600-0400 INFO  LocalIOProvider LR-Handler(tag: 39, GET) rbuf: RB-LR-Handler(tag: 39, GET)
+2017-07-28 12:33:03,600-0400 INFO  GetFileHandler Handler(tag: 39, GET) unregistering (last)
+2017-07-28 12:33:03,600-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 12:33:03,659-0400 INFO  GetFileHandler Handler(tag: 40, GET) request complete; src=file://localhost//core/xinchen/swift-k/dist/swift-svn/libexec/_swiftwrap.staging
+2017-07-28 12:33:03,659-0400 INFO  GetFileHandler Handler(tag: 40, GET) reader: LR-Handler(tag: 40, GET)
+2017-07-28 12:33:03,659-0400 INFO  GetFileHandler Handler(tag: 40, GET) sending length: 15067, 1034371392
+2017-07-28 12:33:03,659-0400 INFO  ReadBuffer RB-LR-Handler(tag: 40, GET) will ask for 1 buffers for a size of 15067
+2017-07-28 12:33:03,659-0400 INFO  ReadBuffer RB-LR-Handler(tag: 40, GET) actual allocated buffers 1(0 queued)
+2017-07-28 12:33:03,659-0400 INFO  LocalIOProvider LR-Handler(tag: 40, GET) rbuf: RB-LR-Handler(tag: 40, GET)
+2017-07-28 12:33:03,670-0400 INFO  GetFileHandler Handler(tag: 40, GET) unregistering (last)
+2017-07-28 12:33:03,670-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 12:33:03,719-0400 INFO  GetFileHandler Handler(tag: 41, GET) request complete; src=file://localhost/swift.conf
+2017-07-28 12:33:03,719-0400 INFO  GetFileHandler Handler(tag: 41, GET) reader: LR-Handler(tag: 41, GET)
+2017-07-28 12:33:03,720-0400 INFO  GetFileHandler Handler(tag: 41, GET) sending length: 773, 1300214147
+2017-07-28 12:33:03,720-0400 INFO  ReadBuffer RB-LR-Handler(tag: 41, GET) will ask for 1 buffers for a size of 773
+2017-07-28 12:33:03,720-0400 INFO  ReadBuffer RB-LR-Handler(tag: 41, GET) actual allocated buffers 1(0 queued)
+2017-07-28 12:33:03,720-0400 INFO  LocalIOProvider LR-Handler(tag: 41, GET) rbuf: RB-LR-Handler(tag: 41, GET)
+2017-07-28 12:33:03,720-0400 INFO  GetFileHandler Handler(tag: 41, GET) unregistering (last)
+2017-07-28 12:33:03,720-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 12:33:03,799-0400 INFO  GetFileHandler Handler(tag: 42, GET) request complete; src=file://localhost/dakota/runDakota.sh
+2017-07-28 12:33:03,799-0400 INFO  GetFileHandler Handler(tag: 42, GET) reader: LR-Handler(tag: 42, GET)
+2017-07-28 12:33:03,799-0400 INFO  GetFileHandler Handler(tag: 42, GET) sending length: 2036, 1528987182
+2017-07-28 12:33:03,799-0400 INFO  ReadBuffer RB-LR-Handler(tag: 42, GET) will ask for 1 buffers for a size of 2036
+2017-07-28 12:33:03,799-0400 INFO  ReadBuffer RB-LR-Handler(tag: 42, GET) actual allocated buffers 1(0 queued)
+2017-07-28 12:33:03,799-0400 INFO  LocalIOProvider LR-Handler(tag: 42, GET) rbuf: RB-LR-Handler(tag: 42, GET)
+2017-07-28 12:33:03,800-0400 INFO  GetFileHandler Handler(tag: 42, GET) unregistering (last)
+2017-07-28 12:33:03,800-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 12:33:03,839-0400 INFO  GetFileHandler Handler(tag: 43, GET) request complete; src=file://localhost/openfoam/utils/extract.py
+2017-07-28 12:33:03,839-0400 INFO  GetFileHandler Handler(tag: 43, GET) reader: LR-Handler(tag: 43, GET)
+2017-07-28 12:33:03,839-0400 INFO  GetFileHandler Handler(tag: 43, GET) sending length: 4613, 121468571
+2017-07-28 12:33:03,839-0400 INFO  ReadBuffer RB-LR-Handler(tag: 43, GET) will ask for 1 buffers for a size of 4613
+2017-07-28 12:33:03,839-0400 INFO  ReadBuffer RB-LR-Handler(tag: 43, GET) actual allocated buffers 1(0 queued)
+2017-07-28 12:33:03,839-0400 INFO  LocalIOProvider LR-Handler(tag: 43, GET) rbuf: RB-LR-Handler(tag: 43, GET)
+2017-07-28 12:33:03,840-0400 INFO  GetFileHandler Handler(tag: 43, GET) unregistering (last)
+2017-07-28 12:33:03,840-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 12:33:03,883-0400 INFO  Execute TASK_STATUS_CHANGE taskid=task-18 status=2 workerid=local:000000
+2017-07-28 12:33:04,212-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 19462480, JVMThreads: 34
+2017-07-28 12:33:04,213-0400 INFO  RuntimeStats$ProgressTicker   Active:1
+2017-07-28 12:33:05,213-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 19462480, JVMThreads: 34
+2017-07-28 12:33:06,213-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 19462480, JVMThreads: 34
+2017-07-28 12:33:06,752-0400 INFO  Execute TASK_STATUS_CHANGE taskid=task-18 status=17
+2017-07-28 12:33:06,753-0400 INFO  PutFileHandler Handler(tag: 46, PUT) source: /tmp/swiftwork/dakota-run002/jobs/p/prepInputs-z9puhnbn-0/_stderr.txt
+2017-07-28 12:33:06,753-0400 INFO  PutFileHandler Handler(tag: 46, PUT) destination: file://localhost/run002/dakota-run002.d/prepInputs-z9puhnbn-0.stderr
+2017-07-28 12:33:06,754-0400 INFO  PutFileHandler Handler(tag: 46, PUT) Transfer done
+2017-07-28 12:33:06,754-0400 INFO  PutFileHandler Handler(tag: 47, PUT) source: /tmp/swiftwork/dakota-run002/jobs/p/prepInputs-z9puhnbn-0/_wrapper.error
+2017-07-28 12:33:06,754-0400 INFO  PutFileHandler Handler(tag: 47, PUT) destination: file://localhost/run002/dakota-run002.d/prepInputs-z9puhnbn-0.error
+2017-07-28 12:33:06,755-0400 INFO  PutFileHandler Handler(tag: 48, PUT) source: /tmp/swiftwork/dakota-run002/jobs/p/prepInputs-z9puhnbn-0/logs/dakota.out
+2017-07-28 12:33:06,755-0400 INFO  PutFileHandler Handler(tag: 47, PUT) Transfer done
+2017-07-28 12:33:06,755-0400 INFO  PutFileHandler Handler(tag: 48, PUT) destination: file://localhost/logs/dakota.out
+2017-07-28 12:33:06,755-0400 INFO  PutFileHandler Handler(tag: 48, PUT) Transfer done
+2017-07-28 12:33:06,755-0400 INFO  PutFileHandler Handler(tag: 49, PUT) source: /tmp/swiftwork/dakota-run002/jobs/p/prepInputs-z9puhnbn-0/_wrapper.log
+2017-07-28 12:33:06,755-0400 INFO  PutFileHandler Handler(tag: 49, PUT) destination: file://localhost/run002/dakota-run002.d/prepInputs-z9puhnbn-0.info
+2017-07-28 12:33:06,756-0400 INFO  PutFileHandler Handler(tag: 49, PUT) Transfer done
+2017-07-28 12:33:06,756-0400 INFO  PutFileHandler Handler(tag: 50, PUT) source: /tmp/swiftwork/dakota-run002/jobs/p/prepInputs-z9puhnbn-0/results/out.html
+2017-07-28 12:33:06,756-0400 INFO  PutFileHandler Handler(tag: 50, PUT) destination: file://localhost/results/out.html
+2017-07-28 12:33:06,756-0400 INFO  PutFileHandler Handler(tag: 50, PUT) Transfer done
+2017-07-28 12:33:06,756-0400 INFO  PutFileHandler Handler(tag: 51, PUT) source: /tmp/swiftwork/dakota-run002/jobs/p/prepInputs-z9puhnbn-0/results/out.dat
+2017-07-28 12:33:06,756-0400 INFO  PutFileHandler Handler(tag: 51, PUT) destination: file://localhost/results/out.dat
+2017-07-28 12:33:06,756-0400 INFO  PutFileHandler Handler(tag: 51, PUT) Transfer done
+2017-07-28 12:33:06,756-0400 INFO  PutFileHandler Handler(tag: 52, PUT) source: /tmp/swiftwork/dakota-run002/jobs/p/prepInputs-z9puhnbn-0/logs/prep.out
+2017-07-28 12:33:06,756-0400 INFO  PutFileHandler Handler(tag: 52, PUT) destination: file://localhost/logs/prep.out
+2017-07-28 12:33:06,756-0400 INFO  PutFileHandler Handler(tag: 52, PUT) Transfer done
+2017-07-28 12:33:06,756-0400 INFO  PutFileHandler Handler(tag: 53, PUT) source: /tmp/swiftwork/dakota-run002/jobs/p/prepInputs-z9puhnbn-0/logs/prep.err
+2017-07-28 12:33:06,756-0400 INFO  PutFileHandler Handler(tag: 53, PUT) destination: file://localhost/logs/prep.err
+2017-07-28 12:33:06,756-0400 INFO  PutFileHandler Handler(tag: 53, PUT) Transfer done
+2017-07-28 12:33:06,756-0400 INFO  PutFileHandler Handler(tag: 54, PUT) source: /tmp/swiftwork/dakota-run002/jobs/p/prepInputs-z9puhnbn-0/logs/dakota.err
+2017-07-28 12:33:06,756-0400 INFO  PutFileHandler Handler(tag: 54, PUT) destination: file://localhost/logs/dakota.err
+2017-07-28 12:33:06,757-0400 INFO  PutFileHandler Handler(tag: 54, PUT) Transfer done
+2017-07-28 12:33:06,757-0400 INFO  PutFileHandler Handler(tag: 55, PUT) source: /tmp/swiftwork/dakota-run002/jobs/p/prepInputs-z9puhnbn-0/_stdout.txt
+2017-07-28 12:33:06,757-0400 INFO  PutFileHandler Handler(tag: 55, PUT) destination: file://localhost/run002/dakota-run002.d/prepInputs-z9puhnbn-0.stdout
+2017-07-28 12:33:06,757-0400 INFO  PutFileHandler Handler(tag: 55, PUT) Transfer done
+2017-07-28 12:33:06,843-0400 INFO  Execute TASK_STATUS_CHANGE taskid=task-18 status=5 Process completed with exit code 1
+2017-07-28 12:33:06,845-0400 INFO  LateBindingScheduler jobs queued: 0
+2017-07-28 12:33:06,846-0400 INFO  LateBindingScheduler jobs queued: 0
+2017-07-28 12:33:06,848-0400 INFO  LateBindingScheduler jobs queued: 0
+2017-07-28 12:33:06,848-0400 INFO  LateBindingScheduler jobs queued: 0
+2017-07-28 12:33:06,849-0400 DEBUG swift APPLICATION_EXCEPTION jobid=prepInputs-z9puhnbn-0 - Application exception: Application /bin/bash failed with an exit code of 1
+Job failed: Process completed with exit code 127
+tar: This does not look like a tar archive
+
+gzip: stdin: not in gzip format
+tar: Child returned status 1
+tar: Error is not recoverable: exiting now
+tail: cannot open 'outputs/case0/metrics.csv' for reading: No such file or directory
+Error(s) encountered reading results file work_dir/dakota_tmp.2/results.out for Evaluation 2:
+-- Expected 2 function value(s) but found 0.
+mkdir: cannot create directory 'results': File exists
+	exception @ swift-int-staging.k, line: 182
+Caused by: Process completed with exit code 1
+
+2017-07-28 12:33:06,849-0400 INFO  swift END_FAILURE jobid=prepInputs-z9puhnbn tr=prepInputs
+2017-07-28 12:33:06,850-0400 INFO  swift Exception in prepInputs:
+    Host: linuxpool
+    Directory: dakota-run002/jobs/p/prepInputs-z9puhnbn-0
+	exception @ swift-int-staging.k, line: 187
+	providerStaging:execute2 @ swift.k, line: 126
+	executeSelect @ swift.k, line: 193
+Caused by: Application /bin/bash failed with an exit code of 1
+Job failed: Process completed with exit code 127
+tar: This does not look like a tar archive
+
+gzip: stdin: not in gzip format
+tar: Child returned status 1
+tar: Error is not recoverable: exiting now
+tail: cannot open 'outputs/case0/metrics.csv' for reading: No such file or directory
+Error(s) encountered reading results file work_dir/dakota_tmp.2/results.out for Evaluation 2:
+-- Expected 2 function value(s) but found 0.
+mkdir: cannot create directory 'results': File exists
+	exception @ swift-int-staging.k, line: 182
+Caused by: Process completed with exit code 1
+
+	k:assign @ swift.k, line: 157
+Caused by: Exception in prepInputs:
+    Host: linuxpool
+    Directory: dakota-run002/jobs/p/prepInputs-z9puhnbn-0
+	exception @ swift-int-staging.k, line: 187
+	providerStaging:execute2 @ swift.k, line: 126
+	executeSelect @ swift.k, line: 193
+Caused by: Application /bin/bash failed with an exit code of 1
+Job failed: Process completed with exit code 127
+tar: This does not look like a tar archive
+
+gzip: stdin: not in gzip format
+tar: Child returned status 1
+tar: Error is not recoverable: exiting now
+tail: cannot open 'outputs/case0/metrics.csv' for reading: No such file or directory
+Error(s) encountered reading results file work_dir/dakota_tmp.2/results.out for Evaluation 2:
+-- Expected 2 function value(s) but found 0.
+mkdir: cannot create directory 'results': File exists
+	exception @ swift-int-staging.k, line: 182
+Caused by: Process completed with exit code 1
+
+2017-07-28 12:33:06,850-0400 DEBUG swift PROCEDURE_END line=34 thread=2-0-18-15 name=prepInputs
+2017-07-28 12:33:06,850-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 30654848, JVMThreads: 38
+2017-07-28 12:33:06,850-0400 INFO  RuntimeStats$ProgressTicker   Failed:1
+2017-07-28 12:33:06,857-0400 INFO  swift Errors detected. Cleanup not done.
+2017-07-28 12:33:06,858-0400 INFO  Executor Run failed
+Execution completed with errors
+	throw @ swift.k, line: 112
+	swift:mains @ dakota, line: 158
+
+	at org.globus.cog.karajan.compiled.nodes.Throw.runBody(Throw.java:51)
+	at org.globus.cog.karajan.compiled.nodes.InternalFunction.run(InternalFunction.java:175)
+	at org.globus.cog.karajan.compiled.nodes.CompoundNode.runChild(CompoundNode.java:112)
+	at org.globus.cog.karajan.compiled.nodes.Sequential.run(Sequential.java:41)
+	at org.globus.cog.karajan.compiled.nodes.If.run(If.java:184)
+	at org.globus.cog.karajan.compiled.nodes.CompoundNode.runChild(CompoundNode.java:112)
+	at org.globus.cog.karajan.compiled.nodes.Sequential.run(Sequential.java:41)
+	at org.globus.cog.karajan.compiled.nodes.user.Function.runBody(Function.java:123)
+	at org.globus.cog.karajan.compiled.nodes.user.InvocationWrapper.runBody(InvocationWrapper.java:288)
+	at org.globus.cog.karajan.compiled.nodes.user.InvocationWrapper.run(InvocationWrapper.java:93)
+	at org.globus.cog.karajan.compiled.nodes.CompoundNode.runChild(CompoundNode.java:112)
+	at org.globus.cog.karajan.compiled.nodes.Sequential.run(Sequential.java:41)
+	at org.griphyn.vdl.karajan.lib.restartLog.RestartLog.runBody(RestartLog.java:104)
+	at org.globus.cog.karajan.compiled.nodes.InternalFunction.run(InternalFunction.java:175)
+	at org.globus.cog.karajan.compiled.nodes.CompoundNode.runChild(CompoundNode.java:112)
+	at org.globus.cog.karajan.compiled.nodes.FramedInternalFunction.run(FramedInternalFunction.java:82)
+	at k.thr.LWThread.run(LWThread.java:291)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+	at java.lang.Thread.run(Thread.java:748)
+2017-07-28 12:33:06,860-0400 INFO  Loader Swift finished with errors
+2017-07-28 12:33:06,861-0400 INFO  ChannelManager Notifying peers of shutdown

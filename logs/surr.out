@@ -1,0 +1,142 @@
+Running Surrogate Analysis
+Dakota version 6.5 released Dec  7 2016.
+Repository revision f928f89 (2016-11-10) built Dec  7 2016 15:24:52.
+Running serial Dakota executable in serial mode.
+Start time: Fri Jul 28 17:01:26 2017
+
+--------------------------
+Begin DAKOTA input file
+templatedir/dakota_surr.in
+--------------------------
+environment
+ tabular_data
+  tabular_data_file = 'out_points.dat'
+  method_pointer = 'METHOD_ON_SURR'
+  custom_annotated header eval_id	# no interface column
+
+method
+ id_method = 'METHOD_ON_SURR'
+ model_pointer = 'SURR_MODEL'
+   
+ list_parameter_study
+    import_points_file = 'points.dat'
+    freeform
+
+ # use the settings below to test the surrogate model
+ #sampling
+ #sample_type lhs
+ #seed = 52983
+ #samples = 100
+
+model                                                 
+ id_model = 'SURR_MODEL'                                
+ surrogate global                                                        
+ dace_method_pointer = 'DACE'  
+   samples_file = 'out.dat' 
+ custom_annotated header eval_id	# no interface column
+   gaussian_process surfpack 
+
+method
+ id_method = 'DACE'                              
+ model_pointer = 'DACE_M'     
+ sampling
+ sample_type lhs
+ seed = 1
+ samples = 0 # specify zero here to load surrogate samples from text file
+
+model                                                 
+ id_model = 'DACE_M'                             
+ single                                                   
+ variables_pointer = 'V1' 
+ interface_pointer = 'I1'                     
+ responses_pointer = 'R1' 
+
+variables
+ id_variables = 'V1'
+ uniform_uncertain = 2
+ upper_bounds      40 10.0  
+ lower_bounds      32 1.0
+ descriptors  'L2' 'Inlet1_Velocity'
+
+interface
+ id_interface = 'I1'  
+  fork
+   asynchronous 
+    evaluation_concurrency = 100 # high for swift parallel runs
+    local_evaluation_scheduling dynamic 
+    analysis_driver = 'simulator_script'
+    parameters_file = 'params.in'
+  	results_file    = 'results.out'
+  	work_directory directory_tag
+    copy_files = 'templatedir/*'
+    # named 'workdir' file_save directory_save
+  	aprepro
+    deactivate active_set_vector
+
+responses
+ id_responses = 'R1'   
+ num_response_functions = 2
+ response_descriptors =  'ClipUy'  'lineP' 
+ no_gradients
+ no_hessians
+---------------------
+End DAKOTA input file
+---------------------
+
+Using Dakota input file 'templatedir/dakota_surr.in'
+Writing new restart file dakota.rst
+Surrogate model retrieving points with 2 variables and 2 response functions from file out.dat
+Surrogate model retrieved 10 total points.
+
+>>>>> Executing environment.
+
+>>>>> Running list_parameter_study iterator.
+
+List parameter study for 8 samples
+
+
+>>>>> Building global_kriging approximations.
+Constructing global approximations with no anchor, 0 DACE samples, and 10 reused points.
+--- Surfpack Kriging Diagnostics ---
+KM: #real inputs=2; #pts=10; used 10/10 pts;
+using the Gaussian correlation function with (unscaled)
+Correlation lengths=[9.36177, 22.7624]^T
+found by the "global" optimization_method;
+unadjusted variance=0.222407; "per equation" log(likelihood)=7.59774;
+rcond(R)=2.16123e-08; rcond(G_Rinv_Gtran)=0.0705476; [if either rcond is less
+than 2^-40 (approx 9.095*10^-13) then the matrix is ill-conditioned and
+that "voids the warranty" of the Kriging Model]; nugget=0.  A reduced_polynomial
+of order 2 (with 5 terms) was requested for the trend function; the build
+data was sufficient to use the requested trend function; the highest total
+polynomial order of any term in the utlized trend function is 2;
+for SCALED inputs and outputs the utilized trend function is
+betaHat^T*g(x)=0.0298494 + 0.0167837*x0 + 1.02508*x1 ...
+               -0.0670011*x0^2 -0.00179531*x1^2
+------------------------------------
+--- Surfpack Kriging Diagnostics ---
+KM: #real inputs=2; #pts=10; used 10/10 pts;
+using the Gaussian correlation function with (unscaled)
+Correlation lengths=[3.64832, 0.7117]^T
+found by the "global" optimization_method;
+unadjusted variance=0.00135567; "per equation" log(likelihood)=6.25067;
+rcond(R)=0.0636124; rcond(G_Rinv_Gtran)=0.0394988; [if either rcond is less
+than 2^-40 (approx 9.095*10^-13) then the matrix is ill-conditioned and
+that "voids the warranty" of the Kriging Model]; nugget=0.  A reduced_polynomial
+of order 2 (with 5 terms) was requested for the trend function; the build
+data was sufficient to use the requested trend function; the highest total
+polynomial order of any term in the utlized trend function is 2;
+for SCALED inputs and outputs the utilized trend function is
+betaHat^T*g(x)=-0.179946 -0.000899279*x0 + 1.04333*x1 ...
+               -0.00505994*x0^2 + 0.772142*x1^2
+------------------------------------
+
+<<<<< global_kriging approximation builds completed.
+Beginning Approximate Fn Evaluations...
+<<<<< Function evaluation summary (APPROX_INTERFACE): 8 total (8 new, 0 duplicate)
+<<<<< Function evaluation summary (I1): 0 total (0 new, 0 duplicate)
+
+<<<<< Iterator list_parameter_study completed.
+<<<<< Environment execution completed.
+DAKOTA execution time in seconds:
+  Total CPU        =   0.634777 [parent =   0.634774, child =      3e-06]
+  Total wall clock =   0.635096
