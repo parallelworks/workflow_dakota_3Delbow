@@ -1,0 +1,14 @@
+R;ofa;8
+r;ofa;2
+L1;ofa;32
+L2;ofa;32_40
+Rcurve;ofa;24
+xIn2;ofa;54.5
+yIn2;ofa;-4.5
+Inlet1_Velocity;ofa;1.0_10.0
+Inlet2_Velocity;ofa;4.0
+endTime;ofa;5.0
+writeInterval;ofa;1.0
+meshMinLevel;ofa;0
+meshMaxLevel;ofa;1
+num_exp;dakota;10

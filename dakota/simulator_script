@@ -1,0 +1,86 @@
+#! /bin/bash
+echo "arg1 is: $1"
+echo "arg2 is: $2"
+
+
+# get the coaster service address
+coasterurl=$(cat swift.conf | grep URL | sed "s/URL: \"//g" | sed "s/\"//")
+
+dprepro $1 input.template input.in --output-format="%f"
+#echo "inlet5_X,5,inlet6_Y,7" > input.in
+cat input.in
+
+mkdir outputs
+#mkdir outputs/case0
+#mkdir outputs/errorFiles
+#mkdir outputs/logFiles
+#mkdir outputs/logFiles/salPortNums
+#mkdir outputs/png
+#mkdir outputs/png/0
+mkdir outputs/simParamFiles
+
+cp input.in outputs/simParamFiles/caseParamFile0.in
+
+#tar xvf transferin.tar
+#chmod 777 -R *
+#./utils/runOpenfoam.sh sample_inputs/elbow.tgz sample_inputs/elbow.pvsm $(cat input.in) out.tgz out.png
+
+
+
+
+
+
+
+
+
+
+
+
+#just create results.txt file to register it for transfer
+
+fileid=$(cat input.in | sed 's/ /,/g' | tr -d '\n' | cut -c 1-200)
+
+echo "placeholder" > ${fileid}.tar.gz
+#echo "placeholder" > results.txt
+
+
+
+echo $coasterurl
+
+#swift_driver "python p1.py" "$coasterurl"
+#ls
+#echo "tar xvf transferin.tar"  > untar_and_runofa.sh
+#echo "./utils/runOpenfoam.sh sample_inputs/elbow.tgz sample_inputs/elbow.pvsm $(cat input.in) out.tgz out.png"  >> untar_and_runofa.sh
+
+chmod 777 -R *
+
+#swift_driver "./utils/runOpenfoam.sh sample_inputs/elbow.tgz sample_inputs/elbow.pvsm $(cat input.in) out.tgz out.png" "$coasterurl"
+
+#swift_driver "untar_and_run.sh elbow.tgz null $(cat input.in) out.tgz null" "$coasterurl"
+
+tar cvf cog_transfer.tar *
+swift_driver "runOFA.sh" "$coasterurl"
+
+#echo "1" > $2
+#echo "2" >> $2
+./tree 
+#exit 0
+
+tar xf ${fileid}.tar.gz
+tail -n +2 outputs/case0/metrics.csv | cut -d "," -f 2 > results.txt
+
+#swift_driver "chmod 777 -R *" "$coasterurl"
+#cat output.txt
+#swift_driver "ls -fl" "$coasterurl"
+#ls -fl
+
+cat output.txt
+cat sim.log
+cat results.txt
+pwd
+#echo abc > tmp.txt
+#python p1.py
+#cat input.in
+cp results.txt $2
+
+ls -fl
