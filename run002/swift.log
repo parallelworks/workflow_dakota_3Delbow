@@ -1,0 +1,832 @@
+2017-07-28 14:11:36,251-0400 INFO  Loader JAVA Oracle Corporation Java HotSpot(TM) 64-Bit Server VM 1.8.0_131
+2017-07-28 14:11:36,252-0400 INFO  Loader VERSION Swift trunk git-rev: 04208acc2a9af9ea900ae5c4a1d01bcc93ac07d2 heads/master 6744
+2017-07-28 14:11:36,252-0400 INFO  Loader RUN_ID run002
+2017-07-28 14:11:36,253-0400 INFO  Loader ARGUMENTS [-runid, run002, -logfile, /core/xinchen/workflow_dakota_3Delbow/run002/swift.log, dakota.swift]
+2017-07-28 14:11:36,253-0400 INFO  Loader MAX_HEAP 954728448
+2017-07-28 14:11:36,253-0400 INFO  Loader GLOBUS_HOSTNAME dev.parallel.works
+2017-07-28 14:11:36,253-0400 INFO  Loader CWD /core/xinchen/workflow_dakota_3Delbow/.
+2017-07-28 14:11:36,254-0400 DEBUG Loader SWIFT_CONFIGURATION 
+[D] /core/xinchen/swift-k/dist/swift-svn/etc/swift.conf
+[R] swift.conf
+[C] <Command Line>
+{
+	TCPPortRange: "50000, 50100"                               # [D] line 27
+	alwaysTransferWrapperLog: false                            # [R] line 41
+	executionRetries: 0                                        # [R] line 38
+	fileOperationsThrottle: 8                                  # [D] line 121
+	fileTransfersThrottle: 4                                   # [D] line 107
+	hostJobSubmitThrottle: 2                                   # [D] line 95
+	jobSubmitThrottle: 4                                       # [D] line 83
+	keepSiteDir: true                                          # [R] line 39
+	lazyErrors: true                                           # [R] line 37
+	logProvenance: false                                       # [D] line 200
+	maxForeachThreads: 16384                                   # [D] line 194
+	providerStagingPinSwiftFiles: false                        # [R] line 40
+	replicationEnabled: false                                  # [D] line 146
+	replicationLimit: 3                                        # [D] line 157
+	replicationMinQueueTime: 60                                # [D] line 153
+	site {
+		linuxpool {
+			app.ALL.executable: "*"                                  # [R] line 16
+			execution {
+				URL: "http://52.38.246.211:4030"                        # [R] line 6
+				type: "coaster-persistent"                              # [R] line 5
+			}
+			initialParallelTasks: 999999                             # [R] line 9
+			maxParallelTasks: 999999                                 # [R] line 10
+			staging: "local"                                         # [R] line 8
+			workDirectory: "/tmp/swiftwork"                          # [R] line 11
+		}
+		local {
+			app.ALL.executable: "*"                                  # [D] line 232
+			execution.type: "local"                                  # [D] line 223
+			filesystem.type: "local"                                 # [D] line 226
+			workDirectory: "swiftwork"                               # [D] line 229
+		}
+	}
+	sites: [linuxpool]                                         # [R] line 1
+	tracingEnabled: false                                      # [D] line 51
+}
+
+2017-07-28 14:11:36,255-0400 DEBUG textfiles BEGIN SWIFTSCRIPT:
+# GENERAL DAKOTA CASE RUNNER
+type file;
+
+# -- INPUT / OUTPUT DEFINITIONS
+# Parallel.Works automates the creation of the Swift run command using your workflow definition
+# Swift needs to pick up the run arguments with the arg() command
+
+# inputs
+#file casein         <arg("case","dakota/dakota_case.in")>;
+
+# outputs
+file outdat         <arg("dat","results/out.dat")>;
+file outhtml        <arg("html","results/out.html")>;
+file outtar         <arg("tar","results/out.tar")>;
+# these are external files needed by the Swift workflow
+#file execute        <"runDakota.sh">;
+file swiftconf      <"swift.conf">;
+#file openfoamcase   <"
+#file[] utils        <FilesysMapper;location="utils">;
+
+file[] openfoam <Ext;exec="mapper.sh",root="openfoam">; 
+file[] dakota <Ext;exec="mapper.sh",root="dakota">; 
+file[] templatedir <Ext;exec="mapper.sh",root="templatedir">; 
+file[] templatedir_ofa <Ext;exec="mapper_ofa.sh">;
+ 
+# -- APP DEFINITIONS
+# this app generates the list of fitness values
+#app (file pout,file perr,file outd,file outh) runDAKOTA (file[] templatedir, file[] dakota, file swiftconf, string i5xmin, string i5xmax, string i6ymin, string i6ymax, string ncase) {
+#    bash "dakota/update_params.sh" i5xmin i5xmax i6ymin i6ymax ncase "dakota/dakota_case.in" "dakota/runDakota.sh"; # stdout=@pout stderr=@perr;
+#    bash "dakota/start_docker.sh" stdout=@pout stderr=@perr;
+#}
+
+
+app (file pout, file perr, file dout, file derr, file outdat, file outhtml ) prepInputs (file[] openfoam, file[] dakota, file swiftconf) {
+    bash "dakota/utils/prepInputs.sh" "inputs/sweepParams.run" "inputs/elbowKPI.json" stdout=@pout stderr=@perr;
+#	tree stdout=@pout stderr=@perr;
+    bash "templatedir/start_docker.sh" stdout=@dout stderr=@derr;
+}
+
+#app (file pout, file perr) tree (file[] openfoam)
+#{
+#    tree stdout=@pout stderr=@perr;
+#}
+
+# -- WORKFLOW COMMANDS
+# this commpand runs app specified above
+file pout   <"logs/prep.out">;
+file perr   <"logs/prep.err">;
+file dout   <"logs/dakota.out">;
+file derr   <"logs/dakota.err">;
+(pout,perr, dout, derr, outdat, outhtml) = prepInputs(openfoam, dakota, swiftconf);
+#(dout,derr,outdat,outhtml) = runDAKOTA(templatedir_ofa,dakota,swiftconf, inlet5_X_min, inlet5_X_max, inlet6_Y_min, inlet6_Y_max, num_cases);
+
+#(sout,serr)=tree(openfoam);
+
+
+2017-07-28 14:11:36,255-0400 DEBUG textfiles END SWIFTSCRIPT:
+2017-07-28 14:11:36,255-0400 DEBUG Loader kmlversion is >03153d0c-11a0-45f9-8495-1d1a00295d88-no-provenance<
+2017-07-28 14:11:36,255-0400 DEBUG Loader build version is >03153d0c-11a0-45f9-8495-1d1a00295d88-no-provenance<
+2017-07-28 14:11:36,255-0400 DEBUG Loader Recompilation suppressed.
+2017-07-28 14:11:36,599-0400 INFO  Loader RUN_START
+2017-07-28 14:11:36,601-0400 INFO  SwiftExecutor swift.home = /core/xinchen/swift-k/dist/swift-svn
+2017-07-28 14:11:36,620-0400 INFO  AbstractScheduler Setting resources to: {linuxpool=linuxpool}
+2017-07-28 14:11:36,626-0400 INFO  GlobalSubmitQueue No global submit throttle set. Using default (1024)
+2017-07-28 14:11:36,635-0400 INFO  LateBindingScheduler jobs queued: 0
+2017-07-28 14:11:36,637-0400 INFO  LateBindingScheduler jobs queued: 0
+2017-07-28 14:11:36,639-0400 INFO  LateBindingScheduler jobs queued: 0
+2017-07-28 14:11:36,664-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 81927520, JVMThreads: 16
+2017-07-28 14:11:36,665-0400 INFO  RuntimeStats$ProgressTicker 
+2017-07-28 14:11:36,674-0400 DEBUG swift PROCEDURE line=34 thread=2-0-18-15 name=prepInputs
+2017-07-28 14:11:36,740-0400 DEBUG swift JOB_INIT jobid=prepInputs-j9oslnbn tr=prepInputs
+2017-07-28 14:11:36,740-0400 DEBUG swift JOB_SITE_SELECT jobid=prepInputs-j9oslnbn-0
+2017-07-28 14:11:36,742-0400 DEBUG swift THREAD_ASSOCIATION jobid=prepInputs-j9oslnbn-0 host=linuxpool thread=2-0-18-15
+2017-07-28 14:11:36,744-0400 DEBUG swift JOB_START jobid=prepInputs-j9oslnbn-0 tr=prepInputs[bash dakota/utils/prepInputs.sh inputs/sweepParams.run inputs/elbowKPI.json, bash templatedir/start_docker.sh] tmpdir=dakota-run002/jobs/p/prepInputs-j9oslnbn-0
+2017-07-28 14:11:36,751-0400 INFO  Execute JOB_TASK jobid=prepInputs-j9oslnbn-0 taskid=task-18 exec=/bin/bash dir=dakota-run002/jobs/p/prepInputs-j9oslnbn-0 args=_swiftwrap.staging -d openfoam/utils|openfoam/inputs|dakota||logs|openfoam|results|dakota/utils -if openfoam/utils/writeBlockMeshDictFile.py|dakota/dakota_DOE.in|openfoam/utils/PVExtract.sh|openfoam/utils/extract.py|openfoam/utils/expandSweep.py|openfoam/runOFA.sh|openfoam/utils/makeGeom.sh|openfoam/utils/makeFoamMesh.sh|dakota/utils/dprepro|openfoam/utils/writeBoundaryFile.py|openfoam/inputs/sweepParams.run|openfoam/utils/runSim.sh|dakota/start_docker_surr.sh|openfoam/utils/data_IO.py|openfoam/inputs/pwParams.run|openfoam/inputs/points.dat|openfoam/utils/foamutils.py|dakota/utils/input_parser.py|openfoam/utils/preProcess.sh|openfoam/utils/makeFoamMesh2.sh|dakota/utils/dakota_cleanup|dakota/start_docker.sh|openfoam/utils/elbow3D_inputFile.py|openfoam/utils/pvutils.py|openfoam/utils/writeSimParamFiles.py|openfoam/inputs/elbowKPI.json|openfoam/utils/runOpenFOAM.sh|dakota/runDakota_surr.sh|openfoam/utils/killSalome.sh|swift.conf|openfoam/utils/makeMesh.sh|dakota/utils/prepInputs_surr.sh|dakota/dakota_surr.in|dakota/utils/graph.py|dakota/utils/swift_driver|dakota/utils/graph_sensitivity.py|dakota/runDakota.sh|openfoam/inputs/openFoamCase.tar|dakota/simulator_script|dakota/utils/tree|dakota/utils/prepInputs.sh|openfoam/utils/runSimPVExtract.sh -of logs/prep.out|results/out.dat|logs/prep.err|logs/dakota.out|logs/dakota.err|results/out.html -cf  -cdmfile  -status provider -e bash -out logs/prep.out -err logs/prep.err -i -a dakota/utils/prepInputs.sh inputs/sweepParams.run inputs/elbowKPI.json -e bash -out logs/dakota.out -err logs/dakota.err -i -a templatedir/start_docker.sh
+2017-07-28 14:11:36,756-0400 INFO  Execute TASK_STATUS_CHANGE taskid=task-18 status=8
+2017-07-28 14:11:36,768-0400 INFO  AbstractCoasterChannel TCPChannel[client, http://52.38.246.211:4030] setting name to http://52.38.246.211:4030
+2017-07-28 14:11:36,774-0400 INFO  AbstractTCPChannel http://52.38.246.211:4030: channel started
+2017-07-28 14:11:36,775-0400 INFO  AbstractCoasterChannel Timeout check started for http://52.38.246.211:4030
+2017-07-28 14:11:36,776-0400 INFO  AbstractStreamCoasterChannel Using NIO sender for http://52.38.246.211:4030
+2017-07-28 14:11:36,903-0400 INFO  Execute TASK_STATUS_CHANGE taskid=task-18 status=1
+2017-07-28 14:11:36,905-0400 INFO  Execute TASK_STATUS_CHANGE taskid=task-18 status=16 workerid=local:000000
+2017-07-28 14:11:36,906-0400 INFO  GetFileHandler Handler(tag: 4, GET) request complete; src=file://localhost//core/xinchen/swift-k/dist/swift-svn/libexec/_swiftwrap.staging
+2017-07-28 14:11:36,909-0400 INFO  GetFileHandler Handler(tag: 4, GET) reader: LR-Handler(tag: 4, GET)
+2017-07-28 14:11:36,909-0400 INFO  GetFileHandler Handler(tag: 4, GET) sending length: 15067, 1492766625
+2017-07-28 14:11:36,913-0400 INFO  ReadBuffer RB-LR-Handler(tag: 4, GET) will ask for 1 buffers for a size of 15067
+2017-07-28 14:11:36,913-0400 INFO  ReadBuffer RB-LR-Handler(tag: 4, GET) actual allocated buffers 1(0 queued)
+2017-07-28 14:11:36,913-0400 INFO  LocalIOProvider LR-Handler(tag: 4, GET) rbuf: RB-LR-Handler(tag: 4, GET)
+2017-07-28 14:11:36,914-0400 INFO  GetFileHandler Handler(tag: 4, GET) unregistering (last)
+2017-07-28 14:11:36,914-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 14:11:36,963-0400 INFO  GetFileHandler Handler(tag: 5, GET) request complete; src=file://localhost/dakota/start_docker_surr.sh
+2017-07-28 14:11:36,964-0400 INFO  GetFileHandler Handler(tag: 5, GET) reader: LR-Handler(tag: 5, GET)
+2017-07-28 14:11:36,964-0400 INFO  GetFileHandler Handler(tag: 5, GET) sending length: 180, 1216591311
+2017-07-28 14:11:36,964-0400 INFO  ReadBuffer RB-LR-Handler(tag: 5, GET) will ask for 1 buffers for a size of 180
+2017-07-28 14:11:36,964-0400 INFO  ReadBuffer RB-LR-Handler(tag: 5, GET) actual allocated buffers 1(0 queued)
+2017-07-28 14:11:36,964-0400 INFO  LocalIOProvider LR-Handler(tag: 5, GET) rbuf: RB-LR-Handler(tag: 5, GET)
+2017-07-28 14:11:36,964-0400 INFO  GetFileHandler Handler(tag: 5, GET) unregistering (last)
+2017-07-28 14:11:36,964-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 14:11:37,043-0400 INFO  GetFileHandler Handler(tag: 6, GET) request complete; src=file://localhost/dakota/start_docker.sh
+2017-07-28 14:11:37,043-0400 INFO  GetFileHandler Handler(tag: 6, GET) reader: LR-Handler(tag: 6, GET)
+2017-07-28 14:11:37,043-0400 INFO  GetFileHandler Handler(tag: 6, GET) sending length: 172, 1284386645
+2017-07-28 14:11:37,043-0400 INFO  ReadBuffer RB-LR-Handler(tag: 6, GET) will ask for 1 buffers for a size of 172
+2017-07-28 14:11:37,043-0400 INFO  ReadBuffer RB-LR-Handler(tag: 6, GET) actual allocated buffers 1(0 queued)
+2017-07-28 14:11:37,043-0400 INFO  LocalIOProvider LR-Handler(tag: 6, GET) rbuf: RB-LR-Handler(tag: 6, GET)
+2017-07-28 14:11:37,044-0400 INFO  GetFileHandler Handler(tag: 6, GET) unregistering (last)
+2017-07-28 14:11:37,044-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 14:11:37,123-0400 INFO  GetFileHandler Handler(tag: 7, GET) request complete; src=file://localhost/dakota/runDakota_surr.sh
+2017-07-28 14:11:37,123-0400 INFO  GetFileHandler Handler(tag: 7, GET) reader: LR-Handler(tag: 7, GET)
+2017-07-28 14:11:37,123-0400 INFO  GetFileHandler Handler(tag: 7, GET) sending length: 2047, 778864418
+2017-07-28 14:11:37,123-0400 INFO  ReadBuffer RB-LR-Handler(tag: 7, GET) will ask for 1 buffers for a size of 2047
+2017-07-28 14:11:37,123-0400 INFO  ReadBuffer RB-LR-Handler(tag: 7, GET) actual allocated buffers 1(0 queued)
+2017-07-28 14:11:37,123-0400 INFO  LocalIOProvider LR-Handler(tag: 7, GET) rbuf: RB-LR-Handler(tag: 7, GET)
+2017-07-28 14:11:37,124-0400 INFO  GetFileHandler Handler(tag: 7, GET) unregistering (last)
+2017-07-28 14:11:37,124-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 14:11:37,163-0400 INFO  GetFileHandler Handler(tag: 8, GET) request complete; src=file://localhost/openfoam/utils/data_IO.py
+2017-07-28 14:11:37,163-0400 INFO  GetFileHandler Handler(tag: 8, GET) reader: LR-Handler(tag: 8, GET)
+2017-07-28 14:11:37,163-0400 INFO  GetFileHandler Handler(tag: 8, GET) sending length: 4928, 899502983
+2017-07-28 14:11:37,163-0400 INFO  ReadBuffer RB-LR-Handler(tag: 8, GET) will ask for 1 buffers for a size of 4928
+2017-07-28 14:11:37,163-0400 INFO  ReadBuffer RB-LR-Handler(tag: 8, GET) actual allocated buffers 1(0 queued)
+2017-07-28 14:11:37,163-0400 INFO  LocalIOProvider LR-Handler(tag: 8, GET) rbuf: RB-LR-Handler(tag: 8, GET)
+2017-07-28 14:11:37,164-0400 INFO  GetFileHandler Handler(tag: 8, GET) unregistering (last)
+2017-07-28 14:11:37,164-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 14:11:37,203-0400 INFO  GetFileHandler Handler(tag: 9, GET) request complete; src=file://localhost/openfoam/inputs/sweepParams.run
+2017-07-28 14:11:37,203-0400 INFO  GetFileHandler Handler(tag: 9, GET) reader: LR-Handler(tag: 9, GET)
+2017-07-28 14:11:37,203-0400 INFO  GetFileHandler Handler(tag: 9, GET) sending length: 230, 663495817
+2017-07-28 14:11:37,203-0400 INFO  ReadBuffer RB-LR-Handler(tag: 9, GET) will ask for 1 buffers for a size of 230
+2017-07-28 14:11:37,204-0400 INFO  ReadBuffer RB-LR-Handler(tag: 9, GET) actual allocated buffers 1(0 queued)
+2017-07-28 14:11:37,204-0400 INFO  LocalIOProvider LR-Handler(tag: 9, GET) rbuf: RB-LR-Handler(tag: 9, GET)
+2017-07-28 14:11:37,204-0400 INFO  GetFileHandler Handler(tag: 9, GET) unregistering (last)
+2017-07-28 14:11:37,204-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 14:11:37,287-0400 INFO  GetFileHandler Handler(tag: 10, GET) request complete; src=file://localhost/dakota/utils/dakota_cleanup
+2017-07-28 14:11:37,287-0400 INFO  GetFileHandler Handler(tag: 10, GET) reader: LR-Handler(tag: 10, GET)
+2017-07-28 14:11:37,287-0400 INFO  GetFileHandler Handler(tag: 10, GET) sending length: 110, 1369824477
+2017-07-28 14:11:37,287-0400 INFO  ReadBuffer RB-LR-Handler(tag: 10, GET) will ask for 1 buffers for a size of 110
+2017-07-28 14:11:37,287-0400 INFO  ReadBuffer RB-LR-Handler(tag: 10, GET) actual allocated buffers 1(0 queued)
+2017-07-28 14:11:37,287-0400 INFO  LocalIOProvider LR-Handler(tag: 10, GET) rbuf: RB-LR-Handler(tag: 10, GET)
+2017-07-28 14:11:37,288-0400 INFO  GetFileHandler Handler(tag: 10, GET) unregistering (last)
+2017-07-28 14:11:37,288-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 14:11:37,387-0400 INFO  GetFileHandler Handler(tag: 11, GET) request complete; src=file://localhost/dakota/dakota_DOE.in
+2017-07-28 14:11:37,387-0400 INFO  GetFileHandler Handler(tag: 11, GET) reader: LR-Handler(tag: 11, GET)
+2017-07-28 14:11:37,387-0400 INFO  GetFileHandler Handler(tag: 11, GET) sending length: 1665, 1702253162
+2017-07-28 14:11:37,387-0400 INFO  ReadBuffer RB-LR-Handler(tag: 11, GET) will ask for 1 buffers for a size of 1665
+2017-07-28 14:11:37,387-0400 INFO  ReadBuffer RB-LR-Handler(tag: 11, GET) actual allocated buffers 1(0 queued)
+2017-07-28 14:11:37,388-0400 INFO  LocalIOProvider LR-Handler(tag: 11, GET) rbuf: RB-LR-Handler(tag: 11, GET)
+2017-07-28 14:11:37,388-0400 INFO  GetFileHandler Handler(tag: 11, GET) unregistering (last)
+2017-07-28 14:11:37,388-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 14:11:37,447-0400 INFO  GetFileHandler Handler(tag: 12, GET) request complete; src=file://localhost/dakota/simulator_script
+2017-07-28 14:11:37,447-0400 INFO  GetFileHandler Handler(tag: 12, GET) reader: LR-Handler(tag: 12, GET)
+2017-07-28 14:11:37,447-0400 INFO  GetFileHandler Handler(tag: 12, GET) sending length: 1813, 1230847048
+2017-07-28 14:11:37,448-0400 INFO  ReadBuffer RB-LR-Handler(tag: 12, GET) will ask for 1 buffers for a size of 1813
+2017-07-28 14:11:37,448-0400 INFO  ReadBuffer RB-LR-Handler(tag: 12, GET) actual allocated buffers 1(0 queued)
+2017-07-28 14:11:37,448-0400 INFO  LocalIOProvider LR-Handler(tag: 12, GET) rbuf: RB-LR-Handler(tag: 12, GET)
+2017-07-28 14:11:37,448-0400 INFO  GetFileHandler Handler(tag: 12, GET) unregistering (last)
+2017-07-28 14:11:37,448-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 14:11:37,487-0400 INFO  GetFileHandler Handler(tag: 13, GET) request complete; src=file://localhost/dakota/runDakota.sh
+2017-07-28 14:11:37,487-0400 INFO  GetFileHandler Handler(tag: 13, GET) reader: LR-Handler(tag: 13, GET)
+2017-07-28 14:11:37,487-0400 INFO  GetFileHandler Handler(tag: 13, GET) sending length: 2036, 2030516803
+2017-07-28 14:11:37,487-0400 INFO  ReadBuffer RB-LR-Handler(tag: 13, GET) will ask for 1 buffers for a size of 2036
+2017-07-28 14:11:37,487-0400 INFO  ReadBuffer RB-LR-Handler(tag: 13, GET) actual allocated buffers 1(0 queued)
+2017-07-28 14:11:37,487-0400 INFO  LocalIOProvider LR-Handler(tag: 13, GET) rbuf: RB-LR-Handler(tag: 13, GET)
+2017-07-28 14:11:37,493-0400 INFO  GetFileHandler Handler(tag: 13, GET) unregistering (last)
+2017-07-28 14:11:37,493-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 14:11:37,547-0400 INFO  GetFileHandler Handler(tag: 14, GET) request complete; src=file://localhost/openfoam/utils/elbow3D_inputFile.py
+2017-07-28 14:11:37,547-0400 INFO  GetFileHandler Handler(tag: 14, GET) reader: LR-Handler(tag: 14, GET)
+2017-07-28 14:11:37,547-0400 INFO  GetFileHandler Handler(tag: 14, GET) sending length: 6038, 1705922985
+2017-07-28 14:11:37,547-0400 INFO  ReadBuffer RB-LR-Handler(tag: 14, GET) will ask for 1 buffers for a size of 6038
+2017-07-28 14:11:37,547-0400 INFO  ReadBuffer RB-LR-Handler(tag: 14, GET) actual allocated buffers 1(0 queued)
+2017-07-28 14:11:37,547-0400 INFO  LocalIOProvider LR-Handler(tag: 14, GET) rbuf: RB-LR-Handler(tag: 14, GET)
+2017-07-28 14:11:37,547-0400 INFO  GetFileHandler Handler(tag: 14, GET) unregistering (last)
+2017-07-28 14:11:37,548-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 14:11:37,587-0400 INFO  GetFileHandler Handler(tag: 15, GET) request complete; src=file://localhost/openfoam/utils/killSalome.sh
+2017-07-28 14:11:37,587-0400 INFO  GetFileHandler Handler(tag: 15, GET) reader: LR-Handler(tag: 15, GET)
+2017-07-28 14:11:37,587-0400 INFO  GetFileHandler Handler(tag: 15, GET) sending length: 749, 625570827
+2017-07-28 14:11:37,587-0400 INFO  ReadBuffer RB-LR-Handler(tag: 15, GET) will ask for 1 buffers for a size of 749
+2017-07-28 14:11:37,587-0400 INFO  ReadBuffer RB-LR-Handler(tag: 15, GET) actual allocated buffers 1(0 queued)
+2017-07-28 14:11:37,587-0400 INFO  LocalIOProvider LR-Handler(tag: 15, GET) rbuf: RB-LR-Handler(tag: 15, GET)
+2017-07-28 14:11:37,587-0400 INFO  GetFileHandler Handler(tag: 15, GET) unregistering (last)
+2017-07-28 14:11:37,587-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 14:11:37,666-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 132120576, JVMThreads: 34
+2017-07-28 14:11:37,666-0400 INFO  RuntimeStats$ProgressTicker   Stage in:1
+2017-07-28 14:11:37,667-0400 INFO  GetFileHandler Handler(tag: 16, GET) request complete; src=file://localhost/openfoam/utils/runSim.sh
+2017-07-28 14:11:37,667-0400 INFO  GetFileHandler Handler(tag: 16, GET) reader: LR-Handler(tag: 16, GET)
+2017-07-28 14:11:37,667-0400 INFO  GetFileHandler Handler(tag: 16, GET) sending length: 1080, 2069165543
+2017-07-28 14:11:37,667-0400 INFO  ReadBuffer RB-LR-Handler(tag: 16, GET) will ask for 1 buffers for a size of 1080
+2017-07-28 14:11:37,667-0400 INFO  ReadBuffer RB-LR-Handler(tag: 16, GET) actual allocated buffers 1(0 queued)
+2017-07-28 14:11:37,667-0400 INFO  LocalIOProvider LR-Handler(tag: 16, GET) rbuf: RB-LR-Handler(tag: 16, GET)
+2017-07-28 14:11:37,667-0400 INFO  GetFileHandler Handler(tag: 16, GET) unregistering (last)
+2017-07-28 14:11:37,667-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 14:11:37,747-0400 INFO  GetFileHandler Handler(tag: 17, GET) request complete; src=file://localhost/dakota/utils/input_parser.py
+2017-07-28 14:11:37,747-0400 INFO  GetFileHandler Handler(tag: 17, GET) reader: LR-Handler(tag: 17, GET)
+2017-07-28 14:11:37,747-0400 INFO  GetFileHandler Handler(tag: 17, GET) sending length: 3231, 351307186
+2017-07-28 14:11:37,747-0400 INFO  ReadBuffer RB-LR-Handler(tag: 17, GET) will ask for 1 buffers for a size of 3231
+2017-07-28 14:11:37,747-0400 INFO  ReadBuffer RB-LR-Handler(tag: 17, GET) actual allocated buffers 1(0 queued)
+2017-07-28 14:11:37,747-0400 INFO  LocalIOProvider LR-Handler(tag: 17, GET) rbuf: RB-LR-Handler(tag: 17, GET)
+2017-07-28 14:11:37,748-0400 INFO  GetFileHandler Handler(tag: 17, GET) unregistering (last)
+2017-07-28 14:11:37,748-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 14:11:37,791-0400 INFO  GetFileHandler Handler(tag: 18, GET) request complete; src=file://localhost/openfoam/utils/runSimPVExtract.sh
+2017-07-28 14:11:37,791-0400 INFO  GetFileHandler Handler(tag: 18, GET) reader: LR-Handler(tag: 18, GET)
+2017-07-28 14:11:37,791-0400 INFO  GetFileHandler Handler(tag: 18, GET) sending length: 1224, 583782938
+2017-07-28 14:11:37,791-0400 INFO  ReadBuffer RB-LR-Handler(tag: 18, GET) will ask for 1 buffers for a size of 1224
+2017-07-28 14:11:37,791-0400 INFO  ReadBuffer RB-LR-Handler(tag: 18, GET) actual allocated buffers 1(0 queued)
+2017-07-28 14:11:37,791-0400 INFO  LocalIOProvider LR-Handler(tag: 18, GET) rbuf: RB-LR-Handler(tag: 18, GET)
+2017-07-28 14:11:37,791-0400 INFO  GetFileHandler Handler(tag: 18, GET) unregistering (last)
+2017-07-28 14:11:37,792-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 14:11:37,891-0400 INFO  GetFileHandler Handler(tag: 19, GET) request complete; src=file://localhost/openfoam/utils/foamutils.py
+2017-07-28 14:11:37,892-0400 INFO  GetFileHandler Handler(tag: 19, GET) reader: LR-Handler(tag: 19, GET)
+2017-07-28 14:11:37,892-0400 INFO  GetFileHandler Handler(tag: 19, GET) sending length: 4224, 1801790031
+2017-07-28 14:11:37,892-0400 INFO  ReadBuffer RB-LR-Handler(tag: 19, GET) will ask for 1 buffers for a size of 4224
+2017-07-28 14:11:37,892-0400 INFO  ReadBuffer RB-LR-Handler(tag: 19, GET) actual allocated buffers 1(0 queued)
+2017-07-28 14:11:37,892-0400 INFO  LocalIOProvider LR-Handler(tag: 19, GET) rbuf: RB-LR-Handler(tag: 19, GET)
+2017-07-28 14:11:37,892-0400 INFO  GetFileHandler Handler(tag: 19, GET) unregistering (last)
+2017-07-28 14:11:37,892-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 14:11:37,951-0400 INFO  GetFileHandler Handler(tag: 20, GET) request complete; src=file://localhost/openfoam/utils/runOpenFOAM.sh
+2017-07-28 14:11:37,951-0400 INFO  GetFileHandler Handler(tag: 20, GET) reader: LR-Handler(tag: 20, GET)
+2017-07-28 14:11:37,951-0400 INFO  GetFileHandler Handler(tag: 20, GET) sending length: 716, 1676677884
+2017-07-28 14:11:37,951-0400 INFO  ReadBuffer RB-LR-Handler(tag: 20, GET) will ask for 1 buffers for a size of 716
+2017-07-28 14:11:37,951-0400 INFO  ReadBuffer RB-LR-Handler(tag: 20, GET) actual allocated buffers 1(0 queued)
+2017-07-28 14:11:37,951-0400 INFO  LocalIOProvider LR-Handler(tag: 20, GET) rbuf: RB-LR-Handler(tag: 20, GET)
+2017-07-28 14:11:37,952-0400 INFO  GetFileHandler Handler(tag: 20, GET) unregistering (last)
+2017-07-28 14:11:37,952-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 14:11:38,031-0400 INFO  GetFileHandler Handler(tag: 21, GET) request complete; src=file://localhost/dakota/utils/prepInputs_surr.sh
+2017-07-28 14:11:38,031-0400 INFO  GetFileHandler Handler(tag: 21, GET) reader: LR-Handler(tag: 21, GET)
+2017-07-28 14:11:38,031-0400 INFO  GetFileHandler Handler(tag: 21, GET) sending length: 451, 736349705
+2017-07-28 14:11:38,031-0400 INFO  ReadBuffer RB-LR-Handler(tag: 21, GET) will ask for 1 buffers for a size of 451
+2017-07-28 14:11:38,031-0400 INFO  ReadBuffer RB-LR-Handler(tag: 21, GET) actual allocated buffers 1(0 queued)
+2017-07-28 14:11:38,031-0400 INFO  LocalIOProvider LR-Handler(tag: 21, GET) rbuf: RB-LR-Handler(tag: 21, GET)
+2017-07-28 14:11:38,032-0400 INFO  GetFileHandler Handler(tag: 21, GET) unregistering (last)
+2017-07-28 14:11:38,032-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 14:11:38,111-0400 INFO  GetFileHandler Handler(tag: 22, GET) request complete; src=file://localhost/openfoam/inputs/openFoamCase.tar
+2017-07-28 14:11:38,111-0400 INFO  GetFileHandler Handler(tag: 22, GET) reader: LR-Handler(tag: 22, GET)
+2017-07-28 14:11:38,111-0400 INFO  GetFileHandler Handler(tag: 22, GET) sending length: 61440, 1284544012
+2017-07-28 14:11:38,111-0400 INFO  ReadBuffer RB-LR-Handler(tag: 22, GET) will ask for 1 buffers for a size of 61440
+2017-07-28 14:11:38,111-0400 INFO  ReadBuffer RB-LR-Handler(tag: 22, GET) actual allocated buffers 1(0 queued)
+2017-07-28 14:11:38,112-0400 INFO  LocalIOProvider LR-Handler(tag: 22, GET) rbuf: RB-LR-Handler(tag: 22, GET)
+2017-07-28 14:11:38,112-0400 INFO  GetFileHandler Handler(tag: 22, GET) unregistering (last)
+2017-07-28 14:11:38,112-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 14:11:38,191-0400 INFO  GetFileHandler Handler(tag: 23, GET) request complete; src=file://localhost/openfoam/utils/makeFoamMesh2.sh
+2017-07-28 14:11:38,191-0400 INFO  GetFileHandler Handler(tag: 23, GET) reader: LR-Handler(tag: 23, GET)
+2017-07-28 14:11:38,191-0400 INFO  GetFileHandler Handler(tag: 23, GET) sending length: 1826, 659546548
+2017-07-28 14:11:38,191-0400 INFO  ReadBuffer RB-LR-Handler(tag: 23, GET) will ask for 1 buffers for a size of 1826
+2017-07-28 14:11:38,191-0400 INFO  ReadBuffer RB-LR-Handler(tag: 23, GET) actual allocated buffers 1(0 queued)
+2017-07-28 14:11:38,192-0400 INFO  LocalIOProvider LR-Handler(tag: 23, GET) rbuf: RB-LR-Handler(tag: 23, GET)
+2017-07-28 14:11:38,192-0400 INFO  GetFileHandler Handler(tag: 23, GET) unregistering (last)
+2017-07-28 14:11:38,192-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 14:11:38,235-0400 INFO  GetFileHandler Handler(tag: 24, GET) request complete; src=file://localhost/openfoam/utils/extract.py
+2017-07-28 14:11:38,235-0400 INFO  GetFileHandler Handler(tag: 24, GET) reader: LR-Handler(tag: 24, GET)
+2017-07-28 14:11:38,235-0400 INFO  GetFileHandler Handler(tag: 24, GET) sending length: 4613, 1611367245
+2017-07-28 14:11:38,236-0400 INFO  ReadBuffer RB-LR-Handler(tag: 24, GET) will ask for 1 buffers for a size of 4613
+2017-07-28 14:11:38,236-0400 INFO  ReadBuffer RB-LR-Handler(tag: 24, GET) actual allocated buffers 1(0 queued)
+2017-07-28 14:11:38,236-0400 INFO  LocalIOProvider LR-Handler(tag: 24, GET) rbuf: RB-LR-Handler(tag: 24, GET)
+2017-07-28 14:11:38,236-0400 INFO  GetFileHandler Handler(tag: 24, GET) unregistering (last)
+2017-07-28 14:11:38,236-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 14:11:38,295-0400 INFO  GetFileHandler Handler(tag: 25, GET) request complete; src=file://localhost/openfoam/utils/makeFoamMesh.sh
+2017-07-28 14:11:38,295-0400 INFO  GetFileHandler Handler(tag: 25, GET) reader: LR-Handler(tag: 25, GET)
+2017-07-28 14:11:38,295-0400 INFO  GetFileHandler Handler(tag: 25, GET) sending length: 1438, 1704368040
+2017-07-28 14:11:38,296-0400 INFO  ReadBuffer RB-LR-Handler(tag: 25, GET) will ask for 1 buffers for a size of 1438
+2017-07-28 14:11:38,296-0400 INFO  ReadBuffer RB-LR-Handler(tag: 25, GET) actual allocated buffers 1(0 queued)
+2017-07-28 14:11:38,296-0400 INFO  LocalIOProvider LR-Handler(tag: 25, GET) rbuf: RB-LR-Handler(tag: 25, GET)
+2017-07-28 14:11:38,296-0400 INFO  GetFileHandler Handler(tag: 25, GET) unregistering (last)
+2017-07-28 14:11:38,296-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 14:11:38,355-0400 INFO  GetFileHandler Handler(tag: 26, GET) request complete; src=file://localhost/openfoam/inputs/elbowKPI.json
+2017-07-28 14:11:38,355-0400 INFO  GetFileHandler Handler(tag: 26, GET) reader: LR-Handler(tag: 26, GET)
+2017-07-28 14:11:38,355-0400 INFO  GetFileHandler Handler(tag: 26, GET) sending length: 1211, 1810859511
+2017-07-28 14:11:38,355-0400 INFO  ReadBuffer RB-LR-Handler(tag: 26, GET) will ask for 1 buffers for a size of 1211
+2017-07-28 14:11:38,355-0400 INFO  ReadBuffer RB-LR-Handler(tag: 26, GET) actual allocated buffers 1(0 queued)
+2017-07-28 14:11:38,355-0400 INFO  LocalIOProvider LR-Handler(tag: 26, GET) rbuf: RB-LR-Handler(tag: 26, GET)
+2017-07-28 14:11:38,356-0400 INFO  GetFileHandler Handler(tag: 26, GET) unregistering (last)
+2017-07-28 14:11:38,356-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 14:11:38,435-0400 INFO  GetFileHandler Handler(tag: 27, GET) request complete; src=file://localhost/dakota/utils/prepInputs.sh
+2017-07-28 14:11:38,435-0400 INFO  GetFileHandler Handler(tag: 27, GET) reader: LR-Handler(tag: 27, GET)
+2017-07-28 14:11:38,435-0400 INFO  GetFileHandler Handler(tag: 27, GET) sending length: 417, 1675563566
+2017-07-28 14:11:38,436-0400 INFO  ReadBuffer RB-LR-Handler(tag: 27, GET) will ask for 1 buffers for a size of 417
+2017-07-28 14:11:38,436-0400 INFO  ReadBuffer RB-LR-Handler(tag: 27, GET) actual allocated buffers 1(0 queued)
+2017-07-28 14:11:38,436-0400 INFO  LocalIOProvider LR-Handler(tag: 27, GET) rbuf: RB-LR-Handler(tag: 27, GET)
+2017-07-28 14:11:38,436-0400 INFO  GetFileHandler Handler(tag: 27, GET) unregistering (last)
+2017-07-28 14:11:38,436-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 14:11:38,515-0400 INFO  GetFileHandler Handler(tag: 28, GET) request complete; src=file://localhost/openfoam/utils/writeBlockMeshDictFile.py
+2017-07-28 14:11:38,515-0400 INFO  GetFileHandler Handler(tag: 28, GET) reader: LR-Handler(tag: 28, GET)
+2017-07-28 14:11:38,516-0400 INFO  GetFileHandler Handler(tag: 28, GET) sending length: 2459, 816002533
+2017-07-28 14:11:38,516-0400 INFO  ReadBuffer RB-LR-Handler(tag: 28, GET) will ask for 1 buffers for a size of 2459
+2017-07-28 14:11:38,516-0400 INFO  ReadBuffer RB-LR-Handler(tag: 28, GET) actual allocated buffers 1(0 queued)
+2017-07-28 14:11:38,516-0400 INFO  LocalIOProvider LR-Handler(tag: 28, GET) rbuf: RB-LR-Handler(tag: 28, GET)
+2017-07-28 14:11:38,516-0400 INFO  GetFileHandler Handler(tag: 28, GET) unregistering (last)
+2017-07-28 14:11:38,516-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 14:11:38,555-0400 INFO  GetFileHandler Handler(tag: 29, GET) request complete; src=file://localhost/dakota/utils/graph.py
+2017-07-28 14:11:38,555-0400 INFO  GetFileHandler Handler(tag: 29, GET) reader: LR-Handler(tag: 29, GET)
+2017-07-28 14:11:38,556-0400 INFO  GetFileHandler Handler(tag: 29, GET) sending length: 1715, 915291987
+2017-07-28 14:11:38,556-0400 INFO  ReadBuffer RB-LR-Handler(tag: 29, GET) will ask for 1 buffers for a size of 1715
+2017-07-28 14:11:38,556-0400 INFO  ReadBuffer RB-LR-Handler(tag: 29, GET) actual allocated buffers 1(0 queued)
+2017-07-28 14:11:38,556-0400 INFO  LocalIOProvider LR-Handler(tag: 29, GET) rbuf: RB-LR-Handler(tag: 29, GET)
+2017-07-28 14:11:38,556-0400 INFO  GetFileHandler Handler(tag: 29, GET) unregistering (last)
+2017-07-28 14:11:38,556-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 14:11:38,595-0400 INFO  GetFileHandler Handler(tag: 30, GET) request complete; src=file://localhost/dakota/dakota_surr.in
+2017-07-28 14:11:38,595-0400 INFO  GetFileHandler Handler(tag: 30, GET) reader: LR-Handler(tag: 30, GET)
+2017-07-28 14:11:38,595-0400 INFO  GetFileHandler Handler(tag: 30, GET) sending length: 1979, 507045916
+2017-07-28 14:11:38,596-0400 INFO  ReadBuffer RB-LR-Handler(tag: 30, GET) will ask for 1 buffers for a size of 1979
+2017-07-28 14:11:38,596-0400 INFO  ReadBuffer RB-LR-Handler(tag: 30, GET) actual allocated buffers 1(0 queued)
+2017-07-28 14:11:38,596-0400 INFO  LocalIOProvider LR-Handler(tag: 30, GET) rbuf: RB-LR-Handler(tag: 30, GET)
+2017-07-28 14:11:38,596-0400 INFO  GetFileHandler Handler(tag: 30, GET) unregistering (last)
+2017-07-28 14:11:38,596-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 14:11:38,635-0400 INFO  GetFileHandler Handler(tag: 31, GET) request complete; src=file://localhost/openfoam/runOFA.sh
+2017-07-28 14:11:38,635-0400 INFO  GetFileHandler Handler(tag: 31, GET) reader: LR-Handler(tag: 31, GET)
+2017-07-28 14:11:38,635-0400 INFO  GetFileHandler Handler(tag: 31, GET) sending length: 887, 739311065
+2017-07-28 14:11:38,636-0400 INFO  ReadBuffer RB-LR-Handler(tag: 31, GET) will ask for 1 buffers for a size of 887
+2017-07-28 14:11:38,636-0400 INFO  ReadBuffer RB-LR-Handler(tag: 31, GET) actual allocated buffers 1(0 queued)
+2017-07-28 14:11:38,636-0400 INFO  LocalIOProvider LR-Handler(tag: 31, GET) rbuf: RB-LR-Handler(tag: 31, GET)
+2017-07-28 14:11:38,636-0400 INFO  GetFileHandler Handler(tag: 31, GET) unregistering (last)
+2017-07-28 14:11:38,636-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 14:11:38,666-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 132120576, JVMThreads: 34
+2017-07-28 14:11:38,719-0400 INFO  GetFileHandler Handler(tag: 32, GET) request complete; src=file://localhost/openfoam/utils/makeMesh.sh
+2017-07-28 14:11:38,719-0400 INFO  GetFileHandler Handler(tag: 32, GET) reader: LR-Handler(tag: 32, GET)
+2017-07-28 14:11:38,719-0400 INFO  GetFileHandler Handler(tag: 32, GET) sending length: 2454, 764195978
+2017-07-28 14:11:38,720-0400 INFO  ReadBuffer RB-LR-Handler(tag: 32, GET) will ask for 1 buffers for a size of 2454
+2017-07-28 14:11:38,720-0400 INFO  ReadBuffer RB-LR-Handler(tag: 32, GET) actual allocated buffers 1(0 queued)
+2017-07-28 14:11:38,720-0400 INFO  LocalIOProvider LR-Handler(tag: 32, GET) rbuf: RB-LR-Handler(tag: 32, GET)
+2017-07-28 14:11:38,720-0400 INFO  GetFileHandler Handler(tag: 32, GET) unregistering (last)
+2017-07-28 14:11:38,720-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 14:11:38,779-0400 INFO  GetFileHandler Handler(tag: 33, GET) request complete; src=file://localhost/openfoam/utils/expandSweep.py
+2017-07-28 14:11:38,779-0400 INFO  GetFileHandler Handler(tag: 33, GET) reader: LR-Handler(tag: 33, GET)
+2017-07-28 14:11:38,780-0400 INFO  GetFileHandler Handler(tag: 33, GET) sending length: 1557, 1947378589
+2017-07-28 14:11:38,780-0400 INFO  ReadBuffer RB-LR-Handler(tag: 33, GET) will ask for 1 buffers for a size of 1557
+2017-07-28 14:11:38,780-0400 INFO  ReadBuffer RB-LR-Handler(tag: 33, GET) actual allocated buffers 1(0 queued)
+2017-07-28 14:11:38,780-0400 INFO  LocalIOProvider LR-Handler(tag: 33, GET) rbuf: RB-LR-Handler(tag: 33, GET)
+2017-07-28 14:11:38,780-0400 INFO  GetFileHandler Handler(tag: 33, GET) unregistering (last)
+2017-07-28 14:11:38,780-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 14:11:38,839-0400 INFO  GetFileHandler Handler(tag: 34, GET) request complete; src=file://localhost/openfoam/utils/PVExtract.sh
+2017-07-28 14:11:38,840-0400 INFO  GetFileHandler Handler(tag: 34, GET) reader: LR-Handler(tag: 34, GET)
+2017-07-28 14:11:38,840-0400 INFO  GetFileHandler Handler(tag: 34, GET) sending length: 1492, 638944038
+2017-07-28 14:11:38,840-0400 INFO  ReadBuffer RB-LR-Handler(tag: 34, GET) will ask for 1 buffers for a size of 1492
+2017-07-28 14:11:38,840-0400 INFO  ReadBuffer RB-LR-Handler(tag: 34, GET) actual allocated buffers 1(0 queued)
+2017-07-28 14:11:38,840-0400 INFO  LocalIOProvider LR-Handler(tag: 34, GET) rbuf: RB-LR-Handler(tag: 34, GET)
+2017-07-28 14:11:38,840-0400 INFO  GetFileHandler Handler(tag: 34, GET) unregistering (last)
+2017-07-28 14:11:38,840-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 14:11:38,879-0400 INFO  GetFileHandler Handler(tag: 35, GET) request complete; src=file://localhost/openfoam/utils/writeSimParamFiles.py
+2017-07-28 14:11:38,880-0400 INFO  GetFileHandler Handler(tag: 35, GET) reader: LR-Handler(tag: 35, GET)
+2017-07-28 14:11:38,880-0400 INFO  GetFileHandler Handler(tag: 35, GET) sending length: 674, 591739461
+2017-07-28 14:11:38,880-0400 INFO  ReadBuffer RB-LR-Handler(tag: 35, GET) will ask for 1 buffers for a size of 674
+2017-07-28 14:11:38,880-0400 INFO  ReadBuffer RB-LR-Handler(tag: 35, GET) actual allocated buffers 1(0 queued)
+2017-07-28 14:11:38,880-0400 INFO  LocalIOProvider LR-Handler(tag: 35, GET) rbuf: RB-LR-Handler(tag: 35, GET)
+2017-07-28 14:11:38,880-0400 INFO  GetFileHandler Handler(tag: 35, GET) unregistering (last)
+2017-07-28 14:11:38,880-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 14:11:38,959-0400 INFO  GetFileHandler Handler(tag: 36, GET) request complete; src=file://localhost/openfoam/inputs/pwParams.run
+2017-07-28 14:11:38,959-0400 INFO  GetFileHandler Handler(tag: 36, GET) reader: LR-Handler(tag: 36, GET)
+2017-07-28 14:11:38,959-0400 INFO  GetFileHandler Handler(tag: 36, GET) sending length: 222, 1835437616
+2017-07-28 14:11:38,960-0400 INFO  ReadBuffer RB-LR-Handler(tag: 36, GET) will ask for 1 buffers for a size of 222
+2017-07-28 14:11:38,960-0400 INFO  ReadBuffer RB-LR-Handler(tag: 36, GET) actual allocated buffers 1(0 queued)
+2017-07-28 14:11:38,960-0400 INFO  LocalIOProvider LR-Handler(tag: 36, GET) rbuf: RB-LR-Handler(tag: 36, GET)
+2017-07-28 14:11:38,960-0400 INFO  GetFileHandler Handler(tag: 36, GET) unregistering (last)
+2017-07-28 14:11:38,960-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 14:11:39,039-0400 INFO  GetFileHandler Handler(tag: 37, GET) request complete; src=file://localhost/openfoam/utils/makeGeom.sh
+2017-07-28 14:11:39,039-0400 INFO  GetFileHandler Handler(tag: 37, GET) reader: LR-Handler(tag: 37, GET)
+2017-07-28 14:11:39,039-0400 INFO  GetFileHandler Handler(tag: 37, GET) sending length: 1574, 1996413526
+2017-07-28 14:11:39,039-0400 INFO  ReadBuffer RB-LR-Handler(tag: 37, GET) will ask for 1 buffers for a size of 1574
+2017-07-28 14:11:39,040-0400 INFO  ReadBuffer RB-LR-Handler(tag: 37, GET) actual allocated buffers 1(0 queued)
+2017-07-28 14:11:39,040-0400 INFO  LocalIOProvider LR-Handler(tag: 37, GET) rbuf: RB-LR-Handler(tag: 37, GET)
+2017-07-28 14:11:39,040-0400 INFO  GetFileHandler Handler(tag: 37, GET) unregistering (last)
+2017-07-28 14:11:39,040-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 14:11:39,079-0400 INFO  GetFileHandler Handler(tag: 38, GET) request complete; src=file://localhost/dakota/utils/swift_driver
+2017-07-28 14:11:39,079-0400 INFO  GetFileHandler Handler(tag: 38, GET) reader: LR-Handler(tag: 38, GET)
+2017-07-28 14:11:39,079-0400 INFO  GetFileHandler Handler(tag: 38, GET) sending length: 674, 1230778505
+2017-07-28 14:11:39,079-0400 INFO  ReadBuffer RB-LR-Handler(tag: 38, GET) will ask for 1 buffers for a size of 674
+2017-07-28 14:11:39,079-0400 INFO  ReadBuffer RB-LR-Handler(tag: 38, GET) actual allocated buffers 1(0 queued)
+2017-07-28 14:11:39,079-0400 INFO  LocalIOProvider LR-Handler(tag: 38, GET) rbuf: RB-LR-Handler(tag: 38, GET)
+2017-07-28 14:11:39,080-0400 INFO  GetFileHandler Handler(tag: 38, GET) unregistering (last)
+2017-07-28 14:11:39,080-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 14:11:39,163-0400 INFO  GetFileHandler Handler(tag: 39, GET) request complete; src=file://localhost/openfoam/inputs/points.dat
+2017-07-28 14:11:39,163-0400 INFO  GetFileHandler Handler(tag: 39, GET) reader: LR-Handler(tag: 39, GET)
+2017-07-28 14:11:39,163-0400 INFO  GetFileHandler Handler(tag: 39, GET) sending length: 40, 804332864
+2017-07-28 14:11:39,163-0400 INFO  ReadBuffer RB-LR-Handler(tag: 39, GET) will ask for 1 buffers for a size of 40
+2017-07-28 14:11:39,163-0400 INFO  ReadBuffer RB-LR-Handler(tag: 39, GET) actual allocated buffers 1(0 queued)
+2017-07-28 14:11:39,163-0400 INFO  LocalIOProvider LR-Handler(tag: 39, GET) rbuf: RB-LR-Handler(tag: 39, GET)
+2017-07-28 14:11:39,164-0400 INFO  GetFileHandler Handler(tag: 39, GET) unregistering (last)
+2017-07-28 14:11:39,164-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 14:11:39,263-0400 INFO  GetFileHandler Handler(tag: 40, GET) request complete; src=file://localhost/openfoam/utils/pvutils.py
+2017-07-28 14:11:39,263-0400 INFO  GetFileHandler Handler(tag: 40, GET) reader: LR-Handler(tag: 40, GET)
+2017-07-28 14:11:39,263-0400 INFO  GetFileHandler Handler(tag: 40, GET) sending length: 20042, 105863614
+2017-07-28 14:11:39,263-0400 INFO  ReadBuffer RB-LR-Handler(tag: 40, GET) will ask for 1 buffers for a size of 20042
+2017-07-28 14:11:39,264-0400 INFO  ReadBuffer RB-LR-Handler(tag: 40, GET) actual allocated buffers 1(0 queued)
+2017-07-28 14:11:39,264-0400 INFO  LocalIOProvider LR-Handler(tag: 40, GET) rbuf: RB-LR-Handler(tag: 40, GET)
+2017-07-28 14:11:39,264-0400 INFO  GetFileHandler Handler(tag: 40, GET) unregistering (last)
+2017-07-28 14:11:39,264-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 14:11:39,323-0400 INFO  GetFileHandler Handler(tag: 41, GET) request complete; src=file://localhost/openfoam/utils/preProcess.sh
+2017-07-28 14:11:39,323-0400 INFO  GetFileHandler Handler(tag: 41, GET) reader: LR-Handler(tag: 41, GET)
+2017-07-28 14:11:39,323-0400 INFO  GetFileHandler Handler(tag: 41, GET) sending length: 2290, 1688176663
+2017-07-28 14:11:39,324-0400 INFO  ReadBuffer RB-LR-Handler(tag: 41, GET) will ask for 1 buffers for a size of 2290
+2017-07-28 14:11:39,324-0400 INFO  ReadBuffer RB-LR-Handler(tag: 41, GET) actual allocated buffers 1(0 queued)
+2017-07-28 14:11:39,324-0400 INFO  LocalIOProvider LR-Handler(tag: 41, GET) rbuf: RB-LR-Handler(tag: 41, GET)
+2017-07-28 14:11:39,336-0400 INFO  GetFileHandler Handler(tag: 41, GET) unregistering (last)
+2017-07-28 14:11:39,336-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 14:11:39,383-0400 INFO  GetFileHandler Handler(tag: 42, GET) request complete; src=file://localhost/openfoam/utils/writeBoundaryFile.py
+2017-07-28 14:11:39,383-0400 INFO  GetFileHandler Handler(tag: 42, GET) reader: LR-Handler(tag: 42, GET)
+2017-07-28 14:11:39,384-0400 INFO  GetFileHandler Handler(tag: 42, GET) sending length: 1679, 1231773189
+2017-07-28 14:11:39,384-0400 INFO  ReadBuffer RB-LR-Handler(tag: 42, GET) will ask for 1 buffers for a size of 1679
+2017-07-28 14:11:39,384-0400 INFO  ReadBuffer RB-LR-Handler(tag: 42, GET) actual allocated buffers 1(0 queued)
+2017-07-28 14:11:39,384-0400 INFO  LocalIOProvider LR-Handler(tag: 42, GET) rbuf: RB-LR-Handler(tag: 42, GET)
+2017-07-28 14:11:39,384-0400 INFO  GetFileHandler Handler(tag: 42, GET) unregistering (last)
+2017-07-28 14:11:39,384-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 14:11:39,423-0400 INFO  GetFileHandler Handler(tag: 43, GET) request complete; src=file://localhost/swift.conf
+2017-07-28 14:11:39,423-0400 INFO  GetFileHandler Handler(tag: 43, GET) reader: LR-Handler(tag: 43, GET)
+2017-07-28 14:11:39,423-0400 INFO  GetFileHandler Handler(tag: 43, GET) sending length: 773, 15640106
+2017-07-28 14:11:39,423-0400 INFO  ReadBuffer RB-LR-Handler(tag: 43, GET) will ask for 1 buffers for a size of 773
+2017-07-28 14:11:39,424-0400 INFO  ReadBuffer RB-LR-Handler(tag: 43, GET) actual allocated buffers 1(0 queued)
+2017-07-28 14:11:39,424-0400 INFO  LocalIOProvider LR-Handler(tag: 43, GET) rbuf: RB-LR-Handler(tag: 43, GET)
+2017-07-28 14:11:39,424-0400 INFO  GetFileHandler Handler(tag: 43, GET) unregistering (last)
+2017-07-28 14:11:39,424-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 14:11:39,503-0400 INFO  GetFileHandler Handler(tag: 44, GET) request complete; src=file://localhost/dakota/utils/dprepro
+2017-07-28 14:11:39,503-0400 INFO  GetFileHandler Handler(tag: 44, GET) reader: LR-Handler(tag: 44, GET)
+2017-07-28 14:11:39,503-0400 INFO  GetFileHandler Handler(tag: 44, GET) sending length: 12889, 225485640
+2017-07-28 14:11:39,503-0400 INFO  ReadBuffer RB-LR-Handler(tag: 44, GET) will ask for 1 buffers for a size of 12889
+2017-07-28 14:11:39,503-0400 INFO  ReadBuffer RB-LR-Handler(tag: 44, GET) actual allocated buffers 1(0 queued)
+2017-07-28 14:11:39,503-0400 INFO  LocalIOProvider LR-Handler(tag: 44, GET) rbuf: RB-LR-Handler(tag: 44, GET)
+2017-07-28 14:11:39,504-0400 INFO  GetFileHandler Handler(tag: 44, GET) unregistering (last)
+2017-07-28 14:11:39,504-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 14:11:39,543-0400 INFO  GetFileHandler Handler(tag: 45, GET) request complete; src=file://localhost/dakota/utils/graph_sensitivity.py
+2017-07-28 14:11:39,543-0400 INFO  GetFileHandler Handler(tag: 45, GET) reader: LR-Handler(tag: 45, GET)
+2017-07-28 14:11:39,543-0400 INFO  GetFileHandler Handler(tag: 45, GET) sending length: 2055, 712078275
+2017-07-28 14:11:39,543-0400 INFO  ReadBuffer RB-LR-Handler(tag: 45, GET) will ask for 1 buffers for a size of 2055
+2017-07-28 14:11:39,543-0400 INFO  ReadBuffer RB-LR-Handler(tag: 45, GET) actual allocated buffers 1(0 queued)
+2017-07-28 14:11:39,543-0400 INFO  LocalIOProvider LR-Handler(tag: 45, GET) rbuf: RB-LR-Handler(tag: 45, GET)
+2017-07-28 14:11:39,544-0400 INFO  GetFileHandler Handler(tag: 45, GET) unregistering (last)
+2017-07-28 14:11:39,544-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 14:11:39,587-0400 INFO  GetFileHandler Handler(tag: 46, GET) request complete; src=file://localhost/dakota/utils/tree
+2017-07-28 14:11:39,587-0400 INFO  GetFileHandler Handler(tag: 46, GET) reader: LR-Handler(tag: 46, GET)
+2017-07-28 14:11:39,587-0400 INFO  GetFileHandler Handler(tag: 46, GET) sending length: 57176, 2119736312
+2017-07-28 14:11:39,588-0400 INFO  ReadBuffer RB-LR-Handler(tag: 46, GET) will ask for 1 buffers for a size of 57176
+2017-07-28 14:11:39,588-0400 INFO  ReadBuffer RB-LR-Handler(tag: 46, GET) actual allocated buffers 1(0 queued)
+2017-07-28 14:11:39,588-0400 INFO  LocalIOProvider LR-Handler(tag: 46, GET) rbuf: RB-LR-Handler(tag: 46, GET)
+2017-07-28 14:11:39,588-0400 INFO  GetFileHandler Handler(tag: 46, GET) unregistering (last)
+2017-07-28 14:11:39,588-0400 INFO  ReadBuffer RB-LR-Handler(tag: -1, GET) de-allocating 1 buffers
+2017-07-28 14:11:39,648-0400 INFO  Execute TASK_STATUS_CHANGE taskid=task-18 status=2 workerid=local:000000
+2017-07-28 14:11:39,667-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 19380696, JVMThreads: 34
+2017-07-28 14:11:39,667-0400 INFO  RuntimeStats$ProgressTicker   Active:1
+2017-07-28 14:11:40,667-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 19380696, JVMThreads: 34
+2017-07-28 14:11:41,667-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 19380696, JVMThreads: 34
+2017-07-28 14:11:42,668-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 19380696, JVMThreads: 34
+2017-07-28 14:11:43,668-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 19380696, JVMThreads: 34
+2017-07-28 14:11:44,668-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 19380696, JVMThreads: 34
+2017-07-28 14:11:45,668-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 19380696, JVMThreads: 34
+2017-07-28 14:11:46,669-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 19380696, JVMThreads: 34
+2017-07-28 14:11:47,669-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 19380696, JVMThreads: 34
+2017-07-28 14:11:48,669-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 19380696, JVMThreads: 34
+2017-07-28 14:11:49,669-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 19380696, JVMThreads: 34
+2017-07-28 14:11:50,669-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 19380696, JVMThreads: 34
+2017-07-28 14:11:51,670-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 19380696, JVMThreads: 34
+2017-07-28 14:11:52,670-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 19380696, JVMThreads: 34
+2017-07-28 14:11:53,671-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 19380696, JVMThreads: 34
+2017-07-28 14:11:54,671-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 19380696, JVMThreads: 34
+2017-07-28 14:11:55,671-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 19380696, JVMThreads: 34
+2017-07-28 14:11:56,672-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 19380696, JVMThreads: 34
+2017-07-28 14:11:57,672-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 19380696, JVMThreads: 34
+2017-07-28 14:11:58,672-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 19380696, JVMThreads: 34
+2017-07-28 14:11:59,672-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 19380696, JVMThreads: 34
+2017-07-28 14:12:00,672-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 19380696, JVMThreads: 34
+2017-07-28 14:12:01,673-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 19380696, JVMThreads: 34
+2017-07-28 14:12:02,673-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 19380696, JVMThreads: 34
+2017-07-28 14:12:03,673-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 19380696, JVMThreads: 34
+2017-07-28 14:12:04,673-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 19380696, JVMThreads: 34
+2017-07-28 14:12:05,674-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 19380696, JVMThreads: 34
+2017-07-28 14:12:06,674-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 19380696, JVMThreads: 34
+2017-07-28 14:12:07,674-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 19380696, JVMThreads: 34
+2017-07-28 14:12:08,674-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 19380696, JVMThreads: 34
+2017-07-28 14:12:09,674-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 19380696, JVMThreads: 34
+2017-07-28 14:12:09,675-0400 INFO  RuntimeStats$ProgressTicker   Active:1
+2017-07-28 14:12:10,675-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 19380696, JVMThreads: 34
+2017-07-28 14:12:11,675-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 19380696, JVMThreads: 34
+2017-07-28 14:12:12,675-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 19380696, JVMThreads: 34
+2017-07-28 14:12:13,676-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 19380696, JVMThreads: 34
+2017-07-28 14:12:14,676-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 19380696, JVMThreads: 34
+2017-07-28 14:12:15,024-0400 INFO  HeartBeatCommand http://52.38.246.211:4030 up latency: 41ms, rtt: 43ms
+2017-07-28 14:12:15,676-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:12:16,676-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:12:17,676-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:12:18,677-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:12:19,677-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:12:20,677-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:12:21,677-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:12:22,678-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:12:23,678-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:12:24,678-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:12:25,678-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:12:26,679-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:12:27,679-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:12:28,679-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:12:29,680-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:12:30,680-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:12:31,680-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:12:32,680-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:12:33,681-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:12:34,681-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:12:35,681-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:12:36,681-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:12:37,682-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:12:38,682-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:12:39,682-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:12:39,682-0400 INFO  RuntimeStats$ProgressTicker   Active:1
+2017-07-28 14:12:40,682-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:12:41,683-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:12:42,683-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:12:43,683-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:12:44,683-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:12:45,684-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:12:46,684-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:12:47,684-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:12:48,684-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:12:49,685-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:12:50,685-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:12:51,685-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:12:52,685-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:12:53,480-0400 INFO  HeartBeatCommand http://52.38.246.211:4030 up latency: 1ms, rtt: 47ms
+2017-07-28 14:12:53,686-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:12:54,686-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:12:55,686-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:12:56,686-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:12:57,687-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:12:58,687-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:12:59,687-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:00,687-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:01,687-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:02,691-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:03,691-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:04,691-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:05,692-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:06,692-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:07,695-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:08,695-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:09,695-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:09,696-0400 INFO  RuntimeStats$ProgressTicker   Active:1
+2017-07-28 14:13:10,696-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:11,696-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:12,696-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:13,696-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:14,697-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:15,697-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:16,697-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:17,697-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:18,698-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:19,698-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:20,698-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:21,698-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:22,699-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:23,699-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:24,699-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:25,699-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:26,699-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:27,700-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:28,700-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:29,700-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:30,701-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:31,701-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:31,929-0400 INFO  HeartBeatCommand http://52.38.246.211:4030 up latency: 1ms, rtt: 43ms
+2017-07-28 14:13:32,702-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:33,702-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:34,702-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:35,702-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:36,703-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:37,703-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:38,703-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:39,703-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:39,704-0400 INFO  RuntimeStats$ProgressTicker   Active:1
+2017-07-28 14:13:40,704-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:41,704-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:42,704-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:43,705-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:44,713-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:45,714-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:46,714-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:47,714-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:48,715-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:49,715-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:50,716-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:51,716-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:52,716-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:53,727-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:54,727-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:55,728-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:56,728-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:57,728-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:58,729-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:13:59,729-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:14:00,730-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:14:01,730-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:14:02,730-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:14:03,731-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:14:04,731-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:14:05,732-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:14:06,732-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:14:07,732-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:14:08,733-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:14:09,735-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:14:09,735-0400 INFO  RuntimeStats$ProgressTicker   Active:1
+2017-07-28 14:14:10,399-0400 INFO  HeartBeatCommand http://52.38.246.211:4030 up latency: 1ms, rtt: 60ms
+2017-07-28 14:14:10,738-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:14:11,738-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:14:12,739-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:14:13,739-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:14:14,739-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:14:15,740-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:14:16,740-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:14:17,741-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:14:18,741-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:14:19,741-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:14:20,742-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:14:21,742-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:14:22,743-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:14:23,743-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:14:24,743-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:14:25,744-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:14:26,744-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:14:27,744-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:14:28,745-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:14:29,745-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:14:30,745-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:14:31,746-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:14:32,746-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:14:33,746-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:14:34,747-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:14:35,751-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 22023128, JVMThreads: 34
+2017-07-28 14:14:36,751-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:14:37,752-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:14:38,752-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:14:39,752-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:14:39,753-0400 INFO  RuntimeStats$ProgressTicker   Active:1
+2017-07-28 14:14:40,753-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:14:41,753-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:14:42,754-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:14:43,754-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:14:44,755-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:14:45,755-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:14:46,755-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:14:47,756-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:14:48,756-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:14:48,852-0400 INFO  HeartBeatCommand http://52.38.246.211:4030 up latency: 1ms, rtt: 60ms
+2017-07-28 14:14:49,757-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:14:50,757-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:14:51,757-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:14:52,759-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:14:53,763-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:14:54,767-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:14:55,767-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:14:56,768-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:14:57,768-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:14:58,768-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:14:59,769-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:00,769-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:01,769-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:02,770-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:03,770-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:04,771-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:05,771-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:06,771-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:07,771-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:08,771-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:09,771-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:09,772-0400 INFO  RuntimeStats$ProgressTicker   Active:1
+2017-07-28 14:15:10,772-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:11,772-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:12,772-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:13,773-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:14,773-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:15,773-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:16,773-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:17,773-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:18,774-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:19,774-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:20,774-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:21,774-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:22,775-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:23,775-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:24,775-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:25,775-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:26,775-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:27,292-0400 INFO  HeartBeatCommand http://52.38.246.211:4030 up latency: 1ms, rtt: 47ms
+2017-07-28 14:15:27,776-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:28,776-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:29,776-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:30,776-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:31,776-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:32,776-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:33,777-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:34,777-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:35,777-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:36,777-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:37,777-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:38,777-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:39,778-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:39,778-0400 INFO  RuntimeStats$ProgressTicker   Active:1
+2017-07-28 14:15:40,778-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:41,778-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:42,778-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:43,779-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:44,779-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:45,779-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:46,779-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:47,780-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:48,780-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:49,780-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:50,781-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:51,781-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:52,782-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:53,782-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:54,782-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:55,782-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:56,782-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:57,782-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:58,783-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:15:59,783-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:16:00,783-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:16:01,783-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:16:02,784-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:16:03,784-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:16:04,784-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 24665560, JVMThreads: 34
+2017-07-28 14:16:05,742-0400 INFO  HeartBeatCommand http://52.38.246.211:4030 up latency: 1ms, rtt: 44ms
+2017-07-28 14:16:05,784-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 25986784, JVMThreads: 34
+2017-07-28 14:16:06,784-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 25986784, JVMThreads: 34
+2017-07-28 14:16:07,785-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 25986784, JVMThreads: 34
+2017-07-28 14:16:08,785-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 25986784, JVMThreads: 34
+2017-07-28 14:16:09,785-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 25986784, JVMThreads: 34
+2017-07-28 14:16:09,785-0400 INFO  RuntimeStats$ProgressTicker   Active:1
+2017-07-28 14:16:10,785-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 25986784, JVMThreads: 34
+2017-07-28 14:16:11,786-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 25986784, JVMThreads: 34
+2017-07-28 14:16:12,786-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 25986784, JVMThreads: 34
+2017-07-28 14:16:13,786-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 25986784, JVMThreads: 34
+2017-07-28 14:16:14,786-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 25986784, JVMThreads: 34
+2017-07-28 14:16:15,786-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 25986784, JVMThreads: 34
+2017-07-28 14:16:16,787-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 25986784, JVMThreads: 34
+2017-07-28 14:16:17,787-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 25986784, JVMThreads: 34
+2017-07-28 14:16:18,787-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 25986784, JVMThreads: 34
+2017-07-28 14:16:19,787-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 25986784, JVMThreads: 34
+2017-07-28 14:16:20,787-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 25986784, JVMThreads: 34
+2017-07-28 14:16:21,788-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 25986784, JVMThreads: 34
+2017-07-28 14:16:22,788-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 25986784, JVMThreads: 34
+2017-07-28 14:16:23,788-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 25986784, JVMThreads: 34
+2017-07-28 14:16:24,788-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 25986784, JVMThreads: 34
+2017-07-28 14:16:25,788-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 25986784, JVMThreads: 34
+2017-07-28 14:16:26,788-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 25986784, JVMThreads: 34
+2017-07-28 14:16:27,789-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 25986784, JVMThreads: 34
+2017-07-28 14:16:28,789-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 25986784, JVMThreads: 34
+2017-07-28 14:16:29,260-0400 INFO  Execute TASK_STATUS_CHANGE taskid=task-18 status=17
+2017-07-28 14:16:29,261-0400 INFO  PutFileHandler Handler(tag: 49, PUT) source: /tmp/swiftwork/dakota-run002/jobs/p/prepInputs-j9oslnbn-0/_stdout.txt
+2017-07-28 14:16:29,261-0400 INFO  PutFileHandler Handler(tag: 49, PUT) destination: file://localhost/run002/dakota-run002.d/prepInputs-j9oslnbn-0.stdout
+2017-07-28 14:16:29,262-0400 INFO  PutFileHandler Handler(tag: 50, PUT) source: /tmp/swiftwork/dakota-run002/jobs/p/prepInputs-j9oslnbn-0/logs/prep.err
+2017-07-28 14:16:29,262-0400 INFO  PutFileHandler Handler(tag: 50, PUT) destination: file://localhost/logs/prep.err
+2017-07-28 14:16:29,262-0400 INFO  PutFileHandler Handler(tag: 51, PUT) source: /tmp/swiftwork/dakota-run002/jobs/p/prepInputs-j9oslnbn-0/_wrapper.log
+2017-07-28 14:16:29,262-0400 INFO  PutFileHandler Handler(tag: 51, PUT) destination: file://localhost/run002/dakota-run002.d/prepInputs-j9oslnbn-0.info
+2017-07-28 14:16:29,262-0400 INFO  PutFileHandler Handler(tag: 52, PUT) source: /tmp/swiftwork/dakota-run002/jobs/p/prepInputs-j9oslnbn-0/_wrapper.error
+2017-07-28 14:16:29,262-0400 INFO  PutFileHandler Handler(tag: 52, PUT) destination: file://localhost/run002/dakota-run002.d/prepInputs-j9oslnbn-0.error
+2017-07-28 14:16:29,263-0400 INFO  PutFileHandler Handler(tag: 53, PUT) source: /tmp/swiftwork/dakota-run002/jobs/p/prepInputs-j9oslnbn-0/logs/dakota.out
+2017-07-28 14:16:29,263-0400 INFO  PutFileHandler Handler(tag: 53, PUT) destination: file://localhost/logs/dakota.out
+2017-07-28 14:16:29,262-0400 INFO  PutFileHandler Handler(tag: 49, PUT) Transfer done
+2017-07-28 14:16:29,263-0400 INFO  PutFileHandler Handler(tag: 50, PUT) Transfer done
+2017-07-28 14:16:29,263-0400 INFO  PutFileHandler Handler(tag: 51, PUT) Transfer done
+2017-07-28 14:16:29,263-0400 INFO  PutFileHandler Handler(tag: 52, PUT) Transfer done
+2017-07-28 14:16:29,264-0400 INFO  PutFileHandler Handler(tag: 53, PUT) Transfer done
+2017-07-28 14:16:29,264-0400 INFO  PutFileHandler Handler(tag: 54, PUT) source: /tmp/swiftwork/dakota-run002/jobs/p/prepInputs-j9oslnbn-0/results/out.html
+2017-07-28 14:16:29,264-0400 INFO  PutFileHandler Handler(tag: 54, PUT) destination: file://localhost/results/out.html
+2017-07-28 14:16:29,276-0400 INFO  PutFileHandler Handler(tag: 55, PUT) source: /tmp/swiftwork/dakota-run002/jobs/p/prepInputs-j9oslnbn-0/logs/dakota.err
+2017-07-28 14:16:29,276-0400 INFO  PutFileHandler Handler(tag: 55, PUT) destination: file://localhost/logs/dakota.err
+2017-07-28 14:16:29,276-0400 INFO  PutFileHandler Handler(tag: 56, PUT) source: /tmp/swiftwork/dakota-run002/jobs/p/prepInputs-j9oslnbn-0/logs/prep.out
+2017-07-28 14:16:29,276-0400 INFO  PutFileHandler Handler(tag: 56, PUT) destination: file://localhost/logs/prep.out
+2017-07-28 14:16:29,276-0400 INFO  PutFileHandler Handler(tag: 57, PUT) source: /tmp/swiftwork/dakota-run002/jobs/p/prepInputs-j9oslnbn-0/_stderr.txt
+2017-07-28 14:16:29,276-0400 INFO  PutFileHandler Handler(tag: 57, PUT) destination: file://localhost/run002/dakota-run002.d/prepInputs-j9oslnbn-0.stderr
+2017-07-28 14:16:29,276-0400 INFO  PutFileHandler Handler(tag: 54, PUT) Transfer done
+2017-07-28 14:16:29,276-0400 INFO  PutFileHandler Handler(tag: 58, PUT) source: /tmp/swiftwork/dakota-run002/jobs/p/prepInputs-j9oslnbn-0/results/out.dat
+2017-07-28 14:16:29,276-0400 INFO  PutFileHandler Handler(tag: 58, PUT) destination: file://localhost/results/out.dat
+2017-07-28 14:16:29,276-0400 INFO  PutFileHandler Handler(tag: 55, PUT) Transfer done
+2017-07-28 14:16:29,276-0400 INFO  PutFileHandler Handler(tag: 56, PUT) Transfer done
+2017-07-28 14:16:29,276-0400 INFO  PutFileHandler Handler(tag: 57, PUT) Transfer done
+2017-07-28 14:16:29,277-0400 INFO  PutFileHandler Handler(tag: 58, PUT) Transfer done
+2017-07-28 14:16:29,355-0400 INFO  LateBindingScheduler jobs queued: 0
+2017-07-28 14:16:29,356-0400 INFO  Execute TASK_STATUS_CHANGE taskid=task-18 status=7
+2017-07-28 14:16:29,356-0400 DEBUG swift JOB_END jobid=prepInputs-j9oslnbn-0
+2017-07-28 14:16:29,356-0400 INFO  swift END_SUCCESS jobid=prepInputs-j9oslnbn tr=prepInputs
+2017-07-28 14:16:29,356-0400 DEBUG swift PROCEDURE_END line=34 thread=2-0-18-15 name=prepInputs
+2017-07-28 14:16:29,356-0400 INFO  RuntimeStats$ProgressTicker HeapMax: 954728448, CrtHeap: 506462208, UsedHeap: 35464928, JVMThreads: 34
+2017-07-28 14:16:29,356-0400 INFO  RuntimeStats$ProgressTicker   Finished successfully:1
+2017-07-28 14:16:29,362-0400 DEBUG swift Starting cleanups
+2017-07-28 14:16:29,362-0400 INFO  swift START cleanups=[]
+2017-07-28 14:16:29,362-0400 INFO  swift END cleanups=[]
+2017-07-28 14:16:29,362-0400 DEBUG swift Ending cleanups
+2017-07-28 14:16:29,364-0400 INFO  Loader Swift finished with no errors
+2017-07-28 14:16:29,365-0400 INFO  ChannelManager Notifying peers of shutdown

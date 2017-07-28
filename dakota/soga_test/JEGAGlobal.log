@@ -1,0 +1,104 @@
+JEGA Genetic Algorithm Optimization Software v2.7.0
+Run started Fri Jul 28 21:21:28 2017
+
+Global Log initialized using "quiet" as default level.
+Global Log logging to file JEGAGlobal.log
+Global Log logging to console window
+21:21:28: quiet- JEGA Front End: Random seed = 2315
+21:21:28: quiet- : Matched new set to a group that is not the current group.  Adopting the new group.
+21:21:28: quiet- Error encountered while retrieving parameter named "method.max_time" of type "d" from parameter database reading: Parameter not found for tag: method.max_time
+21:21:29: verbose- merit_function: maximum encountered fitness = 74.
+21:21:29: quiet- duplicate_free: 1 generation so far.
+21:21:29: quiet- duplicate_free: 50 evaluations so far.
+21:21:29: verbose- merit_function: maximum encountered fitness = 74.
+21:21:29: quiet- duplicate_free: 2 generations so far.
+21:21:29: quiet- duplicate_free: 58 evaluations so far.
+21:21:29: verbose- merit_function: maximum encountered fitness = 74.
+21:21:29: quiet- duplicate_free: 3 generations so far.
+21:21:29: quiet- duplicate_free: 64 evaluations so far.
+21:21:29: verbose- merit_function: maximum encountered fitness = 74.
+21:21:29: quiet- duplicate_free: 4 generations so far.
+21:21:29: quiet- duplicate_free: 68 evaluations so far.
+21:21:29: verbose- merit_function: maximum encountered fitness = 74.
+21:21:29: quiet- duplicate_free: 5 generations so far.
+21:21:29: quiet- duplicate_free: 70 evaluations so far.
+21:21:29: verbose- merit_function: maximum encountered fitness = 74.
+21:21:29: quiet- duplicate_free: 6 generations so far.
+21:21:29: quiet- duplicate_free: 72 evaluations so far.
+21:21:30: verbose- merit_function: maximum encountered fitness = 74.
+21:21:30: quiet- duplicate_free: 7 generations so far.
+21:21:30: quiet- duplicate_free: 73 evaluations so far.
+21:21:30: verbose- merit_function: maximum encountered fitness = 74.
+21:21:30: quiet- duplicate_free: 8 generations so far.
+21:21:30: quiet- duplicate_free: 75 evaluations so far.
+21:21:30: verbose- merit_function: maximum encountered fitness = 74.
+21:21:30: quiet- duplicate_free: 9 generations so far.
+21:21:30: quiet- duplicate_free: 76 evaluations so far.
+21:21:30: verbose- merit_function: maximum encountered fitness = 74.
+21:21:30: quiet- duplicate_free: 10 generations so far.
+21:21:30: quiet- duplicate_free: 78 evaluations so far.
+21:21:30: quiet- SOGA: Ran 10 total generations.
+21:21:30: quiet- SOGA: Final population size = 1
+21:21:30: quiet- JEGA Front End: SOGA execution took 0.086927 seconds.
+21:21:30: quiet- JEGA Front End: Execution took 0.086927 seconds.
+21:21:30: quiet- SOGA: find optimum completed and all results have been passed back to DAKOTA.
+
+
+JEGA Genetic Algorithm Optimization Software v2.7.0
+Run started Fri Jul 28 21:23:15 2017
+
+Global Log initialized using "quiet" as default level.
+Global Log logging to file JEGAGlobal.log
+Global Log logging to console window
+21:23:15: quiet- JEGA Front End: Random seed = 2315
+21:23:15: quiet- : Matched new set to a group that is not the current group.  Adopting the new group.
+21:23:15: quiet- Error encountered while retrieving parameter named "method.max_time" of type "d" from parameter database reading: Parameter not found for tag: method.max_time
+21:23:16: verbose- merit_function: maximum encountered fitness = -1.
+21:23:16: quiet- duplicate_free: 1 generation so far.
+21:23:16: quiet- duplicate_free: 50 evaluations so far.
+21:23:16: verbose- merit_function: maximum encountered fitness = -1.
+21:23:16: quiet- duplicate_free: 2 generations so far.
+21:23:16: quiet- duplicate_free: 58 evaluations so far.
+21:23:16: verbose- merit_function: maximum encountered fitness = -1.
+21:23:16: quiet- duplicate_free: 3 generations so far.
+21:23:16: quiet- duplicate_free: 63 evaluations so far.
+21:23:16: verbose- merit_function: maximum encountered fitness = -1.
+21:23:16: quiet- duplicate_free: 4 generations so far.
+21:23:16: quiet- duplicate_free: 71 evaluations so far.
+21:23:16: verbose- merit_function: maximum encountered fitness = -1.
+21:23:16: quiet- duplicate_free: 5 generations so far.
+21:23:16: quiet- duplicate_free: 76 evaluations so far.
+21:23:16: verbose- merit_function: maximum encountered fitness = -1.
+21:23:16: quiet- duplicate_free: 6 generations so far.
+21:23:16: quiet- duplicate_free: 78 evaluations so far.
+21:23:16: verbose- merit_function: maximum encountered fitness = -1.
+21:23:16: quiet- duplicate_free: 7 generations so far.
+21:23:16: quiet- duplicate_free: 83 evaluations so far.
+21:23:16: verbose- merit_function: maximum encountered fitness = -1.
+21:23:16: quiet- duplicate_free: 8 generations so far.
+21:23:16: quiet- duplicate_free: 86 evaluations so far.
+21:23:16: verbose- merit_function: maximum encountered fitness = -1.
+21:23:16: quiet- duplicate_free: 9 generations so far.
+21:23:16: quiet- duplicate_free: 89 evaluations so far.
+21:23:16: verbose- merit_function: maximum encountered fitness = -0.
+21:23:16: quiet- duplicate_free: 10 generations so far.
+21:23:16: quiet- duplicate_free: 92 evaluations so far.
+21:23:16: verbose- merit_function: maximum encountered fitness = -0.
+21:23:16: quiet- duplicate_free: 11 generations so far.
+21:23:16: quiet- duplicate_free: 92 evaluations so far.
+21:23:16: verbose- merit_function: maximum encountered fitness = -0.
+21:23:16: quiet- duplicate_free: 12 generations so far.
+21:23:16: quiet- duplicate_free: 92 evaluations so far.
+21:23:17: verbose- merit_function: maximum encountered fitness = -0.
+21:23:17: quiet- duplicate_free: 13 generations so far.
+21:23:17: quiet- duplicate_free: 93 evaluations so far.
+21:23:17: verbose- merit_function: maximum encountered fitness = -0.
+21:23:17: quiet- duplicate_free: 14 generations so far.
+21:23:17: quiet- duplicate_free: 93 evaluations so far.
+21:23:17: quiet- SOGA: Ran 14 total generations.
+21:23:17: quiet- SOGA: Final population size = 1
+21:23:17: quiet- JEGA Front End: SOGA execution took 0.087551 seconds.
+21:23:17: quiet- JEGA Front End: Execution took 0.087551 seconds.
+21:23:17: quiet- SOGA: find optimum completed and all results have been passed back to DAKOTA.
+
+

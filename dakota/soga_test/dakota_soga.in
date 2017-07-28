@@ -1,0 +1,77 @@
+environment
+    	tabular_data
+        tabular_data_file = 'out_dace.dat'
+        method_pointer = 'SOGA'
+        custom_annotated header eval_id
+
+method
+ id_method = 'SOGA'                              
+ model_pointer = 'SOGA_M'     
+   output quiet
+    
+   	max_function_evaluations = 1000 #@@MAX_ITERATIONS@@
+   	seed = 2315
+   	final_solutions = 10
+   	
+    population_size = 50 #@@POPULATION_SIZE@@
+    #print_each_pop
+    #initialization_type flat_file = 'init_pop_new.dat'
+    initialization_type simple_random
+    
+    soga
+    fitness_type merit_function
+    constraint_penalty = 0.9
+    replacement_type elitist  # elitist, unique_roulette_wheel, favor_feasible
+    crossover_type shuffle_random
+	   num_offspring = 2 num_parents = 2
+    #crossover_type multi_point_parameterized_binary = 2
+    crossover_rate = 0.8 #$crossover_rate
+    mutation_type replace_uniform
+    mutation_rate = 0.08 #$mutation_rate
+   	convergence_type average_fitness_tracker 
+   	percent_change = 0.05
+   	num_generations = 5 #100000000 # force run until completion
+    
+model                                                 
+ id_model = 'SOGA_M'                             
+ single                                                   
+ variables_pointer = 'V1' 
+ interface_pointer = 'I1'                     
+ responses_pointer = 'R1' 
+
+variables
+ id_variables = 'V1'
+ discrete_design_range = 2
+ lower_bounds =  -3 0
+ upper_bounds =  5 10
+ descriptors 'x1' 'x2'
+
+interface
+ id_interface = 'I1'
+    fork
+        asynchronous
+          evaluation_concurrency = 10
+          local_evaluation_scheduling dynamic
+# When using work_directory, the analysis_drivers may be given by:
+# 1) an absolute path, 2) located in (or relative to) the startup directory alongside the Dakota input file, 3) in the list of template files linked or copied, 4) or on the $PATH (Path% on Windows).
+        analysis_driver = 'test.sh'
+        parameters_file = 'params.in'
+        results_file    = 'results.out'
+        work_directory directory_tag
+        named = 'work_dir/dakota_tmp'
+        directory_save
+        replace
+        copy_files = 'templatedir/*'
+   # named 'workdir' file_save directory_save
+        aprepro
+   deactivate active_set_vector
+
+responses
+ id_responses = 'R1'   
+  	objective_functions = 2
+  	sense = 'min' 'min'
+  	weights 1 1
+  	no_gradients
+  	no_hessians
+ descriptors 'y1' 'y2'
+ #nonlinear_equality_constraints = 2 ##??????????????????????
