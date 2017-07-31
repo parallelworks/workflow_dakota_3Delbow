@@ -15,6 +15,9 @@ file surrdat         <arg("surr","results/surr.dat")>;
 #file execute        <"runDakota.sh">;
 file pts      <arg("pts","openfoam/inputs/points.dat")>;
 
+file swiftconf <"swift.conf">;
+
+
 file[] openfoam <Ext;exec="mapper.sh",root="openfoam">;
 file[] dakota <Ext;exec="mapper.sh",root="dakota">;
 file[] templatedir <Ext;exec="mapper.sh",root="templatedir">;
@@ -24,8 +27,8 @@ file[] templatedir_ofa <Ext;exec="mapper_ofa.sh">;
 # -- APP DEFINITIONS
 
 
-app (file sout, file serr, file surrdat ) prepInputs (file[] openfoam, file[] dakota, file outdat, file pts) {
-    bash "dakota/utils/prepInputs_surr.sh" "inputs/sweepParams.run" "inputs/elbowKPI.json" ;
+app (file sout, file serr, file surrdat ) prepInputs (file[] openfoam, file[] dakota, file outdat, file pts, file swiftconf) {
+    bash "dakota/utils/prepInputs_surr.sh" "sweepParams.run" "inputs/elbowKPI.json" ;
     bash "templatedir/start_docker_surr.sh" stdout=@sout stderr=@serr;
 }
 
@@ -38,7 +41,7 @@ app (file sout, file serr, file surrdat ) prepInputs (file[] openfoam, file[] da
 # this commpand runs app specified above
 file sout   <"logs/surr.out">;
 file serr   <"logs/surr.err">;
-(sout,serr,surrdat) = prepInputs(openfoam, dakota, outdat,pts);
+(sout,serr,surrdat) = prepInputs(openfoam, dakota, outdat,pts, swiftconf);
 #(dout,derr,outdat,outhtml) = runDAKOTA(templatedir_ofa,dakota,swiftconf, inlet5_X_min, inlet5_X_max, inlet6_Y_min, inlet6_Y_max, num_cases);
 
 #(sout,serr)=tree(openfoam);

@@ -8,6 +8,7 @@ mkdir templatedir
 rsync -a openfoam/ templatedir/
 rsync  dakota/* templatedir/
 rsync dakota/utils/* templatedir/
+rsync swift.conf templatedir/
 rsync openfoam/inputs/points.dat .
 rsync results/out.dat .
 
