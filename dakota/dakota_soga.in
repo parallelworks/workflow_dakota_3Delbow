@@ -30,7 +30,7 @@ method
     mutation_rate = 0.08 #$mutation_rate
    	convergence_type average_fitness_tracker 
    	percent_change = 0.05
-   	num_generations = 100000000 # force run until completion
+   	num_generations = 10 # 100000000 # force run until completion
     
 model                                                 
  id_model = 'SOGA_M'                             
@@ -41,7 +41,7 @@ model
 
 variables
  id_variables = 'V1'
- discrete_design_range = $num_tasks
+ discrete_design_range = @@NUMBER_OF_INPUTS@@
  lower_bounds =  @@MAX_INPUTS@@
  upper_bounds =  @@MIN_INPUTS@@
  descriptors @@INPUT_DESCRIPTORS@@
@@ -69,8 +69,8 @@ interface
 responses
  id_responses = 'R1'   
   	objective_functions = @@NUMBER_OF_OUTPUTS@@
-  	sense = @@OUTPUTS_SENSE@@
-  	weights @@OUTPUT_WEIGHTS@@
+  	sense = @@OUTPUTS_SENSES@@
+  	weights @@OUTPUTS_WEIGHTS@@
   	no_gradients
   	no_hessians
  descriptors @@OUTPUT_DESCRIPTORS@@

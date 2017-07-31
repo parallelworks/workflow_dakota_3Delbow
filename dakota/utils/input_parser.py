@@ -97,14 +97,16 @@ for ii in range(len(changed_list)):
 
 num_out=0
 output_descriptors=""
-
+output_sense=""
+output_weight=""
 with open(json_file_name) as json_file :
 	jf=json.load(json_file)
 for ii in jf.keys() :
 	if jf[ii].get('extractStats','true') != 'false':
 		num_out=num_out+1
 		output_descriptors = output_descriptors + " \\'" + ii + "\\' "
-
+		output_sense = output_sense + " \\'" + jf[ii].get('sense','min') + "\\' "
+		output_weight = output_weight + " " + jf[ii].get('weight','1') 
 #with open(params_dakota,'w') as pd:
 #	pd.write(num_exp+" | ") #@@NUMBER_OF_EXPS@@
 #	pd.write(str(num_changed)+" | ") #@@NUMBER_OF_INPUTS@@
@@ -125,6 +127,8 @@ os.system("sed -i \"s/@@INPUT_DESCRIPTORS@@/"+input_descriptors+"/\" "+dakota_ca
 os.system("sed -i 's/@@NUMBER_OF_OUTPUTS@@/"+str(num_out)+"/' "+dakota_case)
 os.system("sed -i \"s/@@OUTPUT_DESCRIPTORS@@/"+output_descriptors+"/\" "+dakota_case)
 
+os.system("sed -i 's/@@OUTPUTS_WEIGHTS@@/"+output_weight+"/' "+dakota_case)
+os.system("sed -i \"s/@@OUTPUTS_SENSES@@/"+output_sense+"/\" "+dakota_case)
 
 
 os.system("sed -i 's/@@NUMBER_OF_INPUTS@@/"+str(num_changed)+"/' "+runDakota)
