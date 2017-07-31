@@ -73,10 +73,10 @@ for ii in params:
 
 in_template=""
 for ii in changed_list:
-	in_template=in_template+ii+" {"+ii+"} \n"
+	in_template=in_template+ii+";{"+ii+"}\n"
 
 for ii in range(len(unchanged_list)):
-	in_template=in_template+unchanged_list[ii]+" "+unchanged_value[ii]+" \n"
+	in_template=in_template+unchanged_list[ii]+";"+unchanged_value[ii]+"\n"
 #in_template=in_template.rstrip(",")
 
 

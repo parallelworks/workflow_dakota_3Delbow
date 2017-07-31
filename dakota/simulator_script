@@ -10,16 +10,17 @@ dprepro $1 input.template input.in --output-format="%f"
 #echo "inlet5_X,5,inlet6_Y,7" > input.in
 cat input.in
 
-mkdir outputs
+#mkdir outputs
 #mkdir outputs/case0
 #mkdir outputs/errorFiles
 #mkdir outputs/logFiles
 #mkdir outputs/logFiles/salPortNums
 #mkdir outputs/png
 #mkdir outputs/png/0
-mkdir outputs/simParamFiles
+#mkdir outputs/simParamFiles
 
-cp input.in outputs/simParamFiles/caseParamFile0.in
+#cp input.in outputs/simParamFiles/caseParamFile0.in
+cp input.in inputs/sweepParams.run
 
 #tar xvf transferin.tar
 #chmod 777 -R *

@@ -32,7 +32,7 @@ interface
  id_interface = 'I1'  
 	fork
 	asynchronous 
-	  evaluation_concurrency = 10
+	  evaluation_concurrency = 8
 	  local_evaluation_scheduling dynamic 
 # When using work_directory, the analysis_drivers may be given by:
 # 1) an absolute path, 2) located in (or relative to) the startup directory alongside the Dakota input file, 3) in the list of template files linked or copied, 4) or on the $PATH (Path% on Windows).

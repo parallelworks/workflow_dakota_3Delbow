@@ -32,7 +32,7 @@ file[] templatedir_ofa <Ext;exec="mapper_ofa.sh">;
 
 
 app (file pout, file perr, file dout, file derr, file outdat, file outhtml ) prepInputs (file[] openfoam, file[] dakota, file swiftconf) {
-    bash "dakota/utils/prepInputs.sh" "inputs/sweepParams.run" "inputs/elbowKPI.json" stdout=@pout stderr=@perr;
+    bash "dakota/utils/prepInputs.sh" "sweepParams.run" "inputs/elbowKPI.json" stdout=@pout stderr=@perr;
 #	tree stdout=@pout stderr=@perr;
     bash "templatedir/start_docker.sh" stdout=@dout stderr=@derr;
 }
