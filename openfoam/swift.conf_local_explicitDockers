@@ -224,28 +224,29 @@ site.linuxpool {
 	        URL: "http://52.38.246.211:4030"
 	}
     staging: local	
-	workDirectory: "/swiftwork_cog_swift"
+	workDirectory: ${env.PWD}"/swiftwork"
 	
 	app.ALL {
         env.OPENFOAMPATH: "/opt/openfoam4/"
+	env.embeddedDocker:"true"
 		executable: "*"
 	}
-	app.makeGeom {
-        executable: ${env.PWD}"/utils/makeGeom.sh"
-		env.embeddedDocker:"true"
-	}
-	app.makeMesh {
-        executable: ${env.PWD}"/utils/makeMesh.sh"
-		env.embeddedDocker:"true"
-	}
-	app.runSim {
-		executable: ${env.PWD}"/utils/runSim.sh"
-		env.embeddedDocker:"true"
-	}
-	app.PVExtract {
-		executable: ${env.PWD}"/utils/PVExtract.sh"
-		env.embeddedDocker:"true"
-	}
+#	app.makeGeom {
+#        executable: "utils/makeGeom.sh"
+#		env.embeddedDocker:"true"
+#	}
+#	app.makeMesh {
+#        executable: "utils/makeMesh.sh"
+#		env.embeddedDocker:"true"
+#	}
+#	app.runSim {
+#		executable: "utils/runSim.sh"
+#		env.embeddedDocker:"true"
+#	}
+#	app.PVExtract {
+#		executable: "utils/PVExtract.sh"
+#		env.embeddedDocker:"true"
+#	}
 
 }
 

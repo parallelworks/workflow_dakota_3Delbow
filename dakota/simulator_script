@@ -2,6 +2,8 @@
 echo "arg1 is: $1"
 echo "arg2 is: $2"
 
+#export PATH=$PATH:/swift-pw-bin/swift-svn/bin
+export PATH=$PATH:/swift-k/dist/swift-svn/bin
 
 # get the coaster service address
 coasterurl=$(cat swift.conf | grep URL | sed "s/URL: \"//g" | sed "s/\"//")
@@ -59,15 +61,20 @@ chmod 777 -R *
 
 #swift_driver "untar_and_run.sh elbow.tgz null $(cat input.in) out.tgz null" "$coasterurl"
 
-tar cvf cog_transfer.tar *
-swift_driver "runOFA.sh" "$coasterurl"
+#tar cvf cog_transfer.tar *
+#swift_driver "runOFA.sh" "$coasterurl"
+pwd
+./tree
+
+swift -config swift.conf_local_explicitDockers  mainElbow3D.swift
+
 
 #echo "1" > $2
 #echo "2" >> $2
 ./tree 
 #exit 0
 
-tar xf ${fileid}.tar.gz
+#tar xf ${fileid}.tar.gz
 tail -n +2 outputs/case0/metrics.csv | cut -d "," -f 2 > results.txt
 
 #swift_driver "chmod 777 -R *" "$coasterurl"

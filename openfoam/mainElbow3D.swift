@@ -33,9 +33,9 @@ app (file cases, file[] simFileParams) writeCaseParamFiles (file sweepParams, st
 app (file fcaseTar, file ferr, file fout) prepareCase (file geomScript, file utils[], 
                                                               file fsimParams, string caseDirPath, 
                                                               file writeBlockMeshScript, file fFoamCase) {
-    makeGeom filename(geomScript) filename(fsimParams) filename(fFoamCase) 
+    bash "utils/makeGeom.sh" filename(geomScript) filename(fsimParams) filename(fFoamCase) 
              caseDirPath filename(fout) filename(ferr);
-    makeMesh filename(fsimParams) filename(fFoamCase) caseDirPath filename(writeBlockMeshScript) 
+    bash "utils/makeMesh.sh" filename(fsimParams) filename(fFoamCase) caseDirPath filename(writeBlockMeshScript) 
              filename(fout) filename(ferr);
 }
 
@@ -43,8 +43,8 @@ app (file MetricsOutput, file[] fpngs, file fOut, file fErr) runSimExtractMetric
                                                                                    file metrics2extract, 
                                                                                    string extractOutDir, 
                                                                                    file utils[]){
-    runSim filename(fOpenCaseTar) filename(fOut) filename(fErr);
-    PVExtract filename(fOpenCaseTar) filename(metrics2extract) extractOutDir filename(MetricsOutput) 
+    bash "utils/runSim.sh" filename(fOpenCaseTar) filename(fOut) filename(fErr);
+    bash "utils/PVExtract.sh" filename(fOpenCaseTar) filename(metrics2extract) extractOutDir filename(MetricsOutput) 
            filename(fOut) filename(fErr);
 
 }
