@@ -24,7 +24,7 @@
 #     tcp.port.range=start,end
 #
 
-TCPPortRange="50000, 50100"
+#TCPPortRange="50000, 50100"
 
 #
 # false	- means an error will be immediately reported and cause the
@@ -48,7 +48,7 @@ lazyErrors=true
 # in the log file.
 #
 
-tracingEnabled=false
+#tracingEnabled=false
 
 #
 # Indicates when wrapper logs should be fetched from the remote site:
@@ -80,7 +80,7 @@ alwaysTransferWrapperLog=true
 # Default: 4
 #
 
-jobSubmitThrottle=4
+#jobSubmitThrottle=8
 #jobSubmitThrottle=off
 
 #
@@ -92,7 +92,7 @@ jobSubmitThrottle=4
 # Default: 2
 #
 
-hostJobSubmitThrottle=2
+#hostJobSubmitThrottle=2
 #hostJobSubmitThrottle=off
 
 #
@@ -104,7 +104,7 @@ hostJobSubmitThrottle=2
 # Default: 4
 #
 
-fileTransfersThrottle=4
+#fileTransfersThrottle=4
 #fileTransfersThrottle=off
 
 # Limits the total number of concurrent file operations that can happen at any
@@ -118,7 +118,7 @@ fileTransfersThrottle=4
 # Default: 8
 #
 
-fileOperationsThrottle=8
+#fileOperationsThrottle=8
 #fileOperationsThrottle=off
 
 # Indicates whether the working directory on the remote site should be
@@ -143,18 +143,18 @@ executionRetries=0
 # allows multiple instances of a job to compete.
 #
 
-replicationEnabled=false
+#replicationEnabled=false
 
 # If replication is enabled, this value specifies the minimum time, in seconds,
 # a job needs to be queued in a batch queue in order to be considered for
 # replication
 #
 
-replicationMinQueueTime=60
+#replicationMinQueueTime=60
 
 # The maximum number of replicas that Swift should attempt.
 
-replicationLimit=3
+#replicationLimit=3
 
 # Controls how Swift will communicate the result code of running user programs
 # from workers to the submit side. In files mode, a file
@@ -197,7 +197,7 @@ maxForeachThreads=16384
 # enabling this will increase the size of log files, sometimes
 # significantly.
 
-logProvenance=false
+#logProvenance=false
 
 # The URL prefix used to access local files in wrapper
 # staging mode. Full URLs are created by concatenating:
@@ -223,7 +223,9 @@ site.linuxpool {
 		type: "coaster-persistent"
 	        URL: "http://52.38.246.211:4030"
 	}
-    staging: local	
+    staging: local
+	initialParallelTasks: 999999
+	 maxParallelTasks: 999999	
 	workDirectory: ${env.PWD}"/swiftwork"
 	
 	app.ALL {

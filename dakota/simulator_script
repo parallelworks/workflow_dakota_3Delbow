@@ -28,7 +28,7 @@ cp input.in inputs/sweepParams.run
 #chmod 777 -R *
 #./utils/runOpenfoam.sh sample_inputs/elbow.tgz sample_inputs/elbow.pvsm $(cat input.in) out.tgz out.png
 
-
+cp $1 ori.in
 
 
 
@@ -41,14 +41,14 @@ cp input.in inputs/sweepParams.run
 
 #just create results.txt file to register it for transfer
 
-fileid=$(cat input.in | sed 's/ /,/g' | tr -d '\n' | cut -c 1-200)
+#fileid=$(cat input.in | sed 's/ /,/g' | tr -d '\n' | cut -c 1-200)
 
-echo "placeholder" > ${fileid}.tar.gz
+#echo "placeholder" > ${fileid}.tar.gz
 #echo "placeholder" > results.txt
 
 
 
-echo $coasterurl
+#echo $coasterurl
 
 #swift_driver "python p1.py" "$coasterurl"
 #ls
@@ -65,9 +65,27 @@ chmod 777 -R *
 #swift_driver "runOFA.sh" "$coasterurl"
 pwd
 ./tree
+#usebatch=true
 
-swift -config swift.conf_local_explicitDockers  mainElbow3D.swift
+if [ "$usebatch" == "true" ] 
+then
+	timeout=600 #seconds
+	rm READY_RETURN.txt
+	echo "1" > READY_SWIFT.txt
+	while [ ! -e "READY_RETURN.txt" ]
+	do
+		sleep 10 #seconds
+		let timeout=timeout-10
+		if [ "$timeout" -lt "0" ]
+		then
+			break
+		fi
+	done
+	
+else
+	swift -config swift.conf_local_explicitDockers  mainElbow3D.swift
 
+fi
 
 #echo "1" > $2
 #echo "2" >> $2

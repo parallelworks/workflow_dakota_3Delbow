@@ -25,6 +25,10 @@ export PATH=$PATH:$INSTALL_DIR/bin
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$INSTALL_DIR/lib:$INSTALL_DIR/bin
 export PYTHONPATH=$PYTHONPATH:$PWD/utils
 
+#echo "Running batch deamon"
+#./templatedir/batch_deamon.sh &
+
+
 echo "Running DOE Analysis"
 dakota -input $infile
 ec=$?
