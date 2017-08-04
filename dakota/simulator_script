@@ -65,7 +65,7 @@ chmod 777 -R *
 #swift_driver "runOFA.sh" "$coasterurl"
 pwd
 ./tree
-#usebatch=true
+usebatch=true
 
 if [ "$usebatch" == "true" ] 
 then
